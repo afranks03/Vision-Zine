@@ -19,7 +19,7 @@ export function SignInForm() {
 
   return (
     <form action={handleSubmit} className="flex flex-col gap-3">
-      <label className="text-xs uppercase tracking-wider text-neutral-500" htmlFor="email">
+      <label className="text-xs tracking-wider text-neutral-500 uppercase" htmlFor="email">
         Email
       </label>
       <input
@@ -35,11 +35,7 @@ export function SignInForm() {
         {pending ? 'Sending…' : 'Send sign-in link'}
       </Button>
       {message && (
-        <p
-          className={`text-sm ${
-            message.kind === 'ok' ? 'text-emerald-700' : 'text-red-700'
-          }`}
-        >
+        <p className={`text-sm ${message.kind === 'ok' ? 'text-emerald-700' : 'text-red-700'}`}>
           {message.text}
         </p>
       )}
