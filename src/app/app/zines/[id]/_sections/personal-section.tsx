@@ -15,9 +15,7 @@ export function PersonalSection({
   const [displayName, setDisplayName] = useState(initial.display_name ?? '');
   const [pronouns, setPronouns] = useState(initial.pronouns ?? '');
   const [location, setLocation] = useState(initial.location ?? '');
-  const [birthYear, setBirthYear] = useState(
-    initial.birth_year ? String(initial.birth_year) : '',
-  );
+  const [birthYear, setBirthYear] = useState(initial.birth_year ? String(initial.birth_year) : '');
   const [shortIntro, setShortIntro] = useState(initial.short_intro ?? '');
 
   return (
@@ -32,8 +30,8 @@ export function PersonalSection({
       }
       intro={
         <>
-          The basics for the colophon and the cover. You can leave anything blank — we&apos;ll
-          fall back to a quiet default.
+          The basics for the colophon and the cover. You can leave anything blank — we&apos;ll fall
+          back to a quiet default.
         </>
       }
       collect={() => ({
@@ -96,10 +94,7 @@ export function PersonalSection({
           />
         </Field>
       </div>
-      <Field
-        label="Short intro"
-        hint="Two sentences. Goes under your name in the editor's letter."
-      >
+      <Field label="Short intro" hint="Two sentences. Goes under your name in the editor's letter.">
         <textarea
           value={shortIntro}
           onChange={(e) => setShortIntro(e.target.value)}

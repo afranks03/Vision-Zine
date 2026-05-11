@@ -49,15 +49,10 @@ export function SectionShell<K extends SectionKey>({
   }
 
   return (
-    <form
-      action={handleSave}
-      className="flex flex-col gap-6"
-    >
+    <form action={handleSave} className="flex flex-col gap-6">
       <header>
         <Eyebrow className="text-vz-coral">{eyebrow}</Eyebrow>
-        <h2 className="font-display mt-2 text-4xl leading-[0.95] tracking-[-0.02em]">
-          {title}
-        </h2>
+        <h2 className="font-display mt-2 text-4xl leading-[0.95] tracking-[-0.02em]">{title}</h2>
         {intro && <p className="vz-prose mt-3 text-base">{intro}</p>}
       </header>
       <HairlineRule />
@@ -97,7 +92,7 @@ export function Field({
   return (
     <label className="flex flex-col gap-2">
       <span className="vz-meta text-vz-ink">{label}</span>
-      {hint && <span className="font-serif text-sm text-vz-ink/70">{hint}</span>}
+      {hint && <span className="text-vz-ink/70 font-serif text-sm">{hint}</span>}
       {children}
     </label>
   );

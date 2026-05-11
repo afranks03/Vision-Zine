@@ -1,12 +1,6 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import {
-  BulletDot,
-  Eyebrow,
-  Meta,
-  MetaRow,
-  SectionHeader,
-} from '@/components/editorial';
+import { BulletDot, Eyebrow, Meta, MetaRow, SectionHeader } from '@/components/editorial';
 
 export const metadata: Metadata = {
   title: 'About',

@@ -8,7 +8,12 @@ export const metadata: Metadata = {
   description: 'Sign in to Vision Zine with a magic link.',
 };
 
-export default function SignInPage() {
+interface Props {
+  searchParams: Promise<{ next?: string; error?: string }>;
+}
+
+export default async function SignInPage({ searchParams }: Props) {
+  const { next, error } = await searchParams;
   return (
     <div className="bg-vz-cream text-vz-ink flex min-h-screen flex-col">
       <header className="vz-container flex h-16 items-center justify-between">
@@ -38,8 +43,13 @@ export default function SignInPage() {
             <p className="vz-prose mt-3 text-base">
               We&apos;ll email you a link. No password needed.
             </p>
+            {error && (
+              <p className="vz-prose text-vz-coral mt-4 text-sm">
+                Sign-in didn&apos;t complete. ({error})
+              </p>
+            )}
             <div className="mt-7">
-              <SignInForm />
+              <SignInForm next={next} />
             </div>
           </div>
           <p className="vz-prose text-vz-ink/70 mt-6 text-center text-sm">

@@ -26,10 +26,18 @@ export default async function DashboardPage() {
       />
       <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
         <h1
-          className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+          className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(40px, 7vw, 96px)' }}
         >
-          {list.length > 0 ? <>Your <em>zines</em>.</> : <>Your <em>archive</em> is empty.</>}
+          {list.length > 0 ? (
+            <>
+              Your <em>zines</em>.
+            </>
+          ) : (
+            <>
+              Your <em>archive</em> is empty.
+            </>
+          )}
         </h1>
         <Link
           href="/app/new"
@@ -54,8 +62,8 @@ function EmptyState() {
           className="font-display mt-5 leading-[1.05]"
           style={{ fontSize: 'clamp(24px, 3vw, 36px)' }}
         >
-          A zine is a finished issue of a magazine — your magazine. About your year, your
-          work, your goals. <em>Editorial-quality, real paper.</em>
+          A zine is a finished issue of a magazine — your magazine. About your year, your work, your
+          goals. <em>Editorial-quality, real paper.</em>
         </p>
       </div>
       <ol className="space-y-5">
@@ -66,8 +74,8 @@ function EmptyState() {
           Personal, vision, achievements, goals, daily code. Save anytime, come back anytime.
         </Step>
         <Step n="3" label="Receive your zine">
-          A print-ready PDF, a shareable web edition, social crops, and an optional printed
-          copy delivered to your door.
+          A print-ready PDF, a shareable web edition, social crops, and an optional printed copy
+          delivered to your door.
         </Step>
       </ol>
     </div>
@@ -115,7 +123,7 @@ function ZineList({ zines }: { zines: ZineRow[] }) {
                 ]}
               />
             </div>
-            <span className="vz-eyebrow text-vz-coral group-hover:translate-x-1 transition-transform">
+            <span className="vz-eyebrow text-vz-coral transition-transform group-hover:translate-x-1">
               Edit →
             </span>
           </Link>
@@ -129,9 +137,19 @@ function ZineList({ zines }: { zines: ZineRow[] }) {
 
 function romanize(n: number): string {
   const map: [number, string][] = [
-    [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
-    [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
-    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+    [1000, 'M'],
+    [900, 'CM'],
+    [500, 'D'],
+    [400, 'CD'],
+    [100, 'C'],
+    [90, 'XC'],
+    [50, 'L'],
+    [40, 'XL'],
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
   ];
   let out = '';
   let remaining = n;
@@ -145,28 +163,38 @@ function romanize(n: number): string {
 }
 
 function labelStyle(s: string) {
-  return ({
-    editorial: 'Editorial',
-    lifestyle: 'Lifestyle',
-    fashion: 'Fashion',
-    art_catalog: 'Art Catalog',
-    travel: 'Travel',
-    financial: 'Financial',
-  } as Record<string, string>)[s] ?? s;
+  return (
+    (
+      {
+        editorial: 'Editorial',
+        lifestyle: 'Lifestyle',
+        fashion: 'Fashion',
+        art_catalog: 'Art Catalog',
+        travel: 'Travel',
+        financial: 'Financial',
+      } as Record<string, string>
+    )[s] ?? s
+  );
 }
 
 function labelFormat(f: string) {
-  return ({ letter: 'Letter', tabloid: 'Tabloid', pocket: 'Pocket' } as Record<string, string>)[f] ?? f;
+  return (
+    ({ letter: 'Letter', tabloid: 'Tabloid', pocket: 'Pocket' } as Record<string, string>)[f] ?? f
+  );
 }
 
 function labelStatus(s: string) {
-  return ({
-    draft: 'Draft',
-    paid: 'Paid',
-    generating: 'Generating',
-    printed: 'Printed',
-    archived: 'Archived',
-  } as Record<string, string>)[s] ?? s;
+  return (
+    (
+      {
+        draft: 'Draft',
+        paid: 'Paid',
+        generating: 'Generating',
+        printed: 'Printed',
+        archived: 'Archived',
+      } as Record<string, string>
+    )[s] ?? s
+  );
 }
 
 function formatDate(iso: string) {

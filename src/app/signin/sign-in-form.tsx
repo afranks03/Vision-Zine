@@ -3,7 +3,7 @@
 import { useState, useTransition } from 'react';
 import { signInWithEmail } from '../actions';
 
-export function SignInForm() {
+export function SignInForm({ next }: { next?: string }) {
   const [pending, startTransition] = useTransition();
   const [message, setMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(null);
 
@@ -30,6 +30,8 @@ export function SignInForm() {
         placeholder="you@example.com"
         className="border-vz-ink bg-vz-paper text-vz-ink placeholder:text-vz-ink/40 focus:border-vz-coral focus:ring-vz-coral border-2 px-3 py-3 font-serif text-base transition-colors outline-none"
       />
+      {/* Pass along where the user was trying to go (default /app). */}
+      <input type="hidden" name="next" value={next ?? '/app'} />
       <button
         type="submit"
         disabled={pending}

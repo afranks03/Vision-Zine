@@ -60,8 +60,8 @@ export function GoalsSection({
       }
       intro={
         <>
-          Goals by domain. One per line. Keep them specific — &ldquo;Finish the second
-          draft&rdquo; over &ldquo;Write more.&rdquo;
+          Goals by domain. One per line. Keep them specific — &ldquo;Finish the second draft&rdquo;
+          over &ldquo;Write more.&rdquo;
         </>
       }
       collect={() => ({
@@ -77,15 +77,14 @@ export function GoalsSection({
             <div className="border-vz-ink flex items-baseline justify-between border-b pb-2">
               <Eyebrow>{cluster.label}</Eyebrow>
               <Eyebrow className="text-vz-coral text-[9px]">
-                {linesOf(values[cluster.key]).length} goal{linesOf(values[cluster.key]).length === 1 ? '' : 's'}
+                {linesOf(values[cluster.key]).length} goal
+                {linesOf(values[cluster.key]).length === 1 ? '' : 's'}
               </Eyebrow>
             </div>
-            <p className="font-serif text-sm text-vz-ink/70">{cluster.hint}</p>
+            <p className="text-vz-ink/70 font-serif text-sm">{cluster.hint}</p>
             <textarea
               value={values[cluster.key]}
-              onChange={(e) =>
-                setValues((prev) => ({ ...prev, [cluster.key]: e.target.value }))
-              }
+              onChange={(e) => setValues((prev) => ({ ...prev, [cluster.key]: e.target.value }))}
               rows={6}
               placeholder="One goal per line"
               className={textareaClass}

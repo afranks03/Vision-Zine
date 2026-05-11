@@ -10,9 +10,7 @@ export function SectionPlaceholder({ title, reason }: { title: string; reason: s
     <div className="flex flex-col gap-5">
       <header>
         <Eyebrow className="text-vz-coral">Section under construction</Eyebrow>
-        <h2 className="font-display mt-2 text-4xl leading-[0.95] tracking-[-0.02em]">
-          {title}
-        </h2>
+        <h2 className="font-display mt-2 text-4xl leading-[0.95] tracking-[-0.02em]">{title}</h2>
       </header>
       <HairlineRule />
       <p className="vz-prose text-base">{reason}</p>

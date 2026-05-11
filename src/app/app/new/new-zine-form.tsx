@@ -51,8 +51,18 @@ const STYLES: { id: ZineStyle; name: string; tag: string; blurb: string; swatch:
 ];
 
 const FORMATS: { id: ZineFormat; name: string; dims: string; note: string }[] = [
-  { id: 'letter', name: 'Letter', dims: '8.5 × 11 in', note: 'The default — handles long reading.' },
-  { id: 'tabloid', name: 'Tabloid', dims: '11 × 17 in', note: 'Coffee-table sized. The full magazine feel.' },
+  {
+    id: 'letter',
+    name: 'Letter',
+    dims: '8.5 × 11 in',
+    note: 'The default — handles long reading.',
+  },
+  {
+    id: 'tabloid',
+    name: 'Tabloid',
+    dims: '11 × 17 in',
+    note: 'Coffee-table sized. The full magazine feel.',
+  },
   { id: 'pocket', name: 'Pocket', dims: '4.25 × 5.5 in', note: 'Hand-bound journal scale.' },
 ];
 
@@ -120,8 +130,8 @@ export function NewZineForm() {
                 type="button"
                 onClick={() => setFormat(f.id)}
                 aria-pressed={selected}
-                className={`bg-vz-paper text-vz-ink border-vz-ink relative flex min-h-[160px] cursor-pointer flex-col items-start gap-2 border-r border-b p-6 text-left transition-all hover:bg-vz-cream ${
-                  selected ? 'ring-vz-coral z-10 bg-vz-cream ring-4' : 'ring-0'
+                className={`bg-vz-paper text-vz-ink border-vz-ink hover:bg-vz-cream relative flex min-h-[160px] cursor-pointer flex-col items-start gap-2 border-r border-b p-6 text-left transition-all ${
+                  selected ? 'ring-vz-coral bg-vz-cream z-10 ring-4' : 'ring-0'
                 }`}
               >
                 <div className="flex w-full items-start justify-between gap-3">
@@ -144,8 +154,8 @@ export function NewZineForm() {
       <div>
         <Eyebrow>Step 3 · Title (optional)</Eyebrow>
         <p className="vz-prose mt-2 max-w-xl text-base">
-          The headline on your cover. You can leave this blank and we&apos;ll show
-          &ldquo;Issue I.&rdquo;
+          The headline on your cover. You can leave this blank and we&apos;ll show &ldquo;Issue
+          I.&rdquo;
         </p>
         <input
           type="text"
@@ -171,7 +181,7 @@ export function NewZineForm() {
             We&apos;ll start a draft. Nothing is published until you choose to.
           </span>
         </div>
-        {error && <p className="font-serif text-vz-coral mt-3 text-sm">{error}</p>}
+        {error && <p className="text-vz-coral mt-3 font-serif text-sm">{error}</p>}
       </div>
     </div>
   );

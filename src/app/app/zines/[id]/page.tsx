@@ -3,12 +3,7 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BulletDot, Eyebrow, HairlineRule, Meta } from '@/components/editorial';
 import { createClient } from '@/lib/supabase/server';
-import type {
-  SectionContent,
-  SectionKey,
-  ZineDataRow,
-  ZineRow,
-} from '@/lib/supabase/types';
+import type { SectionContent, SectionKey, ZineDataRow, ZineRow } from '@/lib/supabase/types';
 import { GoalsSection } from './_sections/goals-section';
 import { PersonalSection } from './_sections/personal-section';
 import { SectionPlaceholder } from './_sections/section-placeholder';
@@ -113,13 +108,11 @@ export default async function StudioPage({ params, searchParams }: Props) {
                       isActive ? 'bg-vz-yellow text-vz-ink' : 'hover:bg-vz-cream'
                     }`}
                   >
-                    <span className="font-display text-xl leading-none w-7">
+                    <span className="font-display w-7 text-xl leading-none">
                       {(i + 1).toString().padStart(2, '0')}
                     </span>
-                    <span className="font-serif text-sm flex-1">{sec.label}</span>
-                    {sec.ai && (
-                      <Eyebrow className="text-vz-coral text-[9px]">AI</Eyebrow>
-                    )}
+                    <span className="flex-1 font-serif text-sm">{sec.label}</span>
+                    {sec.ai && <Eyebrow className="text-vz-coral text-[9px]">AI</Eyebrow>}
                     {isFilled && (
                       <span aria-hidden className="text-vz-coral text-xs">
                         ✓
@@ -137,7 +130,7 @@ export default async function StudioPage({ params, searchParams }: Props) {
         </aside>
 
         {/* Editor */}
-        <section className="bg-vz-paper border-vz-ink border p-8 min-h-[480px]">
+        <section className="bg-vz-paper border-vz-ink min-h-[480px] border p-8">
           {renderSection(zine.id, sectionKey, contentFor)}
         </section>
       </div>
@@ -158,17 +151,31 @@ function renderSection(
     case 'tenets':
       return <TenetsSection zineId={zineId} initial={contentFor('tenets')} />;
     case 'vision':
-      return <SectionPlaceholder title="Vision Statement" reason="AI-assisted — coming in Phase 2b" />;
+      return (
+        <SectionPlaceholder title="Vision Statement" reason="AI-assisted — coming in Phase 2b" />
+      );
     case 'bio':
       return <SectionPlaceholder title="Bio" reason="AI-assisted — coming in Phase 2b" />;
     case 'resume':
-      return <SectionPlaceholder title="Resume / Career" reason="AI-assisted — coming in Phase 2b" />;
+      return (
+        <SectionPlaceholder title="Resume / Career" reason="AI-assisted — coming in Phase 2b" />
+      );
     case 'achievements':
       return <SectionPlaceholder title="Achievements" reason="AI-assisted — coming in Phase 2b" />;
     case 'online':
-      return <SectionPlaceholder title="Online Presence" reason="Coming in Phase 2c (URL metadata fetching)" />;
+      return (
+        <SectionPlaceholder
+          title="Online Presence"
+          reason="Coming in Phase 2c (URL metadata fetching)"
+        />
+      );
     case 'documents':
-      return <SectionPlaceholder title="Documents" reason="Coming in Phase 2c (Supabase Storage uploads)" />;
+      return (
+        <SectionPlaceholder
+          title="Documents"
+          reason="Coming in Phase 2c (Supabase Storage uploads)"
+        />
+      );
     case 'coauthor':
       return <SectionPlaceholder title="Co-author" reason="Coming in Phase 2d (invitation flow)" />;
   }
@@ -178,9 +185,19 @@ function renderSection(
 
 function romanize(n: number): string {
   const map: [number, string][] = [
-    [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
-    [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
-    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+    [1000, 'M'],
+    [900, 'CM'],
+    [500, 'D'],
+    [400, 'CD'],
+    [100, 'C'],
+    [90, 'XC'],
+    [50, 'L'],
+    [40, 'XL'],
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
   ];
   let out = '';
   let remaining = n;
@@ -194,16 +211,22 @@ function romanize(n: number): string {
 }
 
 function labelStyle(s: string) {
-  return ({
-    editorial: 'Editorial',
-    lifestyle: 'Lifestyle',
-    fashion: 'Fashion',
-    art_catalog: 'Art Catalog',
-    travel: 'Travel',
-    financial: 'Financial',
-  } as Record<string, string>)[s] ?? s;
+  return (
+    (
+      {
+        editorial: 'Editorial',
+        lifestyle: 'Lifestyle',
+        fashion: 'Fashion',
+        art_catalog: 'Art Catalog',
+        travel: 'Travel',
+        financial: 'Financial',
+      } as Record<string, string>
+    )[s] ?? s
+  );
 }
 
 function labelFormat(f: string) {
-  return ({ letter: 'Letter', tabloid: 'Tabloid', pocket: 'Pocket' } as Record<string, string>)[f] ?? f;
+  return (
+    ({ letter: 'Letter', tabloid: 'Tabloid', pocket: 'Pocket' } as Record<string, string>)[f] ?? f
+  );
 }

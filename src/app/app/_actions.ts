@@ -57,16 +57,14 @@ export async function saveSection(input: SaveSectionInput) {
 
   // Upsert on (zine_id, section_key). The unique constraint in the schema
   // enforces one row per section per zine.
-  const { error } = await supabase
-    .from('zine_data')
-    .upsert(
-      {
-        zine_id: input.zineId,
-        section_key: input.sectionKey,
-        content_json: input.contentJson,
-      },
-      { onConflict: 'zine_id,section_key' },
-    );
+  const { error } = await supabase.from('zine_data').upsert(
+    {
+      zine_id: input.zineId,
+      section_key: input.sectionKey,
+      content_json: input.contentJson,
+    },
+    { onConflict: 'zine_id,section_key' },
+  );
 
   if (error) {
     return { error: error.message };

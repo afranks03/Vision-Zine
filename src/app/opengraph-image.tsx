@@ -1,4 +1,3 @@
- 
 import { ImageResponse } from 'next/og';
 
 // Default Open Graph image for Vision Zine. Editorial yellow card with

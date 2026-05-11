@@ -42,9 +42,9 @@ export function TenetsSection({
       }
       intro={
         <>
-          Ten tenets you can read first thing and last thing. Short, declarative, in the
-          first person if you can manage it. (Fewer than ten is fine — the printed page
-          shows only filled ones.)
+          Ten tenets you can read first thing and last thing. Short, declarative, in the first
+          person if you can manage it. (Fewer than ten is fine — the printed page shows only filled
+          ones.)
         </>
       }
       collect={() => ({
@@ -53,15 +53,13 @@ export function TenetsSection({
     >
       <div className="flex items-baseline justify-between">
         <Eyebrow>Tenets</Eyebrow>
-        <Eyebrow className="text-vz-coral">
-          {filledCount} of 10 filled
-        </Eyebrow>
+        <Eyebrow className="text-vz-coral">{filledCount} of 10 filled</Eyebrow>
       </div>
       <HairlineRule />
       <ol className="grid gap-3 md:grid-cols-2">
         {tenets.map((value, i) => (
           <li key={i} className="flex items-start gap-3">
-            <span className="font-display text-2xl leading-[0.9] w-7 pt-1 shrink-0">
+            <span className="font-display w-7 shrink-0 pt-1 text-2xl leading-[0.9]">
               {(i + 1).toString().padStart(2, '0')}
             </span>
             <textarea
