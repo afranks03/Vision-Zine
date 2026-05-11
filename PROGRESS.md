@@ -4,6 +4,28 @@ Dated bullet entries: completed, blocked, next.
 
 ---
 
+## 2026-05-10 — Phase 0 complete ✅
+
+**Completed**
+- Resolved Vercel deploy debugging saga (see entry below for details).
+- Root cause: Adrian had one bogus env var `vision_zine` in Vercel instead of the four real Supabase variables. Added all four (`NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `NEXT_PUBLIC_SITE_URL`) scoped to Production+Preview, redeployed without build cache.
+- **Production verified healthy at https://vision-zine.vercel.app/**:
+  - `GET /` → HTTP 200, renders "Phase 0 smoke test" header + "Not signed in" state
+  - `GET /signin` → HTTP 200, renders magic-link form
+- All Phase 0 quality-bar items pass: typecheck, lint, dev server, production build, Vercel deploy, README updated, tracking docs current.
+
+**Still on Adrian (small follow-ups before end-to-end auth works in production)**
+- Add `https://vision-zine.vercel.app/auth/callback` to Supabase → Authentication → URL Configuration → Redirect URLs. Otherwise the magic-link email from prod will land users back on the localhost callback. (The localhost callback is already added.)
+
+**Next: Phase 1 — Design system & marketing site**
+1. Extract design tokens from `/reference/Vision_3.0.html` (color, type scale, spacing, layout language) into `src/app/globals.css` under `@theme` directives (Tailwind 4 CSS-first config) and a companion `src/styles/tokens.css` for non-Tailwind values.
+2. Build the component library on top of shadcn primitives: Nav, Footer, Stepper, Tag, refined Card/Input/Modal/Toast. Editorial type system (serif display, restrained color, generous spacing).
+3. Marketing routes: `/`, `/examples`, `/pricing`, `/about`, `/faq`. Placeholder copy in brand voice (flagged in OPEN_QUESTIONS for Adrian to edit).
+4. OG image + metadata.
+5. Definition of done: marketing site renders at 1440 + 390, Lighthouse ≥ 95, no CLS.
+
+---
+
 ## 2026-05-10 — Vercel deploy debugging
 
 **Completed**

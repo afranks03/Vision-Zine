@@ -4,33 +4,20 @@ Questions for the founder. Answered items move to `DECISIONS.md`.
 
 ---
 
-## Still blocking Phase 0 close-out
+## Small follow-up before Phase 1 auth works in production
 
-### A. Supabase secret key
-Adrian to paste the `sb_secret_*` value into `.env.local` on the `SUPABASE_SECRET_KEY=` line. Find it at:
-**supabase.com → project → Settings → API → "Project API keys" → secret key (formerly service role)**
+### A. Production callback URL in Supabase
+Add `https://vision-zine.vercel.app/auth/callback` to Supabase → Authentication → URL Configuration → Redirect URLs. The localhost callback is already added; this lets magic-link sign-in work when users hit the production URL.
 
-The Phase 0 smoke test (auth via magic link) works without it, but any server-only operation that bypasses RLS will fail until it's set.
+## Deferred — needed by later phases
 
-### B. Supabase auth configuration
-In supabase.com → project → Authentication → URL Configuration:
-- Add `http://localhost:3000/auth/callback` to **Redirect URLs**
-- (Phase 4) Add the production Vercel URL once known
-
-This is required for the magic-link sign-in to redirect back to the app.
-
-### C. Vercel deploy access
-Brief's Phase 0 "done" requires a successful Vercel deploy. Need either:
-- Adrian links the repo to a Vercel project after first push (preferred — Vercel auto-imports from GitHub), or
-- Vercel CLI token shared so I can `vercel deploy` directly
-
-### D. API keys (deferred — needed by Phase 2+)
+### D. API keys (Phase 2+)
 - Anthropic API key (Phase 2)
 - Stripe test keys (Phase 4)
 - Resend API key (Phase 5)
 - Lulu xPress sandbox credentials (Phase 4)
 
-Not blocking Phase 0 or Phase 1. Will surface again when each phase begins.
+Will surface again when each phase begins.
 
 ---
 
