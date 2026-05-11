@@ -2,7 +2,6 @@
 
 import { useState, useTransition } from 'react';
 import { signInWithEmail } from '../actions';
-import { Button } from '@/components/ui/button';
 
 export function SignInForm() {
   const [pending, startTransition] = useTransition();
@@ -19,8 +18,8 @@ export function SignInForm() {
 
   return (
     <form action={handleSubmit} className="flex flex-col gap-3">
-      <label className="text-xs tracking-wider text-neutral-500 uppercase" htmlFor="email">
-        Email
+      <label className="vz-meta text-vz-ink" htmlFor="email">
+        Email address
       </label>
       <input
         id="email"
@@ -29,13 +28,21 @@ export function SignInForm() {
         required
         autoComplete="email"
         placeholder="you@example.com"
-        className="rounded-md border border-neutral-300 bg-white px-3 py-2 text-sm focus:border-neutral-900 focus:outline-none"
+        className="border-vz-ink bg-vz-paper text-vz-ink placeholder:text-vz-ink/40 focus:border-vz-coral focus:ring-vz-coral border-2 px-3 py-3 font-serif text-base outline-none transition-colors"
       />
-      <Button type="submit" disabled={pending}>
+      <button
+        type="submit"
+        disabled={pending}
+        className="vz-eyebrow bg-vz-ink text-vz-yellow hover:bg-vz-coral hover:text-vz-cream mt-1 cursor-pointer px-4 py-3 transition-colors disabled:cursor-wait disabled:opacity-60"
+      >
         {pending ? 'Sending…' : 'Send sign-in link'}
-      </Button>
+      </button>
       {message && (
-        <p className={`text-sm ${message.kind === 'ok' ? 'text-emerald-700' : 'text-red-700'}`}>
+        <p
+          className={`font-serif text-sm ${
+            message.kind === 'ok' ? 'text-vz-green' : 'text-vz-coral'
+          }`}
+        >
           {message.text}
         </p>
       )}

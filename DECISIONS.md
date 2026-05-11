@@ -42,3 +42,18 @@ Supabase introduced `sb_publishable_*` and `sb_secret_*` key formats (replacing 
 
 ## 2026-05-09 — Auth UX: passwordless magic link
 Phase 0 sign-in uses Supabase's `signInWithOtp` (magic link) rather than email/password. Rationale: aligns with the brand (calm, no friction), no password reset flow to build, no password storage concerns, and Supabase handles the email send in the auth layer (no Resend dependency for Phase 0). Will add OAuth providers (Google, Apple) in Phase 2 if Adrian wants them.
+
+## 2026-05-10 — Marketing routes scoped via `(marketing)` route group
+All five public pages (`/`, `/examples`, `/pricing`, `/about`, `/faq`) live under `src/app/(marketing)/` with a shared `layout.tsx` providing the `MarketingNav` + `MarketingFooter`. Auth pages (`/signin`, `/auth/callback`) and future `/app` routes stay outside the group so they can carry their own chrome. Rationale: avoids prop-drilling the nav/footer into every page, lets the layout do the single Supabase `getUser()` call needed to show "Sign in" vs "Sign out", and keeps marketing concerns isolated from app concerns.
+
+## 2026-05-10 — Design tokens live in CSS, not TypeScript
+The brief originally imagined `tailwind.config.ts` + a separate `tokens.css`. With Tailwind 4 we don't need either — every brand value is a CSS custom property under `@theme` in `globals.css`. Brand-specific tokens use the `vz-` namespace (`--color-vz-yellow`, `--color-vz-ink`, etc.), which Tailwind 4 automatically exposes as utility classes (`bg-vz-yellow`, `text-vz-ink`, `border-vz-coral`). shadcn's semantic tokens (`--primary`, `--background`, etc.) sit on top, remapped to the brand palette, so shadcn components inherit the brand without modification.
+
+## 2026-05-10 — Radius set to 0 across the system
+Editorial design uses sharp corners. The shadcn baseline has `--radius: 0.625rem` (10px); we override to 0px globally. Truly circular elements (numbered badges, the brand mark in the nav, bullet dots) use `rounded-full` / `border-radius:50%` explicitly. This is a structural design decision, not a tweak — the whole product reads as "magazine," not "SaaS."
+
+## 2026-05-10 — Marketing copy: written in voice, flagged for review
+Per the brief, all marketing copy on `/`, `/examples`, `/pricing`, `/about`, `/faq` is first-draft in the brand voice (calm, editorial, no exclamation points, no emoji). Adrian to edit. The pricing page leaves dollar amounts as `$—` (pending real prices post-prototype). The About page uses Adrian's "A.d." byline and Brooklyn × Athens grounding from the brief. The home page hero uses the prototype's masthead aesthetic — "VISION" in display-stroked yellow on yellow — as the visual hook.
+
+## 2026-05-10 — OG image generation via next/og (Satori), not a static file
+`src/app/opengraph-image.tsx` uses `ImageResponse` from `next/og` to generate the 1200×630 OG image at build time. Pros: stays in sync with brand if we update colors, no static asset to hand-edit, scoped per-route if we want page-specific OG later. Cons: Satori is strict (every div with >1 child needs explicit `display: flex`), and we don't yet load DM Serif Display into the renderer — using Georgia as the serif fallback. Acceptable for Phase 1; can swap in DM Serif Display via Satori font loading in a polish pass.

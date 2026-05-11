@@ -4,20 +4,42 @@ Questions for the founder. Answered items move to `DECISIONS.md`.
 
 ---
 
-## Small follow-up before Phase 1 auth works in production
+## Adrian review needed (Phase 1 ship-related)
 
-### A. Production callback URL in Supabase
+### A. Marketing copy review
+All marketing copy is first-draft in the brand voice. Pages and what to look at:
+- **`/`** — Hero subhead ("Your year, printed like Monocle would print it."), the three step descriptions, the "Inside an issue" TOC items, the dark quote section, the CTA copy
+- **`/examples`** — Six style names + blurbs + "mood" lines. Consider whether the styles map to what you actually want to build
+- **`/pricing`** — Tier names (Preview / One Issue / Annual), tier descriptions, feature lists, the three "Common questions" at the bottom. Dollar amounts are `$—` until you set them
+- **`/about`** — The founder essay (first 3 paragraphs use your dropcap; the four principles are pulled from the brief's voice). Email shown is `hello@visionzine.com` (placeholder)
+- **`/faq`** — Four sections, 12 Q+A's total
+
+Edit anything; the design system stays consistent regardless of word changes.
+
+### B. Production callback URL in Supabase
 Add `https://vision-zine.vercel.app/auth/callback` to Supabase → Authentication → URL Configuration → Redirect URLs. The localhost callback is already added; this lets magic-link sign-in work when users hit the production URL.
 
 ## Deferred — needed by later phases
 
-### D. API keys (Phase 2+)
-- Anthropic API key (Phase 2)
+### C. API keys (Phase 2+)
+- Anthropic API key (Phase 2) — coming up next
 - Stripe test keys (Phase 4)
 - Resend API key (Phase 5)
 - Lulu xPress sandbox credentials (Phase 4)
 
 Will surface again when each phase begins.
+
+### D. Co-author flow specifics (Phase 2)
+Decisions needed before building co-author invitations:
+- Should an invited co-author need to create their own account, or magic-link only? (Probably magic-link to match existing flow)
+- What sections of the zine are visible to a co-author vs. owner-only?
+- Can a co-author edit the owner's sections, or only their own?
+
+### E. Issue numbering (Phase 2)
+Each zine has an `issue_number`. Per-user (Adrian's Issues I, II, III) or global? When does it increment — on first publish, on reissue, on duplicate?
+
+### F. Free tier limits (Phase 4)
+The Preview tier — what exactly can a free user generate? Preview only? Watermarked PDF? Web edition without download?
 
 ---
 

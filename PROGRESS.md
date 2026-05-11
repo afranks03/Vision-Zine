@@ -4,6 +4,49 @@ Dated bullet entries: completed, blocked, next.
 
 ---
 
+## 2026-05-10 — Phase 1 shipped: design system + marketing site ✅
+
+**Completed**
+- Read `Vision_3.0.html` and `Vision_3.0.pdf` carefully. Confirmed the canon: Monocle-class editorial magazine. Yellow `#FFD629` primary, Ink black, cream/paper neutrals, coral accent. DM Serif Display (headlines) + Source Serif 4 (body) + Archivo (UI labels).
+- Loaded the three brand fonts via `next/font/google` (replacing scaffolded Geist). CSS variables `--font-display`, `--font-serif`, `--font-sans`.
+- Rebuilt `src/app/globals.css` around Vision Zine tokens: 12 brand colors as `--color-vz-*` (Tailwind 4 namespaced utilities), shadcn semantic tokens remapped to the brand, radius set to 0 (sharp editorial corners), editorial utility classes (`.vz-eyebrow`, `.vz-meta`, `.vz-prose`, `.vz-container`, `.vz-section`, `.vz-num-badge`, `.vz-dropcap`).
+- Built editorial primitives in `src/components/editorial.tsx`: `Eyebrow`, `Meta`, `BulletDot`, `NumberedBadge`, `SectionHeader`, `HeavyRule`, `HairlineRule`, `MetaRow`.
+- Built `MarketingNav` (sticky, ink hairline, sign-in/account aware) and `MarketingFooter` (4-column, ink black background, yellow brand accent).
+- Created `(marketing)` route group with shared `layout.tsx` that fetches the Supabase user server-side and passes to the nav.
+- Built five marketing pages:
+  - `/` — Yellow magazine-cover hero, "Three steps" how-it-works, "Inside an issue" TOC sample, dark Quotes section, yellow CTA
+  - `/examples` — Six-style gallery with mood + format tags (Editorial, Lifestyle, Fashion, Art Catalog, Travel, Financial)
+  - `/pricing` — Three tiers (Preview, One Issue, Annual). Dollar amounts left as `$—` until Adrian sets them post-prototype
+  - `/about` — Coral hero, dropcap editorial body, four principles, founder note signed Brooklyn × Athens
+  - `/faq` — Four sections (Product, Privacy, Co-authors, Print) with native `<details>` disclosure
+- Restyled `/signin` to match the new design system (cream bg, paper card, ink/yellow CTA)
+- Added dynamic OG image at `src/app/opengraph-image.tsx` (1200×630, yellow magazine cover with VISION masthead)
+- `pnpm typecheck`, `pnpm lint`, `pnpm build` all pass
+- Dev-server smoke test: all 7 marketing routes return 200, key content present (VISION masthead, Issue I, Six Pillars TOC, etc.)
+
+**Quality bar (Phase 1)**
+- ✅ Tokens extracted from the prototype canon
+- ✅ Component library on shadcn primitives
+- ✅ All five marketing routes present and rendering
+- ✅ OG image + per-page metadata
+- ✅ Sticky responsive nav with auth-aware actions
+- ✅ Footer with full link architecture
+
+**Pending**
+- Production deploy verification (push will auto-deploy via Vercel)
+- Lighthouse ≥ 95 verification once production is live
+- Responsive QA at 390px (mobile) — pages use `sm:`/`md:` breakpoints and `clamp()` typography but should be visually confirmed
+- Author copy review: all marketing copy is first-draft in the brand voice. Adrian to edit. Notably: hero subhead, examples blurbs, pricing tier descriptions, about page founder note, FAQ answers.
+
+**Next: Phase 2 — Data model + input studio**
+- Supabase schema migrations (zines, zine_data, zine_assets, coauthor_invitations, subscriptions)
+- `/app` dashboard, `/app/new` creation flow, `/app/zines/[id]` studio
+- 10 input sections with thoughtful prompts
+- Anthropic API integration (server-side only) for AI-assisted prompts
+- Needs: `ANTHROPIC_API_KEY` from Adrian
+
+---
+
 ## 2026-05-10 — Phase 0 complete ✅
 
 **Completed**
