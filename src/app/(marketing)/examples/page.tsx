@@ -72,7 +72,7 @@ export default function ExamplesPage() {
           <SectionHeader label="Examples" n="A" />
           <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
             <h1
-              className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+              className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
               style={{ fontSize: 'clamp(40px, 7vw, 104px)' }}
             >
               Six styles. Each one a <em>finished thing</em>.
@@ -88,7 +88,7 @@ export default function ExamplesPage() {
       </header>
 
       <section>
-        <div className="border-vz-ink border-l grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+        <div className="border-vz-ink grid grid-cols-1 border-l md:grid-cols-2 lg:grid-cols-3">
           {STYLES.map((style, i) => (
             <article
               key={style.name}
@@ -117,8 +117,8 @@ export default function ExamplesPage() {
         <div className="vz-container vz-section-tight text-center">
           <Eyebrow className="text-vz-coral">A note on photography</Eyebrow>
           <p className="vz-prose mx-auto mt-5 max-w-2xl">
-            Each template ships with a working layout system. You bring the words and images;
-            we handle the typography, hierarchy, and rhythm so every page looks intentional.
+            Each template ships with a working layout system. You bring the words and images; we
+            handle the typography, hierarchy, and rhythm so every page looks intentional.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Link

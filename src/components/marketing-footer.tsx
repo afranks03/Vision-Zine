@@ -79,7 +79,7 @@ function FooterColumn({
           <li key={link.href}>
             <Link
               href={link.href}
-              className="font-serif text-vz-cream hover:text-vz-yellow text-[15px] transition-colors"
+              className="text-vz-cream hover:text-vz-yellow font-serif text-[15px] transition-colors"
             >
               {link.label}
             </Link>

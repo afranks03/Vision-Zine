@@ -80,7 +80,7 @@ export default function PricingPage() {
           <SectionHeader label="Pricing" n="B" />
           <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
             <h1
-              className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+              className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
               style={{ fontSize: 'clamp(40px, 7vw, 104px)' }}
             >
               Pay once. <em>Or every year.</em>
@@ -93,14 +93,14 @@ export default function PricingPage() {
           </div>
           <HeavyRule className="mt-6" />
           <p className="vz-prose mt-6 max-w-2xl">
-            Final prices are set during invite preview — what you see below is the shape of
-            the offer.
+            Final prices are set during invite preview — what you see below is the shape of the
+            offer.
           </p>
         </div>
       </header>
 
       <section>
-        <div className="border-vz-ink border-l grid grid-cols-1 md:grid-cols-3">
+        <div className="border-vz-ink grid grid-cols-1 border-l md:grid-cols-3">
           {TIERS.map((tier) => (
             <article
               key={tier.name}
@@ -109,9 +109,7 @@ export default function PricingPage() {
               <div className="flex items-start justify-between">
                 <Eyebrow>{tier.tag}</Eyebrow>
                 {tier.primary && (
-                  <span className="vz-meta bg-vz-coral text-vz-cream px-2 py-1">
-                    Recommended
-                  </span>
+                  <span className="vz-meta bg-vz-coral text-vz-cream px-2 py-1">Recommended</span>
                 )}
               </div>
               <h2 className="font-display text-5xl leading-[0.9] tracking-[-0.02em]">
@@ -124,7 +122,10 @@ export default function PricingPage() {
               <HairlineRule className="bg-current/30" />
               <ul className="space-y-3">
                 {tier.features.map((feature) => (
-                  <li key={feature} className="font-serif flex items-start gap-3 text-[15px] leading-snug">
+                  <li
+                    key={feature}
+                    className="flex items-start gap-3 font-serif text-[15px] leading-snug"
+                  >
                     <BulletDot className="mt-2 shrink-0" />
                     <span>{feature}</span>
                   </li>
@@ -137,7 +138,7 @@ export default function PricingPage() {
                     ? 'bg-vz-ink text-vz-yellow hover:bg-vz-coral hover:text-vz-cream'
                     : tier.fg === 'text-vz-cream'
                       ? 'bg-vz-yellow text-vz-ink hover:bg-vz-coral hover:text-vz-cream'
-                      : 'border-current border hover:bg-vz-ink hover:text-vz-yellow hover:border-vz-ink'
+                      : 'hover:bg-vz-ink hover:text-vz-yellow hover:border-vz-ink border border-current'
                 }`}
               >
                 {tier.cta}
@@ -165,7 +166,10 @@ export default function PricingPage() {
             />
           </div>
           <div className="mt-10 text-center">
-            <Link href="/faq" className="vz-eyebrow text-vz-coral hover:text-vz-ink transition-colors">
+            <Link
+              href="/faq"
+              className="vz-eyebrow text-vz-coral hover:text-vz-ink transition-colors"
+            >
               See all FAQs →
             </Link>
           </div>

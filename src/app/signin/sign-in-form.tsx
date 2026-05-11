@@ -28,7 +28,7 @@ export function SignInForm() {
         required
         autoComplete="email"
         placeholder="you@example.com"
-        className="border-vz-ink bg-vz-paper text-vz-ink placeholder:text-vz-ink/40 focus:border-vz-coral focus:ring-vz-coral border-2 px-3 py-3 font-serif text-base outline-none transition-colors"
+        className="border-vz-ink bg-vz-paper text-vz-ink placeholder:text-vz-ink/40 focus:border-vz-coral focus:ring-vz-coral border-2 px-3 py-3 font-serif text-base transition-colors outline-none"
       />
       <button
         type="submit"

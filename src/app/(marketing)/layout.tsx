@@ -8,11 +8,7 @@ import { createClient } from '@/lib/supabase/server';
  * Reads the current Supabase user server-side so the nav can show
  * "Sign in" vs "Sign out" without flicker.
  */
-export default async function MarketingLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default async function MarketingLayout({ children }: { children: React.ReactNode }) {
   const supabase = await createClient();
   const {
     data: { user },

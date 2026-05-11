@@ -86,7 +86,7 @@ export default function FaqPage() {
           <SectionHeader label="Frequently asked" n="C" />
           <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
             <h1
-              className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+              className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
               style={{ fontSize: 'clamp(40px, 7vw, 104px)' }}
             >
               The <em>questions</em> we hear most.
@@ -106,17 +106,14 @@ export default function FaqPage() {
           <div className="space-y-16">
             {FAQ_SECTIONS.map((section, idx) => (
               <div key={section.label}>
-                <SectionHeader
-                  label={section.label}
-                  n={(idx + 1).toString().padStart(2, '0')}
-                />
+                <SectionHeader label={section.label} n={(idx + 1).toString().padStart(2, '0')} />
                 <div className="mt-7 space-y-7">
                   {section.questions.map((item) => (
                     <details
                       key={item.q}
                       className="border-vz-ink group border-t pt-5 transition-colors"
                     >
-                      <summary className="font-display flex cursor-pointer items-start justify-between gap-4 text-2xl leading-tight list-none">
+                      <summary className="font-display flex cursor-pointer list-none items-start justify-between gap-4 text-2xl leading-tight">
                         <span>{item.q}</span>
                         <span
                           aria-hidden
@@ -135,11 +132,11 @@ export default function FaqPage() {
 
           <div className="mt-20 text-center">
             <Eyebrow className="text-vz-coral">Didn&apos;t see your question?</Eyebrow>
-            <p className="vz-prose mt-3 mx-auto max-w-lg text-base">
+            <p className="vz-prose mx-auto mt-3 max-w-lg text-base">
               We try to keep this list short. If something&apos;s missing, write to{' '}
               <a
                 href="mailto:hello@visionzine.com"
-                className="text-vz-coral hover:underline italic"
+                className="text-vz-coral italic hover:underline"
               >
                 hello@visionzine.com
               </a>{' '}

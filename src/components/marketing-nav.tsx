@@ -32,9 +32,7 @@ export function MarketingNav({ userEmail }: MarketingNavProps) {
             <li key={link.href}>
               <Link
                 href={link.href}
-                className={cn(
-                  'vz-eyebrow text-vz-ink hover:text-vz-coral transition-colors',
-                )}
+                className={cn('vz-eyebrow text-vz-ink hover:text-vz-coral transition-colors')}
               >
                 {link.label}
               </Link>

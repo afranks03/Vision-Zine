@@ -4,6 +4,42 @@ Dated bullet entries: completed, blocked, next.
 
 ---
 
+## 2026-05-10 — Phase 2a shipped: schema + app shell + 3 sections
+
+**Completed**
+- Installed Supabase CLI (`pnpm add -D supabase`, v2.98.2). `pnpm exec supabase` now works locally. Added `supabase: true` to `pnpm-workspace.yaml allowBuilds`.
+- `supabase init` — scaffolded `supabase/` with `config.toml` and `migrations/`.
+- Wrote initial migration `supabase/migrations/20260511014420_initial_schema.sql`:
+  - Tables: `zines`, `zine_data`, `zine_assets`, `coauthor_invitations`, `subscriptions`
+  - Triggers: `set_updated_at` (generic), `set_zine_issue_number` (auto-increments per user on insert)
+  - RLS enabled on every table, owner-only policies. Co-author read policies deferred to Phase 2d. Subscription writes locked to service role only.
+  - Indexes on user_id, zine_id, accepted_by, tokens.
+- Hand-wrote `src/lib/supabase/types.ts` with row shapes, section content payloads, and a Database type (the Database generic itself is currently disabled in the client because postgrest-js's constraint check requires very specific structural matching; will re-enable via `supabase gen types typescript` once the schema is applied).
+- Created `(authenticated)` `/app` route group:
+  - `src/app/app/layout.tsx` — auth gate (redirects to `/signin?next=/app`), slim app chrome.
+  - `src/app/app/page.tsx` — dashboard listing user's zines, empty state for first-time users, "Start Issue X" CTA.
+  - `src/app/app/new/page.tsx` + `new-zine-form.tsx` — style chooser (six color-swatched cards), format chooser (Letter/Tabloid/Pocket), optional title, calls `createZine` server action.
+  - `src/app/app/zines/[id]/page.tsx` — studio with two-column layout (left rail of 10 sections + right editor). Section selection via `?section=KEY` query param.
+- Built section editor framework:
+  - `_sections/section-shell.tsx` — shared form shell with save state and helper components
+  - `_sections/personal-section.tsx` — name, display name, pronouns, location, birth year, short intro
+  - `_sections/goals-section.tsx` — four clusters (financial, creative, place, body/spirit) as newline-separated text
+  - `_sections/tenets-section.tsx` — ten numbered slots
+  - `_sections/section-placeholder.tsx` — "coming in Phase 2b/c/d" stub for the seven unbuilt sections
+- Server actions in `src/app/app/_actions.ts`: `createZine`, `saveSection` (upserts on `zine_data` with `onConflict: 'zine_id,section_key'`), `deleteZine`.
+- `pnpm typecheck`, `pnpm lint`, `pnpm build` all pass. All 12 routes generate.
+
+**Pending in this slice**
+- **Adrian to apply the migration** — paste `supabase/migrations/20260511014420_initial_schema.sql` into supabase.com → SQL Editor → New Query → Run. Until applied, the dashboard renders empty state (no crash) but the create-zine flow returns an error.
+- After migration applies: end-to-end smoke test — sign in → create zine → fill Personal → save → reload → verify content persisted.
+
+**Coming in Phase 2b/c/d**
+- 2b: Anthropic API integration. Vision, Bio, Resume, Achievements sections. Streaming AI suggestions. Needs `ANTHROPIC_API_KEY`.
+- 2c: Supabase Storage. File uploads for Documents section. URL metadata fetch for Online Presence.
+- 2d: Co-author invitation flow. Needs Adrian to answer the three co-author questions in `OPEN_QUESTIONS.md`.
+
+---
+
 ## 2026-05-10 — Phase 1 shipped: design system + marketing site ✅
 
 **Completed**

@@ -6,11 +6,7 @@ import { cn } from '@/lib/utils';
 import type { HTMLAttributes, ReactNode } from 'react';
 
 /** Small caps label (Monocle-style eyebrow). 11px, Archivo 700, uppercase. */
-export function Eyebrow({
-  className,
-  children,
-  ...props
-}: HTMLAttributes<HTMLParagraphElement>) {
+export function Eyebrow({ className, children, ...props }: HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p className={cn('vz-eyebrow', className)} {...props}>
       {children}
@@ -30,10 +26,7 @@ export function Meta({ className, children, ...props }: HTMLAttributes<HTMLSpanE
 /** Inline filled circle "bullet" — the brand's separator. */
 export function BulletDot({ className }: { className?: string }) {
   return (
-    <span
-      aria-hidden
-      className={cn('inline-block size-1.5 rounded-full bg-current', className)}
-    />
+    <span aria-hidden className={cn('inline-block size-1.5 rounded-full bg-current', className)} />
   );
 }
 
@@ -98,13 +91,7 @@ export function HairlineRule({ className }: { className?: string }) {
 }
 
 /** A line of eyebrow text with bullet dots between items. */
-export function MetaRow({
-  items,
-  className,
-}: {
-  items: ReactNode[];
-  className?: string;
-}) {
+export function MetaRow({ items, className }: { items: ReactNode[]; className?: string }) {
   return (
     <div className={cn('vz-eyebrow flex flex-wrap items-center gap-2.5', className)}>
       {items.map((item, i) => (

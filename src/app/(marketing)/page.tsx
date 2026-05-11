@@ -47,13 +47,13 @@ function Hero() {
 
         {/* Overline */}
         <Meta className="block text-center">
-          From the desk of <em className="font-display text-base not-italic">you</em> ·
-          Anywhere, Earth
+          From the desk of <em className="font-display text-base not-italic">you</em> · Anywhere,
+          Earth
         </Meta>
 
         {/* Masthead — the dramatic display headline */}
         <h1
-          className="font-display relative mx-[-0.05em] my-2 text-center font-normal leading-[0.85] tracking-[-0.02em]"
+          className="font-display relative mx-[-0.05em] my-2 text-center leading-[0.85] font-normal tracking-[-0.02em]"
           style={{
             fontSize: 'clamp(72px, 17vw, 240px)',
             color: 'var(--color-vz-yellow)',
@@ -77,15 +77,15 @@ function Hero() {
         {/* Hero feature block — what is this? */}
         <div className="border-vz-ink mt-16 grid items-end gap-12 border-t pt-8 md:grid-cols-[1.4fr_1fr]">
           <h2
-            className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+            className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
             style={{ fontSize: 'clamp(36px, 6vw, 84px)' }}
           >
             Your year, <em>printed</em> like Monocle would print it.
           </h2>
           <div className="font-serif text-[15px] leading-relaxed">
             <p>
-              Vision Zine turns the messy archive of your life — vision statements, bios,
-              goals, achievements — into an editorial-quality magazine.
+              Vision Zine turns the messy archive of your life — vision statements, bios, goals,
+              achievements — into an editorial-quality magazine.
             </p>
             <span className="font-display mt-2.5 mb-1 block text-lg italic">
               + a real, printable artifact at your door.
@@ -126,7 +126,7 @@ function HowItWorks() {
         <SectionHeader label="How it works" n="1" />
         <div className="grid items-end gap-8 md:grid-cols-[1fr_auto_auto]">
           <h2
-            className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+            className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
             style={{ fontSize: 'clamp(36px, 5.5vw, 72px)' }}
           >
             Three steps. A few hours. <em>One issue you&apos;ll keep.</em>
@@ -139,7 +139,7 @@ function HowItWorks() {
         </div>
         <HeavyRule className="mt-6 mb-12" />
 
-        <div className="border-vz-ink border-l border-t grid sm:grid-cols-3">
+        <div className="border-vz-ink grid border-t border-l sm:grid-cols-3">
           {STEPS.map((step, i) => (
             <StepCard key={step.title} step={step} n={i + 1} />
           ))}
@@ -167,21 +167,15 @@ const STEPS = [
   },
 ] as const;
 
-function StepCard({
-  step,
-  n,
-}: {
-  step: (typeof STEPS)[number];
-  n: number;
-}) {
+function StepCard({ step, n }: { step: (typeof STEPS)[number]; n: number }) {
   return (
-    <div className="border-vz-ink flex flex-col gap-3.5 border-b border-r p-7 min-h-[280px]">
+    <div className="border-vz-ink flex min-h-[280px] flex-col gap-3.5 border-r border-b p-7">
       <div className="flex items-start justify-between gap-3">
         <span className="font-display text-5xl leading-[0.9]">{n.toString().padStart(2, '0')}</span>
         <Eyebrow className="text-vz-coral">{step.tag}</Eyebrow>
       </div>
       <h3 className="font-display text-3xl leading-none">{step.title}</h3>
-      <p className="font-serif text-[15px] leading-relaxed mt-auto">{step.body}</p>
+      <p className="mt-auto font-serif text-[15px] leading-relaxed">{step.body}</p>
     </div>
   );
 }
@@ -195,7 +189,7 @@ function SamplePages() {
         <SectionHeader label="Inside an issue" n="2" />
         <div className="grid items-end gap-8 md:grid-cols-[1fr_auto]">
           <h2
-            className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+            className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
             style={{ fontSize: 'clamp(36px, 5.5vw, 72px)' }}
           >
             Ten sections, one <em>masthead</em>.
@@ -206,13 +200,16 @@ function SamplePages() {
 
         <div className="grid gap-x-7 gap-y-0 sm:grid-cols-2">
           {TOC_ITEMS.map((item, i) => (
-            <div key={item.title} className="border-vz-ink border-t py-3 grid grid-cols-[28px_1fr] gap-2">
+            <div
+              key={item.title}
+              className="border-vz-ink grid grid-cols-[28px_1fr] gap-2 border-t py-3"
+            >
               <span className="font-display text-xl leading-none">{i + 1}</span>
               <div>
-                <p className="font-display text-[15px] uppercase tracking-wide leading-tight">
+                <p className="font-display text-[15px] leading-tight tracking-wide uppercase">
                   {item.title}
                 </p>
-                <p className="font-serif text-[13px] leading-snug mt-1">{item.desc}</p>
+                <p className="mt-1 font-serif text-[13px] leading-snug">{item.desc}</p>
               </div>
             </div>
           ))}
@@ -244,7 +241,7 @@ function Quotes() {
       <div className="vz-container-narrow vz-section text-center">
         <Eyebrow className="text-vz-yellow">Why a magazine</Eyebrow>
         <blockquote
-          className="font-display italic font-normal mt-7 leading-[1.2]"
+          className="font-display mt-7 leading-[1.2] font-normal italic"
           style={{ fontSize: 'clamp(28px, 3.8vw, 46px)' }}
         >
           A vision board on a fridge is a wish. A magazine on a coffee table is a
@@ -266,14 +263,14 @@ function CtaBlock() {
       <div className="vz-container vz-section text-center">
         <NumberedBadge n="✦" className="mx-auto mb-6" />
         <h2
-          className="font-display font-normal leading-[0.9] tracking-[-0.02em] max-w-3xl mx-auto"
+          className="font-display mx-auto max-w-3xl leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(36px, 6vw, 88px)' }}
         >
           Your <em>Issue I</em> is waiting.
         </h2>
-        <p className="vz-prose mt-6 max-w-xl mx-auto">
-          Start with a single section. Save your progress. Come back when you&apos;re ready.
-          No template store, no stickers, no exclamation points.
+        <p className="vz-prose mx-auto mt-6 max-w-xl">
+          Start with a single section. Save your progress. Come back when you&apos;re ready. No
+          template store, no stickers, no exclamation points.
         </p>
         <div className="mt-9 flex flex-wrap justify-center gap-3">
           <Link

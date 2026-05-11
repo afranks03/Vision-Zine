@@ -4,6 +4,10 @@ import { cookies } from 'next/headers';
 export async function createClient() {
   const cookieStore = await cookies();
 
+  // Database type intentionally not passed here yet — we'll wire it back in
+  // once `supabase gen types typescript --linked` is set up. Hand-written
+  // Database types are brittle to maintain against the postgrest-js generic
+  // constraints. Until then, callers should hold their own row types.
   return createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
     process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY!,

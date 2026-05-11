@@ -3,7 +3,6 @@ import Link from 'next/link';
 import {
   BulletDot,
   Eyebrow,
-  HeavyRule,
   Meta,
   MetaRow,
   SectionHeader,
@@ -11,8 +10,7 @@ import {
 
 export const metadata: Metadata = {
   title: 'About',
-  description:
-    'A vision board on a fridge is a wish. A magazine on a coffee table is a document.',
+  description: 'A vision board on a fridge is a wish. A magazine on a coffee table is a document.',
 };
 
 export default function AboutPage() {
@@ -28,13 +26,13 @@ export default function AboutPage() {
             ]}
           />
           <h1
-            className="font-display font-normal italic leading-[0.85] tracking-[-0.03em]"
+            className="font-display leading-[0.85] font-normal tracking-[-0.03em] italic"
             style={{ fontSize: 'clamp(48px, 9vw, 144px)' }}
           >
             About
           </h1>
           <p
-            className="font-display italic mt-6 max-w-2xl leading-[1.15]"
+            className="font-display mt-6 max-w-2xl leading-[1.15] italic"
             style={{ fontSize: 'clamp(22px, 3vw, 36px)' }}
           >
             A vision board on a fridge is a wish. A magazine on a coffee table is a document.
@@ -47,20 +45,20 @@ export default function AboutPage() {
           <SectionHeader label="The premise" n="1" />
           <div className="vz-prose vz-dropcap">
             <p>
-              I made one of these by hand, for myself, at the start of a new year. Not on a
-              cork board. Not in an app. A printed magazine — the kind you&apos;d find on a
-              friend&apos;s coffee table — about the years ahead of me and the years behind.
+              I made one of these by hand, for myself, at the start of a new year. Not on a cork
+              board. Not in an app. A printed magazine — the kind you&apos;d find on a friend&apos;s
+              coffee table — about the years ahead of me and the years behind.
             </p>
             <p>
-              It changed how I read my own life. Not because the goals were new, but because
-              the form treated them seriously. A serif headline, a hairline rule, a numbered
-              section. Suddenly the work of becoming a better artist or a better partner
-              looked like a working document instead of a wish on a sticky note.
+              It changed how I read my own life. Not because the goals were new, but because the
+              form treated them seriously. A serif headline, a hairline rule, a numbered section.
+              Suddenly the work of becoming a better artist or a better partner looked like a
+              working document instead of a wish on a sticky note.
             </p>
             <p>
-              Vision Zine is the tool I wish I&apos;d had. You answer thoughtful prompts. We
-              compose the pages. You receive a real, printable artifact — and the option to
-              hold it in your hands.
+              Vision Zine is the tool I wish I&apos;d had. You answer thoughtful prompts. We compose
+              the pages. You receive a real, printable artifact — and the option to hold it in your
+              hands.
             </p>
           </div>
 
@@ -93,11 +91,11 @@ export default function AboutPage() {
         <div className="vz-container-narrow vz-section text-center">
           <Eyebrow className="text-vz-yellow">The desk</Eyebrow>
           <p
-            className="font-display italic mt-6 max-w-3xl mx-auto leading-[1.1]"
+            className="font-display mx-auto mt-6 max-w-3xl leading-[1.1] italic"
             style={{ fontSize: 'clamp(28px, 4vw, 52px)' }}
           >
-            Vision Zine is made by Adrian &ldquo;A.d.&rdquo; Franks — a designer and writer
-            working between Brooklyn and Athens.
+            Vision Zine is made by Adrian &ldquo;A.d.&rdquo; Franks — a designer and writer working
+            between Brooklyn and Athens.
           </p>
           <div className="mt-9 flex flex-wrap justify-center gap-3">
             <Link
@@ -129,7 +127,7 @@ function Principle({ n, title, body }: { n: string; title: string; body: string 
         <span className="font-display text-4xl leading-[0.9]">{n}</span>
         <Eyebrow className="text-vz-coral">Principle</Eyebrow>
       </div>
-      <h3 className="font-display text-2xl leading-tight mt-2.5">{title}</h3>
+      <h3 className="font-display mt-2.5 text-2xl leading-tight">{title}</h3>
       <p className="vz-prose mt-2 text-base">{body}</p>
     </div>
   );

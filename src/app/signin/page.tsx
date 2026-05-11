@@ -20,17 +20,17 @@ export default function SignInPage() {
           <span>Vision</span>
           <em className="text-vz-coral">Zine</em>
         </Link>
-        <Meta className="hidden sm:flex items-center gap-2.5">
+        <Meta className="hidden items-center gap-2.5 sm:flex">
           <BulletDot /> Issue I <BulletDot /> Spring {new Date().getFullYear()}
         </Meta>
       </header>
 
       <main className="flex flex-1 items-center justify-center px-5">
         <section className="vz-container-narrow w-full max-w-md">
-          <div className="border-vz-ink border bg-vz-paper p-9">
+          <div className="border-vz-ink bg-vz-paper border p-9">
             <Eyebrow className="text-vz-coral">From the desk</Eyebrow>
             <h1
-              className="font-display mt-4 font-normal leading-[0.9] tracking-[-0.02em]"
+              className="font-display mt-4 leading-[0.9] font-normal tracking-[-0.02em]"
               style={{ fontSize: 'clamp(32px, 5vw, 48px)' }}
             >
               Sign in to <em>your zine</em>.
@@ -42,7 +42,7 @@ export default function SignInPage() {
               <SignInForm />
             </div>
           </div>
-          <p className="vz-prose mt-6 text-center text-sm text-vz-ink/70">
+          <p className="vz-prose text-vz-ink/70 mt-6 text-center text-sm">
             New here? Same form — your account is created on first sign-in.
           </p>
         </section>
