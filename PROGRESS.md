@@ -4,6 +4,21 @@ Dated bullet entries: completed, blocked, next.
 
 ---
 
+## 2026-05-10 — Vercel deploy debugging
+
+**Completed**
+- Pushed two commits to GitHub: `feat: phase 0 foundation scaffold` (1879139 → rebased to 2868450) and `chore: apply prettier + tailwind class ordering` (f28d979 → rebased to 3ca1ae1). Remote: `git@github.com:afranks03/Vision-Zine.git`.
+- Adrian created Vercel project; first deploy `vision-zine.vercel.app` came up with HTTP 500 `MIDDLEWARE_INVOCATION_FAILED`.
+- Diagnosed: middleware was crashing because `NEXT_PUBLIC_*` Supabase env vars were not present at build time (NEXT_PUBLIC vars are inlined at build, not runtime). Pushed `ab4ed5a fix: middleware error surfacing + pre-commit hook PATH issue` to (a) make middleware return 200 with a clear log message when env vars are missing instead of crashing, and (b) switch husky pre-commit from `pnpm exec lint-staged` to `npx lint-staged` so git's restricted PATH can find it.
+- The `ab4ed5a` deploy was **blocked** by Vercel's "Git Author Verification" because the commit author email `afranks3@icloud.com` was not yet a verified email on the GitHub account.
+- Adrian added and verified `afranks3@icloud.com` on github.com → Settings → Emails. Production stayed on `3ca1ae1` (old code) because verification doesn't retroactively un-block deploys.
+
+**Next**
+- Push a fresh commit to trigger a clean auto-deploy with the now-verified email. New build should succeed; defensive middleware will either render the page (if env vars now work) or log the specific missing var to runtime logs.
+- Confirm env vars `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`, `SUPABASE_SECRET_KEY`, `NEXT_PUBLIC_SITE_URL` are set on Vercel for the Production environment and that the new build did NOT use the cached build (NEXT_PUBLIC vars are inlined per-build).
+
+---
+
 ## 2026-05-09 (evening) — Phase 0a complete
 
 **Completed**
