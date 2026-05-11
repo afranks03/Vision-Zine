@@ -4,10 +4,14 @@ import { notFound } from 'next/navigation';
 import { BulletDot, Eyebrow, HairlineRule, Meta } from '@/components/editorial';
 import { createClient } from '@/lib/supabase/server';
 import type { SectionContent, SectionKey, ZineDataRow, ZineRow } from '@/lib/supabase/types';
+import { AchievementsSection } from './_sections/achievements-section';
+import { BioSection } from './_sections/bio-section';
 import { GoalsSection } from './_sections/goals-section';
 import { PersonalSection } from './_sections/personal-section';
+import { ResumeSection } from './_sections/resume-section';
 import { SectionPlaceholder } from './_sections/section-placeholder';
 import { TenetsSection } from './_sections/tenets-section';
+import { VisionSection } from './_sections/vision-section';
 
 export const metadata: Metadata = {
   title: 'Studio',
@@ -131,7 +135,7 @@ export default async function StudioPage({ params, searchParams }: Props) {
 
         {/* Editor */}
         <section className="bg-vz-paper border-vz-ink min-h-[480px] border p-8">
-          {renderSection(zine.id, sectionKey, contentFor)}
+          {renderSection(zine.id, sectionKey, contentFor, displayNameFromPersonal(contentFor))}
         </section>
       </div>
     </div>
@@ -142,6 +146,7 @@ function renderSection(
   zineId: string,
   key: SectionKey,
   contentFor: <K extends SectionKey>(k: K) => Partial<SectionContent<K>>,
+  displayName: string | undefined,
 ) {
   switch (key) {
     case 'personal':
@@ -152,16 +157,36 @@ function renderSection(
       return <TenetsSection zineId={zineId} initial={contentFor('tenets')} />;
     case 'vision':
       return (
-        <SectionPlaceholder title="Vision Statement" reason="AI-assisted — coming in Phase 2b" />
+        <VisionSection
+          zineId={zineId}
+          initial={contentFor('vision')}
+          displayName={displayName}
+        />
       );
     case 'bio':
-      return <SectionPlaceholder title="Bio" reason="AI-assisted — coming in Phase 2b" />;
+      return (
+        <BioSection
+          zineId={zineId}
+          initial={contentFor('bio')}
+          displayName={displayName}
+        />
+      );
     case 'resume':
       return (
-        <SectionPlaceholder title="Resume / Career" reason="AI-assisted — coming in Phase 2b" />
+        <ResumeSection
+          zineId={zineId}
+          initial={contentFor('resume')}
+          displayName={displayName}
+        />
       );
     case 'achievements':
-      return <SectionPlaceholder title="Achievements" reason="AI-assisted — coming in Phase 2b" />;
+      return (
+        <AchievementsSection
+          zineId={zineId}
+          initial={contentFor('achievements')}
+          displayName={displayName}
+        />
+      );
     case 'online':
       return (
         <SectionPlaceholder
@@ -179,6 +204,14 @@ function renderSection(
     case 'coauthor':
       return <SectionPlaceholder title="Co-author" reason="Coming in Phase 2d (invitation flow)" />;
   }
+}
+
+/** Pull a friendly display name out of the Personal section, if filled. */
+function displayNameFromPersonal(
+  contentFor: <K extends SectionKey>(k: K) => Partial<SectionContent<K>>,
+): string | undefined {
+  const personal = contentFor('personal');
+  return personal.display_name || personal.full_name || undefined;
 }
 
 // ---- helpers ----

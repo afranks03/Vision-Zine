@@ -37,16 +37,16 @@ export default function StyleguidePage() {
             ]}
           />
           <h1
-            className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+            className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
             style={{ fontSize: 'clamp(40px, 8vw, 120px)' }}
           >
             The <em>Styleguide</em>.
           </h1>
           <p className="vz-prose mt-6 max-w-2xl">
-            Every color, font, type scale, and primitive in the Vision Zine system. Mirrors
-            the values in <code className="font-mono text-sm">src/app/globals.css</code> and{' '}
-            <code className="font-mono text-sm">design/tokens.json</code>. Use as a
-            companion when designing in Figma.
+            Every color, font, type scale, and primitive in the Vision Zine system. Mirrors the
+            values in <code className="font-mono text-sm">src/app/globals.css</code> and{' '}
+            <code className="font-mono text-sm">design/tokens.json</code>. Use as a companion when
+            designing in Figma.
           </p>
         </div>
       </header>
@@ -86,7 +86,7 @@ function ColorsSection() {
       <div className="vz-container vz-section-tight">
         <SectionHeader label="Colors" n="A" />
         <h2
-          className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+          className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
         >
           Twelve colors. <em>No more.</em>
@@ -97,7 +97,7 @@ function ColorsSection() {
           {BRAND_COLORS.map((c) => (
             <div
               key={c.token}
-              className="border-vz-ink flex flex-col border-r border-b min-h-[180px]"
+              className="border-vz-ink flex min-h-[180px] flex-col border-r border-b"
             >
               <div className="flex-1" style={{ background: c.hex }} aria-hidden />
               <div className="bg-vz-paper p-4">
@@ -106,9 +106,7 @@ function ColorsSection() {
                   <Meta className="text-vz-ink/60 font-mono">{c.hex}</Meta>
                 </div>
                 <Meta className="text-vz-coral mt-1.5 block">--color-{c.token}</Meta>
-                <p className="font-serif text-sm text-vz-ink/70 mt-2 leading-snug">
-                  {c.note}
-                </p>
+                <p className="text-vz-ink/70 mt-2 font-serif text-sm leading-snug">{c.note}</p>
               </div>
             </div>
           ))}
@@ -128,7 +126,7 @@ function FontsSection() {
       <div className="vz-container vz-section-tight">
         <SectionHeader label="Fonts" n="B" />
         <h2
-          className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+          className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
         >
           Three families. <em>Three roles.</em>
@@ -153,8 +151,8 @@ function FontsSection() {
             cssVar="--font-serif"
             sample={
               <p className="font-serif text-lg leading-relaxed">
-                Strong typography, restrained color, intentional white space — the look of
-                someone who got dressed for the day.
+                Strong typography, restrained color, intentional white space — the look of someone
+                who got dressed for the day.
               </p>
             }
             usage="Long-form reading copy. Variable weight 300–900, italic available."
@@ -164,7 +162,7 @@ function FontsSection() {
             role="UI / Labels"
             cssVar="--font-sans"
             sample={
-              <p className="font-sans font-bold uppercase tracking-widest text-sm">
+              <p className="font-sans text-sm font-bold tracking-widest uppercase">
                 From the desk · Issue I · Spring 2026
               </p>
             }
@@ -190,16 +188,16 @@ function FontCard({
   usage: string;
 }) {
   return (
-    <div className="border-vz-ink bg-vz-paper border p-6 flex flex-col gap-4">
+    <div className="border-vz-ink bg-vz-paper flex flex-col gap-4 border p-6">
       <div className="flex items-baseline justify-between">
         <Eyebrow className="text-vz-coral">{role}</Eyebrow>
-        <Meta className="font-mono text-vz-ink/60">{cssVar}</Meta>
+        <Meta className="text-vz-ink/60 font-mono">{cssVar}</Meta>
       </div>
       <h3 className="font-display text-2xl leading-tight">{name}</h3>
       <HairlineRule />
       <div className="min-h-[120px]">{sample}</div>
       <HairlineRule />
-      <p className="font-serif text-sm text-vz-ink/70 leading-snug">{usage}</p>
+      <p className="text-vz-ink/70 font-serif text-sm leading-snug">{usage}</p>
     </div>
   );
 }
@@ -209,15 +207,78 @@ function FontCard({
    ============================================================ */
 
 const TYPE_STYLES = [
-  { name: 'Masthead', token: 'typography.masthead', cls: 'font-display tracking-[-0.02em]', size: 'clamp(72px, 17vw, 240px)', lh: '0.85', sample: 'VISION' },
-  { name: 'H1', token: 'typography.h1', cls: 'font-display tracking-[-0.02em]', size: 'clamp(40px, 7vw, 104px)', lh: '0.9', sample: 'Your year, printed.' },
-  { name: 'H2', token: 'typography.h2', cls: 'font-display tracking-[-0.02em]', size: 'clamp(36px, 5.5vw, 72px)', lh: '0.9', sample: 'Three steps. A few hours.' },
-  { name: 'H3', token: 'typography.h3', cls: 'font-display tracking-[-0.01em]', size: 'clamp(28px, 4vw, 48px)', lh: '0.95', sample: 'Issue I' },
-  { name: 'H4', token: 'typography.h4', cls: 'font-display tracking-[-0.01em]', size: '30px', lh: '0.95', sample: 'Editorial' },
-  { name: 'Prose', token: 'typography.prose', cls: 'font-serif', size: 'clamp(17px, 1.6vw, 21px)', lh: '1.55', sample: 'A vision board on a fridge is a wish. A magazine on a coffee table is a document.' },
-  { name: 'Body', token: 'typography.body', cls: 'font-serif', size: '15px', lh: '1.45', sample: 'Six editorial templates. Three formats.' },
-  { name: 'Eyebrow', token: 'typography.eyebrow', cls: 'font-sans font-bold uppercase tracking-widest', size: '11px', lh: '1.5', sample: 'From the desk' },
-  { name: 'Meta', token: 'typography.meta', cls: 'font-sans font-bold uppercase', size: '10px', lh: '1.6', sample: '© 2026 · Brooklyn × Athens' },
+  {
+    name: 'Masthead',
+    token: 'typography.masthead',
+    cls: 'font-display tracking-[-0.02em]',
+    size: 'clamp(72px, 17vw, 240px)',
+    lh: '0.85',
+    sample: 'VISION',
+  },
+  {
+    name: 'H1',
+    token: 'typography.h1',
+    cls: 'font-display tracking-[-0.02em]',
+    size: 'clamp(40px, 7vw, 104px)',
+    lh: '0.9',
+    sample: 'Your year, printed.',
+  },
+  {
+    name: 'H2',
+    token: 'typography.h2',
+    cls: 'font-display tracking-[-0.02em]',
+    size: 'clamp(36px, 5.5vw, 72px)',
+    lh: '0.9',
+    sample: 'Three steps. A few hours.',
+  },
+  {
+    name: 'H3',
+    token: 'typography.h3',
+    cls: 'font-display tracking-[-0.01em]',
+    size: 'clamp(28px, 4vw, 48px)',
+    lh: '0.95',
+    sample: 'Issue I',
+  },
+  {
+    name: 'H4',
+    token: 'typography.h4',
+    cls: 'font-display tracking-[-0.01em]',
+    size: '30px',
+    lh: '0.95',
+    sample: 'Editorial',
+  },
+  {
+    name: 'Prose',
+    token: 'typography.prose',
+    cls: 'font-serif',
+    size: 'clamp(17px, 1.6vw, 21px)',
+    lh: '1.55',
+    sample: 'A vision board on a fridge is a wish. A magazine on a coffee table is a document.',
+  },
+  {
+    name: 'Body',
+    token: 'typography.body',
+    cls: 'font-serif',
+    size: '15px',
+    lh: '1.45',
+    sample: 'Six editorial templates. Three formats.',
+  },
+  {
+    name: 'Eyebrow',
+    token: 'typography.eyebrow',
+    cls: 'font-sans font-bold uppercase tracking-widest',
+    size: '11px',
+    lh: '1.5',
+    sample: 'From the desk',
+  },
+  {
+    name: 'Meta',
+    token: 'typography.meta',
+    cls: 'font-sans font-bold uppercase',
+    size: '10px',
+    lh: '1.6',
+    sample: '© 2026 · Brooklyn × Athens',
+  },
 ];
 
 function TypographySection() {
@@ -226,7 +287,7 @@ function TypographySection() {
       <div className="vz-container vz-section-tight">
         <SectionHeader label="Type scale" n="C" />
         <h2
-          className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+          className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
         >
           The <em>ramp</em>.
@@ -237,13 +298,20 @@ function TypographySection() {
           {TYPE_STYLES.map((t, i) => (
             <div
               key={t.name}
-              className={`border-vz-ink ${i === 0 ? 'border-t' : ''} border-b py-6 grid gap-4 md:grid-cols-[200px_1fr_220px] md:items-baseline`}
+              className={`border-vz-ink ${i === 0 ? 'border-t' : ''} grid gap-4 border-b py-6 md:grid-cols-[200px_1fr_220px] md:items-baseline`}
             >
               <div>
                 <h3 className="font-display text-xl leading-none">{t.name}</h3>
                 <Meta className="text-vz-coral mt-1.5 block">{t.token}</Meta>
               </div>
-              <div className={t.cls} style={{ fontSize: t.size, lineHeight: t.lh, letterSpacing: t.cls.includes('uppercase') ? '0.1em' : undefined }}>
+              <div
+                className={t.cls}
+                style={{
+                  fontSize: t.size,
+                  lineHeight: t.lh,
+                  letterSpacing: t.cls.includes('uppercase') ? '0.1em' : undefined,
+                }}
+              >
                 {t.sample}
               </div>
               <Meta className="text-vz-ink/60 font-mono">
@@ -287,14 +355,14 @@ function SpacingSection() {
       <div className="vz-container vz-section-tight">
         <SectionHeader label="Spacing" n="D" />
         <h2
-          className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+          className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
         >
           The <em>rhythm</em>.
         </h2>
         <HeavyRule className="mt-6 mb-10" />
 
-        <ul className="space-y-3 border-vz-ink border-t pt-4">
+        <ul className="border-vz-ink space-y-3 border-t pt-4">
           {SPACING_VALUES.map((s) => (
             <li key={s.name} className="flex items-center gap-6">
               <Meta className="text-vz-coral w-28 shrink-0 font-mono">{s.name}</Meta>
@@ -303,9 +371,9 @@ function SpacingSection() {
             </li>
           ))}
         </ul>
-        <p className="font-serif text-sm text-vz-ink/70 mt-6">
-          Container max-width: 1280px · Section vertical padding: 60–140px clamp · Editorial
-          radius: 0 everywhere (badges are <code className="font-mono">rounded-full</code>).
+        <p className="text-vz-ink/70 mt-6 font-serif text-sm">
+          Container max-width: 1280px · Section vertical padding: 60–140px clamp · Editorial radius:
+          0 everywhere (badges are <code className="font-mono">rounded-full</code>).
         </p>
       </div>
     </section>
@@ -322,7 +390,7 @@ function ComponentsSection() {
       <div className="vz-container vz-section-tight">
         <SectionHeader label="Components" n="E" />
         <h2
-          className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+          className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
         >
           The <em>primitives</em>.
@@ -455,15 +523,13 @@ function ComponentDemo({
 }) {
   return (
     <div
-      className={`border-vz-ink border-t pt-5 flex flex-col gap-4 ${
-        wide ? 'md:col-span-2' : ''
-      }`}
+      className={`border-vz-ink flex flex-col gap-4 border-t pt-5 ${wide ? 'md:col-span-2' : ''}`}
     >
       <div className="flex items-baseline justify-between gap-3">
         <h3 className="font-display text-xl leading-none">{label}</h3>
         <Meta className="text-vz-coral font-mono">{cssVar}</Meta>
       </div>
-      <p className="font-serif text-sm text-vz-ink/70 leading-snug">{description}</p>
+      <p className="text-vz-ink/70 font-serif text-sm leading-snug">{description}</p>
       <div className="bg-vz-cream border-vz-ink/20 flex items-start gap-4 border p-6">
         {children}
       </div>
@@ -494,24 +560,24 @@ function TemplatePalettesSection() {
           className="text-vz-cream [&_p]:text-vz-cream"
         />
         <h2
-          className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+          className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(32px, 5vw, 56px)' }}
         >
           Six zines. <em>Six worlds.</em>
         </h2>
-        <HairlineRule className="mt-6 mb-10 bg-vz-cream/40" />
+        <HairlineRule className="bg-vz-cream/40 mt-6 mb-10" />
 
-        <div className="grid gap-0 sm:grid-cols-2 lg:grid-cols-3 border-vz-cream/40 border-l">
+        <div className="border-vz-cream/40 grid gap-0 border-l sm:grid-cols-2 lg:grid-cols-3">
           {TEMPLATE_PALETTES.map((p) => (
             <div
               key={p.name}
-              className="border-vz-cream/40 border-r border-b flex flex-col min-h-[200px]"
+              className="border-vz-cream/40 flex min-h-[200px] flex-col border-r border-b"
               style={{ background: p.bg, color: p.fg }}
             >
               <div className="flex flex-1 items-start justify-between p-6">
                 <span className="font-display text-6xl leading-[0.85]">{p.issue}</span>
                 <span
-                  className="font-display text-2xl italic leading-none"
+                  className="font-display text-2xl leading-none italic"
                   style={{ color: p.accent }}
                 >
                   •
@@ -521,7 +587,7 @@ function TemplatePalettesSection() {
                 <Meta className="block" style={{ color: p.fg }}>
                   {p.name}
                 </Meta>
-                <p className="font-mono text-xs mt-1.5" style={{ color: p.fg, opacity: 0.8 }}>
+                <p className="mt-1.5 font-mono text-xs" style={{ color: p.fg, opacity: 0.8 }}>
                   bg {p.bg} · fg {p.fg} · accent {p.accent}
                 </p>
               </div>
