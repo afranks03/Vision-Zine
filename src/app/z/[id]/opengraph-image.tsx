@@ -1,4 +1,4 @@
-/* eslint-disable react/no-unknown-property */
+ 
 import { ImageResponse } from 'next/og';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { STYLE_PALETTES } from '@/components/zine/styles';
@@ -43,134 +43,133 @@ export default async function OpengraphImage({ params }: Props) {
   const title = (zine?.title || 'Vision').toUpperCase();
   const issue = zine?.issue_number ?? 1;
   const displayName = personal.display_name || personal.full_name || 'a private edition';
-  const fontSize = title.length <= 8 ? 200 : title.length <= 14 ? 150 : title.length <= 22 ? 100 : 72;
+  const fontSize =
+    title.length <= 8 ? 200 : title.length <= 14 ? 150 : title.length <= 22 ? 100 : 72;
 
   return new ImageResponse(
-    (
+    <div
+      style={{
+        width: '100%',
+        height: '100%',
+        background: palette.bg,
+        color: palette.fg,
+        display: 'flex',
+        flexDirection: 'column',
+        padding: 56,
+        fontFamily: 'Georgia, serif',
+      }}
+    >
+      {/* Top meta */}
       <div
         style={{
-          width: '100%',
-          height: '100%',
-          background: palette.bg,
-          color: palette.fg,
           display: 'flex',
-          flexDirection: 'column',
-          padding: 56,
-          fontFamily: 'Georgia, serif',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          fontSize: 18,
+          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontWeight: 700,
+          letterSpacing: 2,
+          textTransform: 'uppercase',
         }}
       >
-        {/* Top meta */}
-        <div
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            fontSize: 18,
-            fontFamily: 'Helvetica, Arial, sans-serif',
-            fontWeight: 700,
-            letterSpacing: 2,
-            textTransform: 'uppercase',
-          }}
-        >
-          <span style={{ display: 'flex', alignItems: 'center' }}>
-            <span
-              style={{
-                width: 9,
-                height: 9,
-                background: palette.fg,
-                borderRadius: '50%',
-                marginRight: 12,
-              }}
-            />
-            Issue {issue}
-          </span>
+        <span style={{ display: 'flex', alignItems: 'center' }}>
           <span
             style={{
-              width: 56,
-              height: 56,
-              border: `2px solid ${palette.fg}`,
+              width: 9,
+              height: 9,
+              background: palette.fg,
               borderRadius: '50%',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 28,
-              fontStyle: 'italic',
-              fontFamily: 'Georgia, serif',
+              marginRight: 12,
             }}
-          >
-            VZ
-          </span>
-        </div>
-
-        {/* Masthead */}
-        <div
+          />
+          Issue {issue}
+        </span>
+        <span
           style={{
-            flex: 1,
+            width: 56,
+            height: 56,
+            border: `2px solid ${palette.fg}`,
+            borderRadius: '50%',
             display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
             alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: 28,
+            fontStyle: 'italic',
+            fontFamily: 'Georgia, serif',
           }}
         >
-          <div
-            style={{
-              display: 'flex',
-              gap: 8,
-              fontSize: 22,
-              fontFamily: 'Helvetica, Arial, sans-serif',
-              fontWeight: 700,
-              letterSpacing: 1,
-              textTransform: 'uppercase',
-              marginBottom: -6,
-            }}
-          >
-            <span>From the desk of</span>
-            <span
-              style={{
-                fontStyle: 'italic',
-                fontFamily: 'Georgia, serif',
-                textTransform: 'none',
-              }}
-            >
-              {displayName}
-            </span>
-          </div>
-          <div
-            style={{
-              fontSize,
-              lineHeight: 0.9,
-              letterSpacing: -3,
-              fontWeight: 400,
-              fontFamily: 'Georgia, serif',
-              marginTop: 8,
-              textAlign: 'center',
-              maxWidth: 1050,
-            }}
-          >
-            {title}
-          </div>
-        </div>
+          VZ
+        </span>
+      </div>
 
-        {/* Bottom rule */}
+      {/* Masthead */}
+      <div
+        style={{
+          flex: 1,
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
+      >
         <div
           style={{
             display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'flex-end',
-            borderTop: `2px solid ${palette.fg}`,
-            paddingTop: 18,
-            fontSize: 16,
+            gap: 8,
+            fontSize: 22,
             fontFamily: 'Helvetica, Arial, sans-serif',
             fontWeight: 700,
-            letterSpacing: 2,
+            letterSpacing: 1,
             textTransform: 'uppercase',
+            marginBottom: -6,
           }}
         >
-          <span>vision-zine.vercel.app</span>
-          <span>Vol. {issue}</span>
+          <span>From the desk of</span>
+          <span
+            style={{
+              fontStyle: 'italic',
+              fontFamily: 'Georgia, serif',
+              textTransform: 'none',
+            }}
+          >
+            {displayName}
+          </span>
+        </div>
+        <div
+          style={{
+            fontSize,
+            lineHeight: 0.9,
+            letterSpacing: -3,
+            fontWeight: 400,
+            fontFamily: 'Georgia, serif',
+            marginTop: 8,
+            textAlign: 'center',
+            maxWidth: 1050,
+          }}
+        >
+          {title}
         </div>
       </div>
-    ),
+
+      {/* Bottom rule */}
+      <div
+        style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'flex-end',
+          borderTop: `2px solid ${palette.fg}`,
+          paddingTop: 18,
+          fontSize: 16,
+          fontFamily: 'Helvetica, Arial, sans-serif',
+          fontWeight: 700,
+          letterSpacing: 2,
+          textTransform: 'uppercase',
+        }}
+      >
+        <span>vision-zine.vercel.app</span>
+        <span>Vol. {issue}</span>
+      </div>
+    </div>,
     { ...size },
   );
 }

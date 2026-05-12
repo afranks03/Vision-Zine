@@ -38,12 +38,7 @@ async function loadZine(id: string): Promise<RenderableZine | null> {
   }
 
   const [zineRes, sectionsRes] = await Promise.all([
-    admin
-      .from('zines')
-      .select('*')
-      .eq('id', id)
-      .eq('is_published', true)
-      .single(),
+    admin.from('zines').select('*').eq('id', id).eq('is_published', true).single(),
     admin.from('zine_data').select('*').eq('zine_id', id),
   ]);
 
@@ -73,8 +68,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!data) {
     return { title: 'Zine not found', robots: { index: false } };
   }
-  const displayName =
-    data.personal.display_name || data.personal.full_name || 'someone';
+  const displayName = data.personal.display_name || data.personal.full_name || 'someone';
   const title = data.zine.title || `Issue ${data.zine.issue_number}`;
   const description =
     data.vision.statement?.split('\n')[0]?.slice(0, 200) ||

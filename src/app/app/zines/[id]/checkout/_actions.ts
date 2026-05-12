@@ -84,6 +84,10 @@ export async function createCheckoutSession(input: CreateCheckoutInput) {
   const successUrl = `${origin}/app/zines/${input.zineId}/checkout/success?session_id={CHECKOUT_SESSION_ID}`;
   const cancelUrl = `${origin}/app/zines/${input.zineId}/checkout/cancel`;
 
+  // If the user selected 'print', we need a shipping address. Stripe
+  // Checkout collects it natively when shipping_address_collection is set.
+  const needsShipping = input.outputs.includes('print');
+
   let session;
   try {
     session = await stripe.checkout.sessions.create({
@@ -92,14 +96,12 @@ export async function createCheckoutSession(input: CreateCheckoutInput) {
       success_url: successUrl,
       cancel_url: cancelUrl,
       customer_email: user.email,
-      // Carry the zine_id + chosen outputs through to the webhook.
       metadata: {
         zine_id: input.zineId,
         tier: tier.id,
         user_id: user.id,
         outputs: input.outputs.join(','),
       },
-      // For subscriptions, set the metadata on the subscription too.
       ...(tier.mode === 'subscription'
         ? {
             subscription_data: {
@@ -107,8 +109,26 @@ export async function createCheckoutSession(input: CreateCheckoutInput) {
             },
           }
         : {}),
-      // Capture shipping for the printed copy at the print step (Phase 4d).
-      // For now we just record that outputs were chosen.
+      ...(needsShipping
+        ? {
+            shipping_address_collection: {
+              // Restrict to where Lulu ships reliably. Expand if needed.
+              allowed_countries: [
+                'US',
+                'CA',
+                'GB',
+                'DE',
+                'FR',
+                'IT',
+                'ES',
+                'NL',
+                'AU',
+                'GR',
+              ],
+            },
+            phone_number_collection: { enabled: true },
+          }
+        : {}),
     });
   } catch (err) {
     return { error: err instanceof Error ? err.message : 'Failed to create checkout session.' };

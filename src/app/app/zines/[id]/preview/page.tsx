@@ -19,6 +19,7 @@ import type {
   ZineRow,
 } from '@/lib/supabase/types';
 import { DownloadPdfButton } from './download-pdf-button';
+import { FormatSwitcher } from './format-switcher';
 import { PrintButton } from './print-button';
 import { PublishControls } from './publish-controls';
 import { StyleSwitcher } from './style-switcher';
@@ -67,6 +68,7 @@ export default async function PreviewPage({ params }: Props) {
           </div>
           <div className="flex items-center gap-2">
             <StyleSwitcher zineId={id} current={zine.style} />
+            <FormatSwitcher zineId={id} current={zine.format} />
             <Eyebrow className="text-vz-coral hidden xl:inline-block">
               Issue {zine.issue_number}
             </Eyebrow>

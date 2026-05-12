@@ -65,11 +65,7 @@ export function PublishControls({
             : 'Publish this zine to a shareable public URL.'
         }
       >
-        {pending
-          ? '…'
-          : isPublished
-            ? 'Unpublish'
-            : 'Publish to web'}
+        {pending ? '…' : isPublished ? 'Unpublish' : 'Publish to web'}
       </button>
       {isPublished && (
         <button
@@ -80,7 +76,7 @@ export function PublishControls({
           {shareState === 'copied' ? 'Link copied ✓' : 'Copy link'}
         </button>
       )}
-      {error && <span className="font-serif text-vz-coral text-xs">{error}</span>}
+      {error && <span className="text-vz-coral font-serif text-xs">{error}</span>}
     </div>
   );
 }

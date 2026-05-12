@@ -85,6 +85,33 @@ export interface CoauthorInvitationRow {
   accepted_at: string | null;
 }
 
+export type PrintOrderStatus =
+  | 'pending'
+  | 'rendering'
+  | 'uploading'
+  | 'submitted'
+  | 'in_production'
+  | 'shipped'
+  | 'delivered'
+  | 'failed';
+
+export interface PrintOrderRow {
+  id: string;
+  zine_id: string;
+  user_id: string;
+  stripe_session_id: string | null;
+  lulu_print_job_id: string | null;
+  shipping_address: Record<string, unknown> | null;
+  status: PrintOrderStatus;
+  status_detail: string | null;
+  tracking_url: string | null;
+  cover_pdf_url: string | null;
+  cover_pdf_md5: string | null;
+  pod_package_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface SubscriptionRow {
   id: string;
   user_id: string;
