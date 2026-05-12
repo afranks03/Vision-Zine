@@ -8,10 +8,7 @@ import { getDisplayName } from './_shared';
  * the corner, runway pacing, big sans tags, an asymmetric image-block
  * placeholder. High contrast.
  */
-export function FashionCover({
-  data,
-  palette,
-}: SpreadProps & { palette: SpreadPalette }) {
+export function FashionCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
   const title = (zine.title || 'Issue ' + romanize(zine.issue_number)).toUpperCase();

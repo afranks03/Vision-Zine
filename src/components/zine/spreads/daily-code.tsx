@@ -8,10 +8,7 @@ export function DailyCode({ data, palette }: SpreadProps & { palette: SpreadPale
   const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
 
   return (
-    <article
-      className="relative"
-      style={{ background: palette.bg, color: palette.fg }}
-    >
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
       <div
         className="vz-container"
         style={{
@@ -36,8 +33,8 @@ export function DailyCode({ data, palette }: SpreadProps & { palette: SpreadPale
 
         {tenets.length === 0 ? (
           <p className="vz-prose mx-auto max-w-xl text-center opacity-70">
-            Add tenets in the studio — short, declarative, first-person ideally. Each one
-            appears in its own framed cell here.
+            Add tenets in the studio — short, declarative, first-person ideally. Each one appears in
+            its own framed cell here.
           </p>
         ) : (
           <ol

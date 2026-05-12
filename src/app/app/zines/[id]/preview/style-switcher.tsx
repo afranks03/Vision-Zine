@@ -21,13 +21,7 @@ const ORDER: ZineStyle[] = [
  * preview page is a Server Component so revalidatePath in the action is
  * what makes the new style appear.
  */
-export function StyleSwitcher({
-  zineId,
-  current,
-}: {
-  zineId: string;
-  current: ZineStyle;
-}) {
+export function StyleSwitcher({ zineId, current }: { zineId: string; current: ZineStyle }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 

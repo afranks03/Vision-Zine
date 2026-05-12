@@ -60,7 +60,8 @@ export default async function PreviewPage({ params }: Props) {
               ← Back to studio
             </Link>
             <Meta className="text-vz-ink/60 hidden sm:inline-block">
-              Preview · {STYLE_LABELS[zine.style]} · {zine.format.charAt(0).toUpperCase() + zine.format.slice(1)}
+              Preview · {STYLE_LABELS[zine.style]} ·{' '}
+              {zine.format.charAt(0).toUpperCase() + zine.format.slice(1)}
             </Meta>
           </div>
           <div className="flex items-center gap-3">
@@ -70,6 +71,12 @@ export default async function PreviewPage({ params }: Props) {
             </Eyebrow>
             <PrintButton />
             <DownloadPdfButton zineId={id} />
+            <Link
+              href={`/app/zines/${id}/checkout`}
+              className="vz-eyebrow bg-vz-coral text-vz-cream hover:bg-vz-ink hover:text-vz-yellow px-3 py-2 transition-colors"
+            >
+              {zine.status === 'paid' ? 'Paid ✓' : 'Get this issue →'}
+            </Link>
           </div>
         </div>
       </div>

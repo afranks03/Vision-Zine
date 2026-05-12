@@ -8,20 +8,14 @@ import { getDisplayName } from './_shared';
  * line of title at upper-third, everything else is whitespace and tiny
  * wall-label text. The number does most of the visual work.
  */
-export function ArtCatalogCover({
-  data,
-  palette,
-}: SpreadProps & { palette: SpreadPalette }) {
+export function ArtCatalogCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
   const title = zine.title || 'A retrospective';
   const year = new Date(zine.created_at).getFullYear();
 
   return (
-    <article
-      className="relative"
-      style={{ background: palette.bg, color: palette.fg }}
-    >
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
       <div
         className="relative grid"
         style={{

@@ -6,23 +6,20 @@ import type { SpreadProps } from '../types';
  * left-rail meta column, and a signature. Palette-driven so each style
  * picks its own background/foreground/accent.
  */
-export function EditorsLetter({
-  data,
-  palette,
-}: SpreadProps & { palette: SpreadPalette }) {
+export function EditorsLetter({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { personal, vision } = data;
   const displayName = personal.display_name || personal.full_name || 'You';
   const statement = vision.statement?.trim();
 
   const paragraphs = statement
-    ? statement.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
+    ? statement
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter(Boolean)
     : [];
 
   return (
-    <article
-      className="relative"
-      style={{ background: palette.bg, color: palette.fg }}
-    >
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
       <div
         className="vz-container"
         style={{
@@ -91,9 +88,9 @@ export function EditorsLetter({
                 ))
               ) : (
                 <p style={{ marginBottom: '1em', opacity: 0.6 }}>
-                  Write your Vision statement in the studio — once you save it, this spread
-                  will compose around your words with a drop cap, a signature, and the side
-                  rail. Until then, this page holds the form for what&apos;s coming.
+                  Write your Vision statement in the studio — once you save it, this spread will
+                  compose around your words with a drop cap, a signature, and the side rail. Until
+                  then, this page holds the form for what&apos;s coming.
                 </p>
               )}
             </div>

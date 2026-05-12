@@ -9,10 +9,7 @@ export function Foundation({ data, palette }: SpreadProps & { palette: SpreadPal
   const items = data.achievements.items ?? [];
 
   return (
-    <article
-      className="relative"
-      style={{ background: palette.bg, color: palette.fg }}
-    >
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
       <div
         className="vz-container"
         style={{
@@ -24,8 +21,8 @@ export function Foundation({ data, palette }: SpreadProps & { palette: SpreadPal
 
         {items.length === 0 ? (
           <p className="vz-prose mx-auto max-w-xl text-center opacity-70">
-            Add achievements in the studio — Title, Year, Tag — and they&apos;ll appear here
-            as numbered receipts across two columns.
+            Add achievements in the studio — Title, Year, Tag — and they&apos;ll appear here as
+            numbered receipts across two columns.
           </p>
         ) : (
           <ol

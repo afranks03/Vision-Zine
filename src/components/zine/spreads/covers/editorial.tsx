@@ -1,22 +1,14 @@
 import { Barcode, BrandMark, romanize } from '../../atoms';
 import type { SpreadPalette } from '../../styles';
 import type { SpreadProps } from '../../types';
-import {
-  buildToc,
-  getDisplayName,
-  mastheadSizeForLength,
-  seasonFromDate,
-} from './_shared';
+import { buildToc, getDisplayName, mastheadSizeForLength, seasonFromDate } from './_shared';
 
 /**
  * Editorial cover — the canonical reference. Yellow page with an
  * ink-bordered frame, dramatic stroked masthead, generated TOC,
  * decorative italic brand mark, feature block, barcode at the bottom.
  */
-export function EditorialCover({
-  data,
-  palette,
-}: SpreadProps & { palette: SpreadPalette }) {
+export function EditorialCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
   const location = data.personal.location || 'On Earth';

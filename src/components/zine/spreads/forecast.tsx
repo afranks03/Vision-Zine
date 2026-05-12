@@ -25,10 +25,7 @@ export function Forecast({ data, palette }: SpreadProps & { palette: SpreadPalet
     (goals.body_spirit?.length ?? 0);
 
   return (
-    <article
-      className="relative"
-      style={{ background: palette.bg, color: palette.fg }}
-    >
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
       <div
         className="vz-container"
         style={{
@@ -90,8 +87,8 @@ export function Forecast({ data, palette }: SpreadProps & { palette: SpreadPalet
             className="vz-prose mx-auto max-w-xl"
             style={{ color: palette.fg, opacity: 0.7, textAlign: 'center' }}
           >
-            Fill in the Goals section in the studio — financial, creative, place, body &amp;
-            spirit — and they&apos;ll appear here, sorted and ruled.
+            Fill in the Goals section in the studio — financial, creative, place, body &amp; spirit
+            — and they&apos;ll appear here, sorted and ruled.
           </p>
         ) : (
           <div className="grid gap-12 md:grid-cols-2" style={{ columnGap: 64, rowGap: 48 }}>

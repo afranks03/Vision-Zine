@@ -8,10 +8,7 @@ import { buildToc, getDisplayName, seasonFromDate } from './_shared';
  * italic title centered on the page, soft meta below, a quiet TOC pulled
  * tight to the bottom. Rose page.
  */
-export function LifestyleCover({
-  data,
-  palette,
-}: SpreadProps & { palette: SpreadPalette }) {
+export function LifestyleCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
   const location = data.personal.location || 'On Earth';

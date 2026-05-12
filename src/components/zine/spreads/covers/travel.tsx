@@ -8,10 +8,7 @@ import { getDisplayName, seasonFromDate } from './_shared';
  * top-right with origin, big italic destination headline, a faux ferry/
  * mileage ticker at the bottom.
  */
-export function TravelCover({
-  data,
-  palette,
-}: SpreadProps & { palette: SpreadPalette }) {
+export function TravelCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
   const location = data.personal.location || 'Anywhere';
@@ -62,9 +59,7 @@ export function TravelCover({
               maxWidth: 140,
             }}
           >
-            <span style={{ display: 'block', fontSize: 28, lineHeight: 1 }}>
-              ↗
-            </span>
+            <span style={{ display: 'block', fontSize: 28, lineHeight: 1 }}>↗</span>
             <span
               style={{
                 fontFamily: 'var(--font-sans)',

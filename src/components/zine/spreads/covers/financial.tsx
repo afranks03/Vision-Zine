@@ -8,10 +8,7 @@ import { getDisplayName } from './_shared';
  * prominently in the corner, formal sans masthead, a "performance
  * summary" 4-column meta strip at the bottom.
  */
-export function FinancialCover({
-  data,
-  palette,
-}: SpreadProps & { palette: SpreadPalette }) {
+export function FinancialCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
   const year = new Date(zine.created_at).getFullYear();
