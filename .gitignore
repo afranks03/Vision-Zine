@@ -40,3 +40,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# local sample / downloaded PDFs (don't commit personal zine output)
+_PDF/
+*.pdf
+!design/screenshots/*.pdf  # leave room for design references if added later
