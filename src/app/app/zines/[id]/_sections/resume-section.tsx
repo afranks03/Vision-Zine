@@ -32,9 +32,8 @@ export function ResumeSection({
       }
       intro={
         <>
-          Paste your resume, a LinkedIn export, or freeform career notes. We&apos;ll
-          pick the 3–7 most editorially interesting items as one-line highlights
-          for the Career spread.
+          Paste your resume, a LinkedIn export, or freeform career notes. We&apos;ll pick the 3–7
+          most editorially interesting items as one-line highlights for the Career spread.
         </>
       }
       inputLabel="Source material"

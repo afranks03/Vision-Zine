@@ -42,18 +42,15 @@ export function AISectionShell<K extends SectionKey>({
   initialRawInput?: string;
   initialOutput?: string;
   /** Map the freeform output text into the section's typed content payload. */
-  buildContent: (params: {
-    rawInput: string;
-    output: string;
-  }) => SectionContent<K>;
+  buildContent: (params: { rawInput: string; output: string }) => SectionContent<K>;
   /** Optional display name to send with the AI request. */
   displayName?: string;
 }) {
   const [rawInput, setRawInput] = useState(initialRawInput ?? '');
   const [savePending, startSave] = useTransition();
-  const [saveMessage, setSaveMessage] = useState<
-    { kind: 'ok' | 'error'; text: string } | null
-  >(null);
+  const [saveMessage, setSaveMessage] = useState<{ kind: 'ok' | 'error'; text: string } | null>(
+    null,
+  );
 
   const {
     output,
@@ -87,10 +84,7 @@ export function AISectionShell<K extends SectionKey>({
       const result = await saveSection({
         zineId,
         sectionKey,
-        contentJson: buildContent({ rawInput, output: text }) as Record<
-          string,
-          unknown
-        >,
+        contentJson: buildContent({ rawInput, output: text }) as Record<string, unknown>,
       });
       if (result && 'error' in result && result.error) {
         setSaveMessage({ kind: 'error', text: result.error });
@@ -112,9 +106,7 @@ export function AISectionShell<K extends SectionKey>({
     <div className="flex flex-col gap-6">
       <header>
         <Eyebrow className="text-vz-coral">{eyebrow}</Eyebrow>
-        <h2 className="font-display mt-2 text-4xl leading-[0.95] tracking-[-0.02em]">
-          {title}
-        </h2>
+        <h2 className="font-display mt-2 text-4xl leading-[0.95] tracking-[-0.02em]">{title}</h2>
         {intro && <p className="vz-prose mt-3 text-base">{intro}</p>}
       </header>
       <HairlineRule />
@@ -141,14 +133,8 @@ export function AISectionShell<K extends SectionKey>({
         >
           {streaming ? 'Stop' : suggestLabel}
         </button>
-        {streaming && (
-          <span className="vz-meta text-vz-coral">Streaming…</span>
-        )}
-        {streamError && (
-          <span className="font-serif text-vz-coral text-sm">
-            {streamError}
-          </span>
-        )}
+        {streaming && <span className="vz-meta text-vz-coral">Streaming…</span>}
+        {streamError && <span className="text-vz-coral font-serif text-sm">{streamError}</span>}
       </div>
 
       <HairlineRule />
@@ -182,7 +168,7 @@ export function AISectionShell<K extends SectionKey>({
           type="button"
           onClick={handleDiscard}
           disabled={savePending || streaming}
-          className="vz-eyebrow border-vz-ink text-vz-ink hover:bg-vz-ink hover:text-vz-yellow disabled:opacity-40 cursor-pointer border px-4 py-3 transition-colors disabled:cursor-not-allowed"
+          className="vz-eyebrow border-vz-ink text-vz-ink hover:bg-vz-ink hover:text-vz-yellow cursor-pointer border px-4 py-3 transition-colors disabled:cursor-not-allowed disabled:opacity-40"
         >
           Discard draft
         </button>

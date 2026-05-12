@@ -91,7 +91,15 @@ export default async function StudioPage({ params, searchParams }: Props) {
             {zine.title || `Issue ${romanize(zine.issue_number)}`}
           </h1>
         </div>
-        <Eyebrow className="text-vz-coral">Draft · autosaved</Eyebrow>
+        <div className="flex items-center gap-3">
+          <Eyebrow className="text-vz-coral">Draft · autosaved</Eyebrow>
+          <Link
+            href={`/app/zines/${id}/preview`}
+            className="vz-eyebrow bg-vz-ink text-vz-yellow hover:bg-vz-coral hover:text-vz-cream px-3 py-2 transition-colors"
+          >
+            Preview →
+          </Link>
+        </div>
       </div>
 
       {/* Two-column layout: section rail + editor */}
@@ -157,27 +165,13 @@ function renderSection(
       return <TenetsSection zineId={zineId} initial={contentFor('tenets')} />;
     case 'vision':
       return (
-        <VisionSection
-          zineId={zineId}
-          initial={contentFor('vision')}
-          displayName={displayName}
-        />
+        <VisionSection zineId={zineId} initial={contentFor('vision')} displayName={displayName} />
       );
     case 'bio':
-      return (
-        <BioSection
-          zineId={zineId}
-          initial={contentFor('bio')}
-          displayName={displayName}
-        />
-      );
+      return <BioSection zineId={zineId} initial={contentFor('bio')} displayName={displayName} />;
     case 'resume':
       return (
-        <ResumeSection
-          zineId={zineId}
-          initial={contentFor('resume')}
-          displayName={displayName}
-        />
+        <ResumeSection zineId={zineId} initial={contentFor('resume')} displayName={displayName} />
       );
     case 'achievements':
       return (

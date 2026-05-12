@@ -69,10 +69,10 @@ export function AchievementsSection({
       }
       intro={
         <>
-          12 to 24 achievements — the receipts for the year ahead. Paste anything:
-          past resumes, year-end reviews, journal entries. We&apos;ll extract them
-          in <code className="font-mono text-sm">Title — Year — Tag</code> format,
-          one per line. You can edit before saving.
+          12 to 24 achievements — the receipts for the year ahead. Paste anything: past resumes,
+          year-end reviews, journal entries. We&apos;ll extract them in{' '}
+          <code className="font-mono text-sm">Title — Year — Tag</code> format, one per line. You
+          can edit before saving.
         </>
       }
       inputLabel="Source material"

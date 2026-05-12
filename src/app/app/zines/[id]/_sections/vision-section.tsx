@@ -25,9 +25,9 @@ export function VisionSection({
       }
       intro={
         <>
-          A first-person manifesto for the year ahead. Tell us what you&apos;re
-          becoming, what you&apos;re building, what you refuse to do — in plain
-          notes. We&apos;ll compose the spread.
+          A first-person manifesto for the year ahead. Tell us what you&apos;re becoming, what
+          you&apos;re building, what you refuse to do — in plain notes. We&apos;ll compose the
+          spread.
         </>
       }
       inputLabel="Your notes (anything — bullets, fragments, half-sentences)"

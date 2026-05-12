@@ -99,8 +99,7 @@ export async function handleAIStreamRoute(
         await claudeStream.finalMessage();
         controller.close();
       } catch (err) {
-        const message =
-          err instanceof Error ? err.message : 'AI stream failed.';
+        const message = err instanceof Error ? err.message : 'AI stream failed.';
         controller.enqueue(encoder.encode(`\n\n[error] ${message}`));
         controller.close();
       }

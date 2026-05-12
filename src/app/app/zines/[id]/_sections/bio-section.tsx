@@ -25,8 +25,8 @@ export function BioSection({
       }
       intro={
         <>
-          Paste an existing bio, a LinkedIn summary, or notes about yourself.
-          We&apos;ll distill it into a short editorial bio for the colophon.
+          Paste an existing bio, a LinkedIn summary, or notes about yourself. We&apos;ll distill it
+          into a short editorial bio for the colophon.
         </>
       }
       inputLabel="Source material"
