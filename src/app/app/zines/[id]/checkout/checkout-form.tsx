@@ -2,7 +2,13 @@
 
 import { useState, useTransition } from 'react';
 import { Eyebrow } from '@/components/editorial';
-import { OUTPUTS, PRICING, PRICING_ORDER, type OutputId, type PricingTierId } from '@/lib/billing/pricing';
+import {
+  OUTPUTS,
+  PRICING,
+  PRICING_ORDER,
+  type OutputId,
+  type PricingTierId,
+} from '@/lib/billing/pricing';
 import { createCheckoutSession } from './_actions';
 
 /**
@@ -127,7 +133,7 @@ export function CheckoutForm({ zineId }: { zineId: string }) {
             Stripe handles the card. You&apos;ll come back here when it&apos;s done.
           </span>
         </div>
-        {error && <p className="font-serif text-vz-coral mt-3 text-sm">{error}</p>}
+        {error && <p className="text-vz-coral mt-3 font-serif text-sm">{error}</p>}
       </div>
     </div>
   );

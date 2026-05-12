@@ -46,6 +46,8 @@ export interface ZineRow {
   style: ZineStyle;
   format: ZineFormat;
   status: ZineStatus;
+  /** When true, /z/[id] renders publicly without auth. */
+  is_published: boolean;
   created_at: string;
   updated_at: string;
 }

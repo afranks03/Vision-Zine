@@ -20,6 +20,7 @@ import type {
 } from '@/lib/supabase/types';
 import { DownloadPdfButton } from './download-pdf-button';
 import { PrintButton } from './print-button';
+import { PublishControls } from './publish-controls';
 import { StyleSwitcher } from './style-switcher';
 
 export const metadata: Metadata = {
@@ -64,11 +65,12 @@ export default async function PreviewPage({ params }: Props) {
               {zine.format.charAt(0).toUpperCase() + zine.format.slice(1)}
             </Meta>
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2">
             <StyleSwitcher zineId={id} current={zine.style} />
-            <Eyebrow className="text-vz-coral hidden md:inline-block">
+            <Eyebrow className="text-vz-coral hidden xl:inline-block">
               Issue {zine.issue_number}
             </Eyebrow>
+            <PublishControls zineId={id} initialPublished={zine.is_published} />
             <PrintButton />
             <DownloadPdfButton zineId={id} />
             <Link

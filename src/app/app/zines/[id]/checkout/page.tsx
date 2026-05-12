@@ -19,11 +19,7 @@ export default async function CheckoutPage({ params }: Props) {
   const { id } = await params;
   const supabase = await createClient();
 
-  const { data: zine, error } = await supabase
-    .from('zines')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data: zine, error } = await supabase.from('zines').select('*').eq('id', id).single();
 
   if (error || !zine) notFound();
   const typedZine = zine as ZineRow;
@@ -31,10 +27,7 @@ export default async function CheckoutPage({ params }: Props) {
   return (
     <div className="vz-container vz-section">
       <Meta className="mb-7 flex items-center gap-2.5">
-        <Link
-          href={`/app/zines/${id}`}
-          className="hover:text-vz-coral transition-colors"
-        >
+        <Link href={`/app/zines/${id}`} className="hover:text-vz-coral transition-colors">
           Studio
         </Link>
         <BulletDot />
@@ -44,7 +37,7 @@ export default async function CheckoutPage({ params }: Props) {
       </Meta>
 
       <h1
-        className="font-display font-normal leading-[0.9] tracking-[-0.02em]"
+        className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
         style={{ fontSize: 'clamp(40px, 7vw, 96px)' }}
       >
         Get this <em>issue</em>.
@@ -53,17 +46,20 @@ export default async function CheckoutPage({ params }: Props) {
 
       <Eyebrow className="text-vz-coral">Choose outputs and a tier</Eyebrow>
       <p className="vz-prose mt-3 max-w-2xl">
-        Pick which outputs you want — the PDF, the web edition, social crops, the printed
-        copy — and one of the two tiers. Both tiers include all four outputs; the annual tier
-        renews and includes a co-author seat and a second print copy per issue.
+        Pick which outputs you want — the PDF, the web edition, social crops, the printed copy — and
+        one of the two tiers. Both tiers include all four outputs; the annual tier renews and
+        includes a co-author seat and a second print copy per issue.
       </p>
 
       {typedZine.status === 'paid' && (
         <div className="border-vz-coral bg-vz-paper mt-10 border-2 p-6">
           <Eyebrow className="text-vz-coral">Already paid</Eyebrow>
           <p className="vz-prose mt-2 text-base">
-            This issue is already marked paid. You can re-download or order another copy
-            from the <Link href={`/app/zines/${id}/preview`} className="underline">preview</Link>.
+            This issue is already marked paid. You can re-download or order another copy from the{' '}
+            <Link href={`/app/zines/${id}/preview`} className="underline">
+              preview
+            </Link>
+            .
           </p>
         </div>
       )}
@@ -97,7 +93,7 @@ export default async function CheckoutPage({ params }: Props) {
                 <p className="font-display mt-3 text-5xl leading-[0.85]">{tier.display}</p>
                 <ul className="mt-6 space-y-2">
                   {tier.features.map((f) => (
-                    <li key={f} className="font-serif flex items-start gap-3 text-sm leading-snug">
+                    <li key={f} className="flex items-start gap-3 font-serif text-sm leading-snug">
                       <BulletDot className="mt-2 shrink-0" />
                       <span>{f}</span>
                     </li>
@@ -116,7 +112,7 @@ export default async function CheckoutPage({ params }: Props) {
           {OUTPUTS.map((o) => (
             <div key={o.id} className="border-vz-ink border-r border-b p-6">
               <h3 className="font-display text-2xl leading-tight">{o.name}</h3>
-              <p className="font-serif mt-2 text-sm leading-relaxed text-vz-ink/75">
+              <p className="text-vz-ink/75 mt-2 font-serif text-sm leading-relaxed">
                 {o.description}
               </p>
             </div>

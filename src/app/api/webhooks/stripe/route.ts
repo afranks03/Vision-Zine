@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from 'next/server';
-import { createServerClient } from '@supabase/ssr';
 import { getStripeClient } from '@/lib/billing/stripe';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export const runtime = 'nodejs';
 // Webhook handlers must be fast — Stripe expects 200 within ~5s. Don't
@@ -75,37 +75,15 @@ export async function POST(request: NextRequest) {
   return NextResponse.json({ received: true });
 }
 
-/** Service-role Supabase client — bypasses RLS so webhook can update. */
-function adminClient() {
-  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const serviceKey = process.env.SUPABASE_SECRET_KEY;
-  if (!url || !serviceKey) {
-    throw new Error(
-      'Supabase service-role credentials missing: NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SECRET_KEY are required for the webhook handler.',
-    );
-  }
-  return createServerClient(url, serviceKey, {
-    cookies: {
-      getAll: () => [],
-      setAll: () => {
-        /* no cookies in webhook context */
-      },
-    },
-  });
-}
-
 async function markZinePaid(zineId: string): Promise<{ ok: true } | { error: string }> {
   let client;
   try {
-    client = adminClient();
+    client = createAdminClient();
   } catch (err) {
     return { error: err instanceof Error ? err.message : 'Admin client init failed.' };
   }
 
-  const { error } = await client
-    .from('zines')
-    .update({ status: 'paid' })
-    .eq('id', zineId);
+  const { error } = await client.from('zines').update({ status: 'paid' }).eq('id', zineId);
 
   if (error) return { error: error.message };
   return { ok: true };

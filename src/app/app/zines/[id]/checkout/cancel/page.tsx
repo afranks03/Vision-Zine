@@ -17,7 +17,7 @@ export default async function CheckoutCancelPage({ params }: Props) {
     <div className="vz-container-narrow vz-section">
       <Eyebrow className="text-vz-coral">Checkout cancelled</Eyebrow>
       <h1
-        className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+        className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
         style={{ fontSize: 'clamp(40px, 7vw, 96px)' }}
       >
         No charge. <em>Your draft is safe.</em>
@@ -25,8 +25,8 @@ export default async function CheckoutCancelPage({ params }: Props) {
       <HeavyRule className="mt-6 mb-10" />
 
       <p className="vz-prose max-w-2xl">
-        Nothing was charged. Your zine sections, the AI-written copy, and your style choice
-        are all still in the studio — come back when you&apos;re ready.
+        Nothing was charged. Your zine sections, the AI-written copy, and your style choice are all
+        still in the studio — come back when you&apos;re ready.
       </p>
 
       <div className="mt-10 flex flex-wrap gap-3">

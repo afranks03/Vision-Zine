@@ -74,6 +74,19 @@ export async function saveSection(input: SaveSectionInput) {
   return { ok: true as const };
 }
 
+export async function setZinePublished(zineId: string, isPublished: boolean) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('zines')
+    .update({ is_published: isPublished })
+    .eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  // Public route also benefits from a fresh fetch.
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
 export async function setZineStyle(zineId: string, style: ZineStyle) {
   const supabase = await createClient();
   const { error } = await supabase.from('zines').update({ style }).eq('id', zineId);

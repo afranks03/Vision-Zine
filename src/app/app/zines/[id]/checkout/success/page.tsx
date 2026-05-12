@@ -19,11 +19,7 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
   const { session_id } = await searchParams;
 
   const supabase = await createClient();
-  const { data: zine, error } = await supabase
-    .from('zines')
-    .select('*')
-    .eq('id', id)
-    .single();
+  const { data: zine, error } = await supabase.from('zines').select('*').eq('id', id).single();
 
   if (error || !zine) notFound();
   const typedZine = zine as ZineRow;
@@ -33,7 +29,7 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
     <div className="vz-container-narrow vz-section">
       <Eyebrow className="text-vz-coral">Payment received</Eyebrow>
       <h1
-        className="font-display mt-3 font-normal leading-[0.9] tracking-[-0.02em]"
+        className="font-display mt-3 leading-[0.9] font-normal tracking-[-0.02em]"
         style={{ fontSize: 'clamp(40px, 7vw, 96px)' }}
       >
         Thank you. <em>Your issue is queued.</em>
@@ -47,9 +43,9 @@ export default async function CheckoutSuccessPage({ params, searchParams }: Prop
       </p>
 
       {!isPaid && (
-        <p className="font-serif text-vz-coral mt-6 text-sm">
-          (The webhook hasn&apos;t marked the zine paid yet — should arrive any second.
-          Refresh in a moment if the status doesn&apos;t update.)
+        <p className="text-vz-coral mt-6 font-serif text-sm">
+          (The webhook hasn&apos;t marked the zine paid yet — should arrive any second. Refresh in a
+          moment if the status doesn&apos;t update.)
         </p>
       )}
 
