@@ -1,25 +1,28 @@
+import type { SpreadPalette } from '../styles';
 import type { SpreadProps } from '../types';
 
 /**
  * Editor's Letter — the Vision statement rendered with a drop cap, a
- * left-rail meta column, and a signature. Cream background. Falls back to
- * a quiet placeholder if no Vision statement is filled.
+ * left-rail meta column, and a signature. Palette-driven so each style
+ * picks its own background/foreground/accent.
  */
-export function EditorsLetter({ data }: SpreadProps) {
+export function EditorsLetter({
+  data,
+  palette,
+}: SpreadProps & { palette: SpreadPalette }) {
   const { personal, vision } = data;
   const displayName = personal.display_name || personal.full_name || 'You';
   const statement = vision.statement?.trim();
 
-  // Split into paragraphs for proper editorial flow.
   const paragraphs = statement
-    ? statement
-        .split(/\n\n+/)
-        .map((p) => p.trim())
-        .filter(Boolean)
+    ? statement.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
     : [];
 
   return (
-    <article className="text-vz-ink relative" style={{ background: 'var(--color-vz-cream)' }}>
+    <article
+      className="relative"
+      style={{ background: palette.bg, color: palette.fg }}
+    >
       <div
         className="vz-container"
         style={{
@@ -38,8 +41,8 @@ export function EditorsLetter({ data }: SpreadProps) {
                 letterSpacing: '0.1em',
                 textTransform: 'uppercase',
                 lineHeight: 1.7,
-                borderTop: '1px solid var(--color-vz-ink)',
-                borderBottom: '1px solid var(--color-vz-ink)',
+                borderTop: `1px solid ${palette.fg}`,
+                borderBottom: `1px solid ${palette.fg}`,
                 padding: '14px 0',
               }}
             >
@@ -82,20 +85,15 @@ export function EditorsLetter({ data }: SpreadProps) {
             >
               {paragraphs.length > 0 ? (
                 paragraphs.map((p, i) => (
-                  <p
-                    key={i}
-                    style={{
-                      marginBottom: '1em',
-                    }}
-                  >
+                  <p key={i} style={{ marginBottom: '1em' }}>
                     {p}
                   </p>
                 ))
               ) : (
                 <p style={{ marginBottom: '1em', opacity: 0.6 }}>
-                  Write your Vision statement in the studio — once you save it, this spread will
-                  compose around your words with a drop cap, a signature, and the side rail. Until
-                  then, this page holds the form for what&apos;s coming.
+                  Write your Vision statement in the studio — once you save it, this spread
+                  will compose around your words with a drop cap, a signature, and the side
+                  rail. Until then, this page holds the form for what&apos;s coming.
                 </p>
               )}
             </div>
@@ -108,6 +106,7 @@ export function EditorsLetter({ data }: SpreadProps) {
                     fontSize: 46,
                     lineHeight: 1,
                     fontWeight: 400,
+                    color: palette.accent,
                   }}
                 >
                   — {displayName}

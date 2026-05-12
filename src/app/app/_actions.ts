@@ -74,6 +74,28 @@ export async function saveSection(input: SaveSectionInput) {
   return { ok: true as const };
 }
 
+export async function setZineStyle(zineId: string, style: ZineStyle) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('zines').update({ style }).eq('id', zineId);
+  if (error) {
+    return { error: error.message };
+  }
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  return { ok: true as const };
+}
+
+export async function setZineFormat(zineId: string, format: ZineFormat) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('zines').update({ format }).eq('id', zineId);
+  if (error) {
+    return { error: error.message };
+  }
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  return { ok: true as const };
+}
+
 export async function deleteZine(zineId: string) {
   const supabase = await createClient();
   const { error } = await supabase.from('zines').delete().eq('id', zineId);

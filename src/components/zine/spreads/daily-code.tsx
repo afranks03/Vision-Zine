@@ -1,14 +1,17 @@
+import type { SpreadPalette } from '../styles';
 import type { SpreadProps } from '../types';
 
 /**
- * The Daily Code — ten tenets in a 2-column bordered grid, on yellow.
- * Renders only the filled tenets (1–10).
+ * The Daily Code — palette-driven 2-column bordered grid.
  */
-export function DailyCode({ data }: SpreadProps) {
+export function DailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
 
   return (
-    <article className="text-vz-ink relative" style={{ background: 'var(--color-vz-yellow)' }}>
+    <article
+      className="relative"
+      style={{ background: palette.bg, color: palette.fg }}
+    >
       <div
         className="vz-container"
         style={{
@@ -33,15 +36,15 @@ export function DailyCode({ data }: SpreadProps) {
 
         {tenets.length === 0 ? (
           <p className="vz-prose mx-auto max-w-xl text-center opacity-70">
-            Add tenets in the studio — short, declarative, first-person ideally. Each one appears in
-            its own framed cell here.
+            Add tenets in the studio — short, declarative, first-person ideally. Each one
+            appears in its own framed cell here.
           </p>
         ) : (
           <ol
             className="grid list-none"
             style={{
               gridTemplateColumns: 'repeat(2, 1fr)',
-              border: '1px solid var(--color-vz-ink)',
+              border: `1px solid ${palette.fg}`,
             }}
           >
             {tenets.map((tenet, i) => {
@@ -51,12 +54,12 @@ export function DailyCode({ data }: SpreadProps) {
               return (
                 <li
                   key={i}
-                  className="grid items-start gap-4.5"
+                  className="grid items-start"
                   style={{
                     gridTemplateColumns: 'auto 1fr',
                     padding: 'clamp(20px, 3vw, 32px)',
-                    borderRight: i % 2 === 0 ? '1px solid var(--color-vz-ink)' : 'none',
-                    borderBottom: isLastTwo ? 'none' : '1px solid var(--color-vz-ink)',
+                    borderRight: i % 2 === 0 ? `1px solid ${palette.fg}` : 'none',
+                    borderBottom: isLastTwo ? 'none' : `1px solid ${palette.fg}`,
                     gap: 18,
                   }}
                 >

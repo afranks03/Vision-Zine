@@ -1,14 +1,18 @@
+import type { SpreadPalette } from '../styles';
 import type { SpreadProps } from '../types';
 
 /**
- * The Foundation — achievements as a two-column receipt list on cream,
- * with an italic editorial quote at the top.
+ * The Foundation — palette-driven achievements receipt list with an
+ * italic editorial quote at the top.
  */
-export function Foundation({ data }: SpreadProps) {
+export function Foundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const items = data.achievements.items ?? [];
 
   return (
-    <article className="text-vz-ink relative" style={{ background: 'var(--color-vz-cream)' }}>
+    <article
+      className="relative"
+      style={{ background: palette.bg, color: palette.fg }}
+    >
       <div
         className="vz-container"
         style={{
@@ -16,12 +20,12 @@ export function Foundation({ data }: SpreadProps) {
           paddingBottom: 'clamp(60px, 10vw, 140px)',
         }}
       >
-        <FoundationQuote />
+        <FoundationQuote palette={palette} />
 
         {items.length === 0 ? (
           <p className="vz-prose mx-auto max-w-xl text-center opacity-70">
-            Add achievements in the studio — Title, Year, Tag — and they&apos;ll appear here as
-            numbered receipts across two columns.
+            Add achievements in the studio — Title, Year, Tag — and they&apos;ll appear here
+            as numbered receipts across two columns.
           </p>
         ) : (
           <ol
@@ -38,7 +42,7 @@ export function Foundation({ data }: SpreadProps) {
                 style={{
                   gridTemplateColumns: '36px 1fr auto',
                   breakInside: 'avoid',
-                  borderBottom: '1px solid var(--color-vz-ink)',
+                  borderBottom: `1px solid ${palette.fg}`,
                   padding: '14px 0',
                   fontFamily: 'var(--font-serif)',
                   fontSize: 16,
@@ -77,8 +81,8 @@ export function Foundation({ data }: SpreadProps) {
                       fontWeight: 700,
                       letterSpacing: '0.1em',
                       textTransform: 'uppercase',
-                      background: 'var(--color-vz-ink)',
-                      color: 'var(--color-vz-yellow)',
+                      background: palette.fg,
+                      color: palette.bg,
                       padding: '3px 7px',
                       whiteSpace: 'nowrap',
                       alignSelf: 'center',
@@ -96,7 +100,7 @@ export function Foundation({ data }: SpreadProps) {
   );
 }
 
-function FoundationQuote() {
+function FoundationQuote({ palette }: { palette: SpreadPalette }) {
   return (
     <blockquote
       className="mx-auto text-center"
@@ -118,7 +122,7 @@ function FoundationQuote() {
           display: 'block',
           width: 80,
           height: 2,
-          background: 'var(--color-vz-ink)',
+          background: palette.fg,
           margin: '18px auto',
         }}
       />
@@ -129,7 +133,7 @@ function FoundationQuote() {
           display: 'block',
           width: 80,
           height: 2,
-          background: 'var(--color-vz-ink)',
+          background: palette.fg,
           margin: '18px auto',
         }}
       />

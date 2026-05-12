@@ -2,6 +2,7 @@ import type { Metadata } from 'next';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { Eyebrow, Meta } from '@/components/editorial';
+import { STYLE_LABELS } from '@/components/zine/styles';
 import { Zine } from '@/components/zine/zine';
 import type { RenderableZine } from '@/components/zine/types';
 import { createClient } from '@/lib/supabase/server';
@@ -19,6 +20,7 @@ import type {
 } from '@/lib/supabase/types';
 import { DownloadPdfButton } from './download-pdf-button';
 import { PrintButton } from './print-button';
+import { StyleSwitcher } from './style-switcher';
 
 export const metadata: Metadata = {
   title: 'Preview',
@@ -58,10 +60,11 @@ export default async function PreviewPage({ params }: Props) {
               ← Back to studio
             </Link>
             <Meta className="text-vz-ink/60 hidden sm:inline-block">
-              Preview · Editorial · Letter
+              Preview · {STYLE_LABELS[zine.style]} · {zine.format.charAt(0).toUpperCase() + zine.format.slice(1)}
             </Meta>
           </div>
           <div className="flex items-center gap-3">
+            <StyleSwitcher zineId={id} current={zine.style} />
             <Eyebrow className="text-vz-coral hidden md:inline-block">
               Issue {zine.issue_number}
             </Eyebrow>

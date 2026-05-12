@@ -1,10 +1,7 @@
 import { romanize } from '../atoms';
+import type { SpreadPalette } from '../styles';
 import type { SpreadProps } from '../types';
 
-/**
- * The Forecast — goals by domain on the dark ink page with yellow accents.
- * Four clusters: financial, creative, place, body & spirit.
- */
 const CLUSTERS: {
   key: 'financial' | 'creative' | 'place' | 'body_spirit';
   label: string;
@@ -15,7 +12,11 @@ const CLUSTERS: {
   { key: 'body_spirit', label: 'Body & Spirit' },
 ];
 
-export function Forecast({ data }: SpreadProps) {
+/**
+ * The Forecast — four-quadrant goals page. Palette-driven (the prototype
+ * uses ink+yellow; other styles re-tint the same structure).
+ */
+export function Forecast({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { goals, zine } = data;
   const total =
     (goals.financial?.length ?? 0) +
@@ -24,7 +25,10 @@ export function Forecast({ data }: SpreadProps) {
     (goals.body_spirit?.length ?? 0);
 
   return (
-    <article className="text-vz-cream relative" style={{ background: 'var(--color-vz-ink)' }}>
+    <article
+      className="relative"
+      style={{ background: palette.bg, color: palette.fg }}
+    >
       <div
         className="vz-container"
         style={{
@@ -32,12 +36,11 @@ export function Forecast({ data }: SpreadProps) {
           paddingBottom: 'clamp(60px, 10vw, 140px)',
         }}
       >
-        {/* Feature head */}
         <header
           className="grid items-end gap-6"
           style={{
             gridTemplateColumns: 'auto 1fr auto',
-            borderBottom: '2px solid var(--color-vz-cream)',
+            borderBottom: `2px solid ${palette.fg}`,
             paddingBottom: 18,
             marginBottom: 'clamp(40px, 6vw, 72px)',
           }}
@@ -85,10 +88,10 @@ export function Forecast({ data }: SpreadProps) {
         {total === 0 ? (
           <p
             className="vz-prose mx-auto max-w-xl"
-            style={{ color: 'var(--color-vz-cream)', opacity: 0.7, textAlign: 'center' }}
+            style={{ color: palette.fg, opacity: 0.7, textAlign: 'center' }}
           >
-            Fill in the Goals section in the studio — financial, creative, place, body &amp; spirit
-            — and they&apos;ll appear here, sorted and ruled like the prototype.
+            Fill in the Goals section in the studio — financial, creative, place, body &amp;
+            spirit — and they&apos;ll appear here, sorted and ruled.
           </p>
         ) : (
           <div className="grid gap-12 md:grid-cols-2" style={{ columnGap: 64, rowGap: 48 }}>
@@ -99,7 +102,7 @@ export function Forecast({ data }: SpreadProps) {
                   <div
                     className="flex items-baseline gap-3.5 pb-2.5"
                     style={{
-                      borderBottom: '1px solid var(--color-vz-cream)',
+                      borderBottom: `1px solid ${palette.fg}`,
                       marginBottom: 14,
                     }}
                   >
@@ -109,7 +112,7 @@ export function Forecast({ data }: SpreadProps) {
                         fontSize: 36,
                         lineHeight: 1,
                         fontWeight: 400,
-                        color: 'var(--color-vz-yellow)',
+                        color: palette.accent,
                       }}
                     >
                       {idx + 1}
@@ -147,7 +150,7 @@ export function Forecast({ data }: SpreadProps) {
                           style={{
                             gridTemplateColumns: '36px 1fr',
                             padding: '12px 0',
-                            borderBottom: '1px solid rgba(245, 239, 221, 0.18)',
+                            borderBottom: `1px solid ${palette.rule}`,
                             fontFamily: 'var(--font-serif)',
                             fontSize: 17,
                             lineHeight: 1.4,
@@ -159,7 +162,7 @@ export function Forecast({ data }: SpreadProps) {
                               fontSize: 11,
                               fontWeight: 700,
                               letterSpacing: '0.06em',
-                              color: 'var(--color-vz-yellow)',
+                              color: palette.accent,
                             }}
                           >
                             {(i + 1).toString().padStart(2, '0')}
