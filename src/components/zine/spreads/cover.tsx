@@ -15,6 +15,7 @@ export function Cover({ data }: SpreadProps) {
   const year = new Date(zine.created_at).getFullYear();
 
   const mastheadText = (zine.title ? zine.title : 'VISION').toUpperCase();
+  const mastheadFontSize = mastheadSizeForLength(mastheadText);
   const tocItems = buildToc(data);
 
   return (
@@ -81,13 +82,14 @@ export function Cover({ data }: SpreadProps) {
           · {location}
         </div>
 
-        {/* Masthead */}
+        {/* Masthead — font size adapts to title length so long titles
+            like "THE BROADWATER CHRONICLE" don't bleed off the page. */}
         <h1
           aria-label={mastheadText}
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: 'clamp(72px, 17vw, 240px)',
-            lineHeight: 0.85,
+            fontSize: mastheadFontSize,
+            lineHeight: 0.9,
             letterSpacing: '-0.02em',
             textAlign: 'center',
             fontWeight: 400,
@@ -98,6 +100,8 @@ export function Cover({ data }: SpreadProps) {
               '4px 4px 0 var(--color-vz-ink), -1px 0 0 var(--color-vz-ink), 1px 0 0 var(--color-vz-ink)',
             position: 'relative',
             zIndex: 1,
+            wordBreak: 'break-word',
+            overflowWrap: 'anywhere',
           }}
         >
           {mastheadText}
@@ -275,6 +279,20 @@ export function Cover({ data }: SpreadProps) {
 }
 
 /* ---- helpers ---- */
+
+/**
+ * Adaptive masthead font-size. The prototype's "FORECAST" (8 chars) sits
+ * at clamp(72, 17vw, 240). Longer titles need to shrink so the masthead
+ * holds the cover frame. Tiers are tuned against DM Serif Display.
+ */
+function mastheadSizeForLength(text: string): string {
+  const len = text.length;
+  if (len <= 7) return 'clamp(80px, 17vw, 240px)'; // VISION, FORECAST
+  if (len <= 11) return 'clamp(64px, 13vw, 180px)'; // ISSUE I, TWO WORDS
+  if (len <= 18) return 'clamp(48px, 9vw, 120px)'; // medium-length
+  if (len <= 26) return 'clamp(40px, 6vw, 88px)'; // THE BROADWATER CHRONICLE (24)
+  return 'clamp(32px, 5vw, 64px)'; // very long; will likely wrap
+}
 
 function seasonFromDate(iso: string): string {
   const m = new Date(iso).getMonth();

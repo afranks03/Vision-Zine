@@ -14,10 +14,7 @@ export const maxDuration = 60;
  * session cookies onto the browser context, navigate to the preview route
  * in print mode, and call page.pdf() with the right paper size.
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   // 1. Auth + ownership check.
@@ -37,10 +34,7 @@ export async function GET(
   if (error || !zine) {
     return NextResponse.json({ error: 'Zine not found.' }, { status: 404 });
   }
-  const typedZine = zine as Pick<
-    ZineRow,
-    'id' | 'user_id' | 'title' | 'format' | 'issue_number'
-  >;
+  const typedZine = zine as Pick<ZineRow, 'id' | 'user_id' | 'title' | 'format' | 'issue_number'>;
   if (typedZine.user_id !== user.id) {
     return NextResponse.json({ error: 'Not authorized.' }, { status: 403 });
   }

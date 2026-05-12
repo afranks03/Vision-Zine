@@ -51,7 +51,7 @@ export function DownloadPdfButton({ zineId }: { zineId: string }) {
       >
         {pending ? 'Generating…' : 'Download PDF'}
       </button>
-      {error && <span className="font-serif text-vz-coral text-xs">{error}</span>}
+      {error && <span className="text-vz-coral font-serif text-xs">{error}</span>}
     </div>
   );
 }
