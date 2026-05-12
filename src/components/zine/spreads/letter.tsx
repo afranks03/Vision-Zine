@@ -12,17 +12,20 @@ export function EditorsLetter({ data }: SpreadProps) {
 
   // Split into paragraphs for proper editorial flow.
   const paragraphs = statement
-    ? statement.split(/\n\n+/).map((p) => p.trim()).filter(Boolean)
+    ? statement
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter(Boolean)
     : [];
 
   return (
-    <article
-      className="text-vz-ink relative"
-      style={{ background: 'var(--color-vz-cream)' }}
-    >
+    <article className="text-vz-ink relative" style={{ background: 'var(--color-vz-cream)' }}>
       <div
         className="vz-container"
-        style={{ paddingTop: 'clamp(60px, 10vw, 140px)', paddingBottom: 'clamp(60px, 10vw, 140px)' }}
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
       >
         <div className="grid items-start gap-8 md:grid-cols-[1fr_2.4fr] md:gap-20">
           {/* Side meta */}
@@ -90,9 +93,9 @@ export function EditorsLetter({ data }: SpreadProps) {
                 ))
               ) : (
                 <p style={{ marginBottom: '1em', opacity: 0.6 }}>
-                  Write your Vision statement in the studio — once you save it, this spread
-                  will compose around your words with a drop cap, a signature, and the
-                  side rail. Until then, this page holds the form for what&apos;s coming.
+                  Write your Vision statement in the studio — once you save it, this spread will
+                  compose around your words with a drop cap, a signature, and the side rail. Until
+                  then, this page holds the form for what&apos;s coming.
                 </p>
               )}
             </div>

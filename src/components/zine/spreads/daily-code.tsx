@@ -8,13 +8,13 @@ export function DailyCode({ data }: SpreadProps) {
   const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
 
   return (
-    <article
-      className="text-vz-ink relative"
-      style={{ background: 'var(--color-vz-yellow)' }}
-    >
+    <article className="text-vz-ink relative" style={{ background: 'var(--color-vz-yellow)' }}>
       <div
         className="vz-container"
-        style={{ paddingTop: 'clamp(60px, 10vw, 140px)', paddingBottom: 'clamp(60px, 10vw, 140px)' }}
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
       >
         <h2
           className="mx-auto text-center"
@@ -33,8 +33,8 @@ export function DailyCode({ data }: SpreadProps) {
 
         {tenets.length === 0 ? (
           <p className="vz-prose mx-auto max-w-xl text-center opacity-70">
-            Add tenets in the studio — short, declarative, first-person ideally. Each one
-            appears in its own framed cell here.
+            Add tenets in the studio — short, declarative, first-person ideally. Each one appears in
+            its own framed cell here.
           </p>
         ) : (
           <ol

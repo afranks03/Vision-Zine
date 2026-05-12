@@ -24,13 +24,13 @@ export function Forecast({ data }: SpreadProps) {
     (goals.body_spirit?.length ?? 0);
 
   return (
-    <article
-      className="text-vz-cream relative"
-      style={{ background: 'var(--color-vz-ink)' }}
-    >
+    <article className="text-vz-cream relative" style={{ background: 'var(--color-vz-ink)' }}>
       <div
         className="vz-container"
-        style={{ paddingTop: 'clamp(60px, 10vw, 140px)', paddingBottom: 'clamp(60px, 10vw, 140px)' }}
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
       >
         {/* Feature head */}
         <header
@@ -87,14 +87,11 @@ export function Forecast({ data }: SpreadProps) {
             className="vz-prose mx-auto max-w-xl"
             style={{ color: 'var(--color-vz-cream)', opacity: 0.7, textAlign: 'center' }}
           >
-            Fill in the Goals section in the studio — financial, creative, place, body
-            &amp; spirit — and they&apos;ll appear here, sorted and ruled like the prototype.
+            Fill in the Goals section in the studio — financial, creative, place, body &amp; spirit
+            — and they&apos;ll appear here, sorted and ruled like the prototype.
           </p>
         ) : (
-          <div
-            className="grid gap-12 md:grid-cols-2"
-            style={{ columnGap: 64, rowGap: 48 }}
-          >
+          <div className="grid gap-12 md:grid-cols-2" style={{ columnGap: 64, rowGap: 48 }}>
             {CLUSTERS.map((cluster, idx) => {
               const items = goals[cluster.key] ?? [];
               return (

@@ -8,20 +8,20 @@ export function Foundation({ data }: SpreadProps) {
   const items = data.achievements.items ?? [];
 
   return (
-    <article
-      className="text-vz-ink relative"
-      style={{ background: 'var(--color-vz-cream)' }}
-    >
+    <article className="text-vz-ink relative" style={{ background: 'var(--color-vz-cream)' }}>
       <div
         className="vz-container"
-        style={{ paddingTop: 'clamp(60px, 10vw, 140px)', paddingBottom: 'clamp(60px, 10vw, 140px)' }}
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
       >
         <FoundationQuote />
 
         {items.length === 0 ? (
           <p className="vz-prose mx-auto max-w-xl text-center opacity-70">
-            Add achievements in the studio — Title, Year, Tag — and they&apos;ll appear here
-            as numbered receipts across two columns.
+            Add achievements in the studio — Title, Year, Tag — and they&apos;ll appear here as
+            numbered receipts across two columns.
           </p>
         ) : (
           <ol

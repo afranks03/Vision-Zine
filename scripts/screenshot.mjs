@@ -8,7 +8,9 @@
  *
  * Output: design/screenshots/{route-name}-{1440|390}.png
  */
-import { chromium } from 'playwright';
+// playwright-core resolves chromium from ~/Library/Caches/ms-playwright after
+// `pnpm exec playwright install chromium` has been run once.
+import { chromium } from 'playwright-core';
 import { mkdir } from 'node:fs/promises';
 import { join } from 'node:path';
 

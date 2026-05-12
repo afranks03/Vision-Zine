@@ -17,6 +17,7 @@ import type {
   ZineDataRow,
   ZineRow,
 } from '@/lib/supabase/types';
+import { DownloadPdfButton } from './download-pdf-button';
 import { PrintButton } from './print-button';
 
 export const metadata: Metadata = {
@@ -65,6 +66,7 @@ export default async function PreviewPage({ params }: Props) {
               Issue {zine.issue_number}
             </Eyebrow>
             <PrintButton />
+            <DownloadPdfButton zineId={id} />
           </div>
         </div>
       </div>

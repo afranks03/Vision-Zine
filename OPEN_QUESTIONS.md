@@ -41,6 +41,9 @@ Each zine has an `issue_number`. Per-user (Adrian's Issues I, II, III) or global
 ### F. Free tier limits (Phase 4)
 The Preview tier — what exactly can a free user generate? Preview only? Watermarked PDF? Web edition without download?
 
+### G. Layout preview before format selection (UX, Phase 3+ enhancement)
+Adrian noted (2026-05-11) that the create-new-zine flow asks users to pick a format (Letter / Tabloid / Pocket) before they see what the magazine actually looks like. A nicer UX would let them see a sample composed layout — possibly with their first-draft data — at each format before committing. Captured for later: probably belongs in a Phase 3c slice (live split-view preview) where format is a toggle on the preview rather than a one-time decision.
+
 ---
 
 ## Non-blocking — answer when convenient

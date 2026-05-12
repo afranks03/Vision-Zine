@@ -305,12 +305,7 @@ function buildToc(data: SpreadProps['data']): TocItem[] {
   if (has('bio', (v) => !!(v.summary && v.summary.trim().length > 0))) {
     items.push({ title: 'Bio', desc: 'A short editorial introduction.', filled: true });
   }
-  if (
-    has(
-      'resume',
-      (v) => !!(v.highlights && v.highlights.length > 0),
-    )
-  ) {
+  if (has('resume', (v) => !!(v.highlights && v.highlights.length > 0))) {
     items.push({
       title: 'Career',
       desc: 'Highlights of the work behind the next chapter.',
@@ -334,12 +329,7 @@ function buildToc(data: SpreadProps['data']): TocItem[] {
       filled: true,
     });
   }
-  if (
-    has(
-      'achievements',
-      (v) => !!(v.items && v.items.length > 0),
-    )
-  ) {
+  if (has('achievements', (v) => !!(v.items && v.items.length > 0))) {
     items.push({
       title: 'The Foundation',
       desc: 'The case for the next chapter, in evidence.',

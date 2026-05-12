@@ -6,9 +6,19 @@ import { type CSSProperties } from 'react';
 /** Convert a positive integer to a Roman numeral. */
 export function romanize(n: number): string {
   const map: [number, string][] = [
-    [1000, 'M'], [900, 'CM'], [500, 'D'], [400, 'CD'],
-    [100, 'C'], [90, 'XC'], [50, 'L'], [40, 'XL'],
-    [10, 'X'], [9, 'IX'], [5, 'V'], [4, 'IV'], [1, 'I'],
+    [1000, 'M'],
+    [900, 'CM'],
+    [500, 'D'],
+    [400, 'CD'],
+    [100, 'C'],
+    [90, 'XC'],
+    [50, 'L'],
+    [40, 'XL'],
+    [10, 'X'],
+    [9, 'IX'],
+    [5, 'V'],
+    [4, 'IV'],
+    [1, 'I'],
   ];
   let out = '';
   let remaining = n;
@@ -57,13 +67,7 @@ export function Barcode({ seed = 'visionzine' }: { seed?: string }) {
 }
 
 /** Small circular brand mark for the cover top-right. Falls back to "VZ". */
-export function BrandMark({
-  letter = 'VZ',
-  style,
-}: {
-  letter?: string;
-  style?: CSSProperties;
-}) {
+export function BrandMark({ letter = 'VZ', style }: { letter?: string; style?: CSSProperties }) {
   return (
     <span
       style={{
