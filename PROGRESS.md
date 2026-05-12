@@ -4,6 +4,81 @@ Dated bullet entries: completed, blocked, next.
 
 ---
 
+## 2026-05-11 — Phase 4a shipped: server-side PDF generation ✅
+
+**Completed**
+- Installed `@sparticuz/chromium-min` + `playwright-core`. Initial attempt with full `@sparticuz/chromium` failed under pnpm + Vercel tracing (bin/ directory wasn't shipped in the function bundle). Switched to `-min` + remote pack URL — chromium binary is downloaded once on cold start, cached in `/tmp`.
+- `src/lib/pdf/browser.ts` — env-aware launcher (Vercel uses chromium-min, local uses playwright-core cache binary).
+- `/api/zines/[id]/pdf` route — auth-gated, ownership-checked. Copies caller's Supabase session cookies onto the headless browser context, navigates to `/app/zines/[id]/preview`, emulates print media (which hides the chrome via existing `print:hidden` classes), waits for fonts, calls `page.pdf()` with paper-sized viewport per zine format (Letter / Tabloid / Pocket).
+- `DownloadPdfButton` client component on the preview page — fetches the route, reads response as blob, triggers download via hidden anchor.
+- `next.config.ts` — `serverExternalPackages: ['@sparticuz/chromium-min', 'playwright-core']` so the bundler doesn't relocate them.
+- Adaptive masthead font size on cover: 5-tier ramp (≤7 chars → 240px, ≤11 → 180px, ≤18 → 120px, ≤26 → 88px, longer → 64px) so titles like "THE BROADWATER CHRONICLE" fit the ink-bordered frame.
+- Verified end-to-end on production: Adrian downloaded a working PDF of his issue.
+
+**Cold start cost**: first download is ~30–45s (function cold + chromium pack fetch from GitHub). Warm invocations are 8–15s. Acceptable for now; we'll optimize in Phase 4d/Phase 6 if needed.
+
+**Pending in Phase 4**
+- 4b: Public web edition at `/z/[slug]` with shareable OG metadata
+- 4c: Stripe Checkout, three pricing tiers, output chooser screen
+- 4d: Lulu xPress print fulfillment, Stripe webhook → mark `zines.status = 'paid'` → kick PDF gen → email user
+
+---
+
+## 2026-05-11 — Phase 3a shipped: zine renderer (5 spreads, Editorial × Letter) ✅
+
+**Completed**
+- `src/components/zine/`: types.ts (`RenderableZine` denormalized shape), atoms.tsx (Roman numeral converter, deterministic Barcode SVG, BrandMark), zine.tsx (composes spreads in canonical magazine order).
+- Five spread components ported from `/reference/Vision_3.0.html`:
+  - **Cover** — yellow page, ink-bordered frame, dramatic stroked masthead, auto-generated TOC from filled sections, feature block, deterministic barcode keyed off zine ID.
+  - **Editor's Letter** — cream page with drop cap, sticky left-rail meta column, italic signature with location.
+  - **The Forecast** — dark ink page with yellow accents, four-quadrant goals grid (financial / creative / place / body & spirit).
+  - **The Daily Code** — yellow page, 2-column bordered grid of up to ten tenets.
+  - **The Foundation** — cream page with italic editorial quote, two-column achievements list with ink-on-yellow tag badges.
+- `/app/zines/[id]/preview` route with sticky chrome (Back to studio + Print + Download PDF), all hidden in `@print` via `print:hidden` Tailwind classes.
+- "Preview →" link added to the studio header.
+- Adrian confirmed the rendered preview looks good against his actual data.
+
+**Carried forward** (Phase 3b/c)
+- Five more style templates (Lifestyle, Fashion, Art Catalog, Travel, Financial)
+- Tabloid + Pocket format containers
+- Live split-view preview (input left, preview right)
+- "Layout preview before format selection" UX idea — see OPEN_QUESTIONS § G
+
+---
+
+## 2026-05-11 — Phase 2b shipped: AI-assisted sections ✅
+
+**Completed**
+- Installed `@anthropic-ai/sdk`. `src/lib/ai/`:
+  - `client.ts` — lazy-init Anthropic client + shared `BRAND_VOICE` system prompt prefix (strict editorial voice: no preamble, no exclamation points, first-person declarative, specific over generic).
+  - `prompts/{vision,bio,resume,achievements}.ts` — per-section system + user prompt builders.
+  - `stream-route.ts` — shared route helper: auth gate via Supabase, input validation (8K char ceiling), prompt caching on the system block (`cache_control: ephemeral`), `claude-sonnet-4-6` with `thinking: adaptive`, streams text deltas as UTF-8 chunks.
+- Four streaming API routes: `/api/ai/suggest-vision`, `/api/ai/summarize-bio`, `/api/ai/extract-resume`, `/api/ai/extract-achievements`.
+- `useAIStream` client hook — reads response body chunk-by-chunk, supports cancellation via AbortController.
+- `AISectionShell` + four section components (Vision, Bio, Resume, Achievements) — input textarea → Suggest button (streams) → editable output → Accept & save (upserts into `zine_data`) or Discard.
+- Studio passes `display_name` from the Personal section into each AI section so prompts have a byline.
+- Adrian verified Vision section: input notes about "Darius Broadwater" → AI returned a tight first-person editorial vision statement, exactly the voice we wanted. Brand voice prompt landed as designed.
+
+**Adrian to set on Vercel (done 2026-05-11)**: `ANTHROPIC_API_KEY` env var. Sensitive on, Production + Preview environments.
+
+---
+
+## 2026-05-11 — Auth callback cookie-attachment fix
+
+Pre-Phase-2b debugging. The magic-link callback was exchanging the code successfully but cookies set during `exchangeCodeForSession` didn't propagate to the redirect response (cookies set via `cookies()` from next/headers attach to Next's implicit response, not the explicit `NextResponse.redirect()` we returned). Fixed by building the redirect response up front and injecting its cookie store into the Supabase client's setAll handler. Also plumbed `?next=` through `/signin` → form → server action → magic-link redirect URL so authenticated users actually land at `/app` instead of `/`.
+
+---
+
+## 2026-05-11 — Figma deliverables (Phase 1.5) ✅
+
+**Completed**
+- `design/tokens.json` — Tokens Studio v2 schema. 12 brand colors as raw tokens plus semantic aliases referencing them, 3 font families with weight / size / line-height / letter-spacing scales, 9 composite typography styles (masthead, h1–h4, prose, body, eyebrow, meta), spacing scale matching the production CSS, radius/border widths.
+- `design/README.md` — 5-minute Tokens Studio plugin setup walkthrough.
+- `/styleguide` route — single-page interactive reference of every brand value (Colors, Fonts, Type scale, Spacing, Components, Template palettes). Statically prerendered.
+- `design/screenshots/` — 14 PNGs at 1440 and 390 covering every public route, captured via `scripts/screenshot.mjs` (Playwright, later swapped to playwright-core after Phase 4a).
+
+---
+
 ## 2026-05-10 — Phase 2a shipped: schema + app shell + 3 sections
 
 **Completed**
