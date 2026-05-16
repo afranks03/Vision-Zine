@@ -90,6 +90,44 @@ export function HairlineRule({ className }: { className?: string }) {
   return <div className={cn('bg-vz-ink h-px w-full', className)} aria-hidden />;
 }
 
+/**
+ * Status pill — small caps, hard rectangular, color-coded.
+ *
+ * Tone palette aligned with our brand tokens; intentionally not rounded
+ * (rounded = SaaS-y; we keep the editorial slab look). Used on the
+ * dashboard to surface zine + print_order state at a glance.
+ */
+export function StatusPill({
+  tone,
+  children,
+  className,
+}: {
+  tone: 'neutral' | 'draft' | 'paid' | 'in_progress' | 'success' | 'warning' | 'muted';
+  children: ReactNode;
+  className?: string;
+}) {
+  const toneClass = {
+    neutral: 'bg-vz-cream text-vz-ink border-vz-ink',
+    draft: 'bg-vz-paper text-vz-ink border-vz-ink',
+    paid: 'bg-vz-yellow text-vz-ink border-vz-ink',
+    in_progress: 'bg-vz-coral text-vz-cream border-vz-coral',
+    success: 'bg-vz-green text-vz-cream border-vz-green',
+    warning: 'bg-vz-ink text-vz-yellow border-vz-ink',
+    muted: 'bg-transparent text-vz-ink/60 border-vz-ink/30',
+  }[tone];
+  return (
+    <span
+      className={cn(
+        'vz-eyebrow inline-flex items-center border px-2 py-[3px] leading-none',
+        toneClass,
+        className,
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
 /** A line of eyebrow text with bullet dots between items. */
 export function MetaRow({ items, className }: { items: ReactNode[]; className?: string }) {
   return (

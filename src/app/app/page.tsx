@@ -1,8 +1,9 @@
 import type { Metadata } from 'next';
 import Link from 'next/link';
-import { Eyebrow, HeavyRule, MetaRow } from '@/components/editorial';
+import { Eyebrow, HeavyRule, MetaRow, StatusPill } from '@/components/editorial';
 import { createClient } from '@/lib/supabase/server';
-import type { ZineRow } from '@/lib/supabase/types';
+import type { PrintOrderRow, PrintOrderStatus, ZineRow, ZineStatus } from '@/lib/supabase/types';
+import { ZineActionsMenu } from './zine-actions-menu';
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -11,25 +12,55 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
-  const { data: zines } = await supabase
-    .from('zines')
-    .select('*')
-    .order('issue_number', { ascending: false });
 
-  const list = (zines ?? []) as ZineRow[];
+  // Two parallel queries: the user's zines, and the user's print_orders.
+  // We merge them client-side so each zine row knows its latest print
+  // status (the dashboard pill reflects both). Cheaper than a JOIN we'd
+  // have to type by hand and easier to reason about with small N.
+  const [zinesRes, ordersRes] = await Promise.all([
+    supabase.from('zines').select('*').order('issue_number', { ascending: false }),
+    supabase
+      .from('print_orders')
+      .select('*')
+      .order('created_at', { ascending: false }),
+  ]);
+
+  const allZines = (zinesRes.data ?? []) as ZineRow[];
+  const allOrders = (ordersRes.data ?? []) as PrintOrderRow[];
+
+  // Latest print order per zine_id (orders already sorted desc).
+  const latestOrderByZine = new Map<string, PrintOrderRow>();
+  for (const order of allOrders) {
+    if (!latestOrderByZine.has(order.zine_id)) latestOrderByZine.set(order.zine_id, order);
+  }
+
+  // Hide archived from the default list; we'll add a filter toggle later.
+  const visible = allZines.filter((z) => z.status !== 'archived');
+  const archivedCount = allZines.length - visible.length;
+  const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://vision-zine.vercel.app';
 
   return (
     <div className="vz-container vz-section">
       <MetaRow
         className="mb-7"
-        items={[<span key="d">Dashboard</span>, <span key="i">Issue index</span>]}
+        items={[
+          <span key="d">Dashboard</span>,
+          <span key="i">Issue index</span>,
+          ...(archivedCount > 0
+            ? [
+                <span key="a" className="text-vz-ink/50">
+                  {archivedCount} archived
+                </span>,
+              ]
+            : []),
+        ]}
       />
       <div className="grid items-end gap-6 md:grid-cols-[1fr_auto]">
         <h1
           className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
           style={{ fontSize: 'clamp(40px, 7vw, 96px)' }}
         >
-          {list.length > 0 ? (
+          {visible.length > 0 ? (
             <>
               Your <em>zines</em>.
             </>
@@ -43,12 +74,18 @@ export default async function DashboardPage() {
           href="/app/new"
           className="vz-eyebrow bg-vz-ink text-vz-yellow hover:bg-vz-coral hover:text-vz-cream justify-self-start px-5 py-3.5 transition-colors md:justify-self-end"
         >
-          {list.length > 0 ? 'Start Issue ' + romanize(list.length + 1) : 'Start Issue I'}
+          {allZines.length === 0
+            ? 'Start Issue I'
+            : 'Start Issue ' + romanize(allZines.length + 1)}
         </Link>
       </div>
       <HeavyRule className="mt-6" />
 
-      {list.length === 0 ? <EmptyState /> : <ZineList zines={list} />}
+      {visible.length === 0 ? (
+        <EmptyState />
+      ) : (
+        <ZineList zines={visible} orders={latestOrderByZine} siteOrigin={siteOrigin} />
+      )}
     </div>
   );
 }
@@ -94,43 +131,145 @@ function Step({ n, label, children }: { n: string; label: string; children: Reac
   );
 }
 
-function ZineList({ zines }: { zines: ZineRow[] }) {
+function ZineList({
+  zines,
+  orders,
+  siteOrigin,
+}: {
+  zines: ZineRow[];
+  orders: Map<string, PrintOrderRow>;
+  siteOrigin: string;
+}) {
   return (
     <ul className="mt-10 grid gap-0">
-      {zines.map((zine, i) => (
-        <li
-          key={zine.id}
-          className={i === 0 ? 'border-vz-ink border-t' : 'border-vz-ink border-t-0'}
-        >
-          <Link
-            href={`/app/zines/${zine.id}`}
-            className="hover:bg-vz-cream group border-vz-ink flex flex-col gap-4 border-b px-1 py-7 transition-colors sm:flex-row sm:items-end sm:gap-8"
+      {zines.map((zine, i) => {
+        const order = orders.get(zine.id);
+        const display = computeDisplayStatus(zine.status, order?.status);
+        return (
+          <li
+            key={zine.id}
+            className={
+              (i === 0 ? 'border-vz-ink border-t' : 'border-vz-ink border-t-0') +
+              ' hover:bg-vz-cream border-vz-ink group relative border-b transition-colors'
+            }
           >
-            <span className="font-display text-6xl leading-[0.85] tracking-[-0.02em]">
-              {romanize(zine.issue_number)}
-            </span>
-            <div className="flex-1">
-              <h2 className="font-display text-3xl leading-[0.95]">
-                {zine.title || `Issue ${romanize(zine.issue_number)}`}
-              </h2>
-              <MetaRow
-                className="text-vz-ink/80 mt-2.5"
-                items={[
-                  <span key="s">{labelStyle(zine.style)}</span>,
-                  <span key="f">{labelFormat(zine.format)}</span>,
-                  <span key="st">{labelStatus(zine.status)}</span>,
-                  <span key="d">{formatDate(zine.updated_at)}</span>,
-                ]}
-              />
+            {/* Whole-row click target. Sits beneath the relative children
+                so the kebab menu and status pill stay independently
+                interactive. */}
+            <Link
+              href={`/app/zines/${zine.id}`}
+              aria-label={`Edit ${zine.title || `Issue ${romanize(zine.issue_number)}`}`}
+              className="absolute inset-0 z-0"
+            />
+            {/* Content overlay: pointer-events-none on the container so
+                the whole-row Link below catches clicks; interactive
+                children (kebab, tracking link) opt back in via
+                pointer-events-auto. */}
+            <div className="pointer-events-none relative z-10 flex flex-col gap-4 px-1 py-7 sm:flex-row sm:items-end sm:gap-8">
+              <span className="font-display text-6xl leading-[0.85] tracking-[-0.02em]">
+                {romanize(zine.issue_number)}
+              </span>
+              <div className="flex-1">
+                <h2 className="font-display text-3xl leading-[0.95]">
+                  {zine.title || `Issue ${romanize(zine.issue_number)}`}
+                </h2>
+                <MetaRow
+                  className="text-vz-ink/80 mt-2.5"
+                  items={[
+                    <span key="s">{labelStyle(zine.style)}</span>,
+                    <span key="f">{labelFormat(zine.format)}</span>,
+                    <span key="d">{formatDate(zine.updated_at)}</span>,
+                  ]}
+                />
+                {order && <PrintOrderLine order={order} />}
+              </div>
+              <div className="flex items-center gap-3">
+                <StatusPill tone={display.tone}>{display.label}</StatusPill>
+                <div className="pointer-events-auto">
+                  <ZineActionsMenu
+                    zineId={zine.id}
+                    isArchived={zine.status === 'archived'}
+                    siteOrigin={siteOrigin}
+                  />
+                </div>
+              </div>
             </div>
-            <span className="vz-eyebrow text-vz-coral transition-transform group-hover:translate-x-1">
-              Edit →
-            </span>
-          </Link>
-        </li>
-      ))}
+          </li>
+        );
+      })}
     </ul>
   );
+}
+
+function PrintOrderLine({ order }: { order: PrintOrderRow }) {
+  const label = labelPrintOrderStatus(order.status);
+  const shortId = order.id.slice(0, 8);
+  return (
+    <div className="vz-meta text-vz-ink/60 mt-2 flex flex-wrap items-center gap-2.5">
+      <span>Order #{shortId}</span>
+      <span aria-hidden>·</span>
+      <span>{label}</span>
+      {order.tracking_url && (
+        <>
+          <span aria-hidden>·</span>
+          <a
+            href={order.tracking_url}
+            target="_blank"
+            rel="noreferrer"
+            className="text-vz-coral hover:text-vz-ink pointer-events-auto underline-offset-2 hover:underline"
+          >
+            Track shipment
+          </a>
+        </>
+      )}
+      {order.status === 'failed' && order.status_detail && (
+        <span
+          className="text-vz-coral"
+          title={order.status_detail}
+        >
+          (error — hover for detail)
+        </span>
+      )}
+    </div>
+  );
+}
+
+// ---- display-status mapping ----
+
+interface DisplayStatus {
+  label: string;
+  tone: 'neutral' | 'draft' | 'paid' | 'in_progress' | 'success' | 'warning' | 'muted';
+}
+
+/**
+ * Merge zine.status and the latest print_order.status into a single
+ * display state. Print order status (if present) takes precedence for
+ * paid zines, since it's a more granular truth.
+ */
+function computeDisplayStatus(
+  zineStatus: ZineStatus,
+  printStatus: PrintOrderStatus | undefined,
+): DisplayStatus {
+  if (zineStatus === 'archived') return { label: 'Archived', tone: 'muted' };
+  if (zineStatus === 'draft') return { label: 'Draft', tone: 'draft' };
+
+  // Once paid, defer to the print pipeline for the granular state.
+  if (printStatus === 'shipped' || printStatus === 'delivered') {
+    return { label: printStatus === 'delivered' ? 'Delivered' : 'Shipped', tone: 'success' };
+  }
+  if (printStatus === 'in_production' || printStatus === 'submitted') {
+    return { label: 'Printing', tone: 'in_progress' };
+  }
+  if (printStatus === 'failed') return { label: 'Print failed', tone: 'warning' };
+  if (printStatus === 'rendering' || printStatus === 'uploading' || printStatus === 'pending') {
+    return { label: 'Preparing', tone: 'in_progress' };
+  }
+
+  // Paid, no print order (digital-only) or order not yet recorded.
+  if (zineStatus === 'paid') return { label: 'Paid', tone: 'paid' };
+  if (zineStatus === 'generating') return { label: 'Generating', tone: 'in_progress' };
+  if (zineStatus === 'printed') return { label: 'Printed', tone: 'success' };
+  return { label: zineStatus, tone: 'neutral' };
 }
 
 // ---- helpers ----
@@ -183,16 +322,19 @@ function labelFormat(f: string) {
   );
 }
 
-function labelStatus(s: string) {
+function labelPrintOrderStatus(s: PrintOrderStatus) {
   return (
     (
       {
-        draft: 'Draft',
-        paid: 'Paid',
-        generating: 'Generating',
-        printed: 'Printed',
-        archived: 'Archived',
-      } as Record<string, string>
+        pending: 'Queued',
+        rendering: 'Rendering PDF',
+        uploading: 'Uploading',
+        submitted: 'Submitted to printer',
+        in_production: 'In production',
+        shipped: 'Shipped',
+        delivered: 'Delivered',
+        failed: 'Failed',
+      } as Record<PrintOrderStatus, string>
     )[s] ?? s
   );
 }
