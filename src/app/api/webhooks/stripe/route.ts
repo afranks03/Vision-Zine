@@ -1,6 +1,7 @@
 import { after } from 'next/server';
 import { NextResponse, type NextRequest } from 'next/server';
 import { getStripeClient } from '@/lib/billing/stripe';
+import { sendPaymentReceiptEmail } from '@/lib/email/send';
 import { kickoffPrintOrder } from '@/lib/print/pipeline';
 import { createAdminClient } from '@/lib/supabase/admin';
 
@@ -75,6 +76,33 @@ export async function POST(request: NextRequest) {
         return NextResponse.json({ error: result.error }, { status: 500 });
       }
 
+      // Background: send the payment receipt email. Best-effort; failure
+      // doesn't reverse the paid state. Idempotency-keyed on the Stripe
+      // session id so webhook retries don't double-send.
+      const contactEmail =
+        session.customer_details?.email || session.customer_email || '';
+      if (contactEmail) {
+        after(async () => {
+          try {
+            const receiptCtx = await buildReceiptContext(zineId, session.id, {
+              outputs,
+              amountTotal: session.amount_total,
+              currency: session.currency,
+              wantsPrint,
+            });
+            if (receiptCtx) {
+              await sendPaymentReceiptEmail({
+                to: contactEmail,
+                stripeSessionId: session.id,
+                ...receiptCtx,
+              });
+            }
+          } catch (err) {
+            console.error('[stripe webhook] receipt email crashed', err);
+          }
+        });
+      }
+
       // Background: kick off the print pipeline if applicable. We pass
       // the work to next/server's after() so Stripe gets a 200 back
       // immediately but the work continues server-side.
@@ -82,7 +110,6 @@ export async function POST(request: NextRequest) {
       if (wantsPrint && userId && collectedShipping) {
         const stripeShipping = stripeShippingToInput(collectedShipping, session);
         const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://vision-zine.vercel.app';
-        const contactEmail = session.customer_details?.email || session.customer_email || '';
 
         if (stripeShipping && contactEmail) {
           after(async () => {
@@ -186,4 +213,88 @@ async function markZinePaid(zineId: string): Promise<{ ok: true } | { error: str
 
   if (error) return { error: error.message };
   return { ok: true };
+}
+
+/**
+ * Build the prop bag for the payment-receipt email by fetching the zine
+ * title (so the user sees "Receipt for The Broadwater Chronicle" rather
+ * than a UUID) and formatting the Stripe amount/currency for display.
+ *
+ * Returns null if the zine has been deleted between checkout and now —
+ * an edge case but worth handling cleanly.
+ */
+async function buildReceiptContext(
+  zineId: string,
+  stripeSessionId: string,
+  stripeData: {
+    outputs: string[];
+    amountTotal: number | null;
+    currency: string | null;
+    wantsPrint: boolean;
+  },
+): Promise<{
+  zineTitle: string;
+  zineId: string;
+  amountPaid: string;
+  outputsList: string;
+  includesPrint: boolean;
+  paidAt: string;
+} | null> {
+  let client;
+  try {
+    client = createAdminClient();
+  } catch (err) {
+    console.error('[stripe webhook] admin client failed for receipt', err);
+    return null;
+  }
+
+  const { data, error } = await client
+    .from('zines')
+    .select('title, issue_number')
+    .eq('id', zineId)
+    .single();
+  if (error || !data) {
+    console.warn('[stripe webhook] zine not found for receipt', { zineId });
+    return null;
+  }
+  const row = data as { title: string | null; issue_number: number };
+  void stripeSessionId; // not used in props, just for log correlation
+
+  const zineTitle = row.title?.trim() || `Issue ${row.issue_number}`;
+  const amountPaid = formatAmount(stripeData.amountTotal, stripeData.currency);
+  const outputsList = stripeData.outputs.map(prettifyOutput).join(', ') || 'Digital download';
+
+  return {
+    zineTitle,
+    zineId,
+    amountPaid,
+    outputsList,
+    includesPrint: stripeData.wantsPrint,
+    paidAt: new Date().toISOString(),
+  };
+}
+
+function formatAmount(amountTotal: number | null, currency: string | null): string {
+  if (typeof amountTotal !== 'number') return '—';
+  const code = (currency || 'usd').toUpperCase();
+  try {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: code }).format(
+      amountTotal / 100,
+    );
+  } catch {
+    return `${(amountTotal / 100).toFixed(2)} ${code}`;
+  }
+}
+
+function prettifyOutput(o: string): string {
+  return (
+    (
+      {
+        digital: 'Digital PDF',
+        print: 'Printed copy',
+        web: 'Web edition',
+        social: 'Social crops',
+      } as Record<string, string>
+    )[o] ?? o
+  );
 }

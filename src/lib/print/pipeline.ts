@@ -17,6 +17,7 @@
  * forget via `waitUntil()` or accept the latency. ~30–60s per order.
  */
 
+import { sendPrintConfirmationEmail } from '@/lib/email/send';
 import { buildPdfFilename, renderZineToPdf } from '@/lib/pdf/render';
 import { podPackageIdFor, submitPrintJob, type LuluShippingAddress } from '@/lib/print/lulu';
 import { uploadZinePdf } from '@/lib/storage/zine-pdf';
@@ -168,9 +169,40 @@ export async function kickoffPrintOrder(input: KickoffPrintInput): Promise<void>
       luluId: luluJob.id,
       zineId: input.zineId,
     });
+
+    // Confirmation email — fail-soft so a Resend hiccup doesn't fail
+    // the whole pipeline (the order is already submitted to Lulu).
+    try {
+      const cityLine = formatCityLine(input.stripeShipping);
+      await sendPrintConfirmationEmail({
+        to: input.contactEmail,
+        zineTitle: zine.title?.trim() || `Issue ${zine.issue_number}`,
+        zineId: input.zineId,
+        orderId,
+        luluPrintJobId: String(luluJob.id),
+        dispatchEstimate: luluJob.estimated_shipping_dates?.dispatch_min,
+        shipToName: input.stripeShipping.name,
+        shipToCity: cityLine,
+      });
+    } catch (emailErr) {
+      console.error('[print pipeline] confirmation email failed', emailErr);
+    }
   } catch (err) {
     const message = err instanceof Error ? err.message : String(err);
     console.error('[print pipeline] failed', { orderId, error: message });
     await setStatus('failed', { status_detail: message });
   }
+}
+
+/**
+ * Single-line shipping address summary for the confirmation email:
+ * "Brooklyn, NY 11201, US" or "Athens 10557, GR" when state is absent.
+ */
+function formatCityLine(s: KickoffPrintInput['stripeShipping']): string {
+  const parts: string[] = [];
+  if (s.address.city) parts.push(s.address.city);
+  const tail = [s.address.state, s.address.postal_code].filter(Boolean).join(' ');
+  if (tail) parts.push(tail);
+  if (s.address.country) parts.push(s.address.country);
+  return parts.join(', ');
 }
