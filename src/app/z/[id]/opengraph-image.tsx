@@ -1,4 +1,3 @@
- 
 import { ImageResponse } from 'next/og';
 import { createAdminClient } from '@/lib/supabase/admin';
 import { STYLE_PALETTES } from '@/components/zine/styles';

@@ -17,13 +17,7 @@ const FORMATS: { id: ZineFormat; label: string; dims: string }[] = [
  * layout tweaks). Server action revalidates the preview, router.refresh()
  * re-renders.
  */
-export function FormatSwitcher({
-  zineId,
-  current,
-}: {
-  zineId: string;
-  current: ZineFormat;
-}) {
+export function FormatSwitcher({ zineId, current }: { zineId: string; current: ZineFormat }) {
   const [pending, startTransition] = useTransition();
   const router = useRouter();
 

@@ -113,18 +113,7 @@ export async function createCheckoutSession(input: CreateCheckoutInput) {
         ? {
             shipping_address_collection: {
               // Restrict to where Lulu ships reliably. Expand if needed.
-              allowed_countries: [
-                'US',
-                'CA',
-                'GB',
-                'DE',
-                'FR',
-                'IT',
-                'ES',
-                'NL',
-                'AU',
-                'GR',
-              ],
+              allowed_countries: ['US', 'CA', 'GB', 'DE', 'FR', 'IT', 'ES', 'NL', 'AU', 'GR'],
             },
             phone_number_collection: { enabled: true },
           }

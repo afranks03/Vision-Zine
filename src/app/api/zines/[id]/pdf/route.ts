@@ -11,10 +11,7 @@ export const maxDuration = 60;
  * Delegates the actual rendering to lib/pdf/render.ts which is also used
  * by the Stripe webhook print pipeline.
  */
-export async function GET(
-  request: NextRequest,
-  { params }: { params: Promise<{ id: string }> },
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
 
   const supabase = await createClient();
@@ -33,10 +30,7 @@ export async function GET(
   if (error || !zine) {
     return NextResponse.json({ error: 'Zine not found.' }, { status: 404 });
   }
-  const typedZine = zine as Pick<
-    ZineRow,
-    'id' | 'user_id' | 'title' | 'format' | 'issue_number'
-  >;
+  const typedZine = zine as Pick<ZineRow, 'id' | 'user_id' | 'title' | 'format' | 'issue_number'>;
   if (typedZine.user_id !== user.id) {
     return NextResponse.json({ error: 'Not authorized.' }, { status: 403 });
   }

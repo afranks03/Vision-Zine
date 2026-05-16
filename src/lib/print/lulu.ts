@@ -109,6 +109,10 @@ export interface SubmitPrintJobInput {
   externalId: string; // our print_orders.id
   contactEmail: string;
   podPackageId: string;
+  /** Human-readable line-item title. Lulu requires this — it's surfaced
+   *  on shipping paperwork and in their admin dashboard. We pass the
+   *  zine's title through from pipeline.ts. */
+  title: string;
   /** PDF source URL — must be reachable by Lulu (signed URL OK) */
   interiorPdfUrl: string;
   interiorPdfMd5: string;
@@ -131,9 +135,7 @@ export interface LuluPrintJobResponse {
   estimated_shipping_dates?: { dispatch_min?: string; dispatch_max?: string };
 }
 
-export async function submitPrintJob(
-  input: SubmitPrintJobInput,
-): Promise<LuluPrintJobResponse> {
+export async function submitPrintJob(input: SubmitPrintJobInput): Promise<LuluPrintJobResponse> {
   const token = await getAccessToken();
   const body = {
     contact_email: input.contactEmail,
@@ -141,6 +143,7 @@ export async function submitPrintJob(
     line_items: [
       {
         external_id: `${input.externalId}-line-1`,
+        title: input.title,
         printable_normalization: {
           cover: {
             source_url: input.coverPdfUrl,

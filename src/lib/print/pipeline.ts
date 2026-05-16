@@ -102,10 +102,7 @@ export async function kickoffPrintOrder(input: KickoffPrintInput): Promise<void>
     //    fetch /z/[id] without auth. Restore the previous flag at the end.
     const wasPublished = zine.is_published;
     if (!wasPublished) {
-      await admin
-        .from('zines')
-        .update({ is_published: true })
-        .eq('id', input.zineId);
+      await admin.from('zines').update({ is_published: true }).eq('id', input.zineId);
     }
 
     let pdfBuffer: Buffer;
@@ -120,10 +117,7 @@ export async function kickoffPrintOrder(input: KickoffPrintInput): Promise<void>
     } finally {
       // Restore previous publish state regardless of render success.
       if (!wasPublished) {
-        await admin
-          .from('zines')
-          .update({ is_published: false })
-          .eq('id', input.zineId);
+        await admin.from('zines').update({ is_published: false }).eq('id', input.zineId);
       }
     }
 
@@ -149,6 +143,9 @@ export async function kickoffPrintOrder(input: KickoffPrintInput): Promise<void>
       externalId: orderId,
       contactEmail: input.contactEmail,
       podPackageId,
+      // Lulu requires a title on every line item — use the zine's title,
+      // falling back to a generic label if a draft has no title set yet.
+      title: zine.title?.trim() || 'Vision Zine',
       interiorPdfUrl: uploaded.signedUrl,
       interiorPdfMd5: uploaded.md5,
       // For saddle-stitch SKUs Lulu accepts the same PDF as both

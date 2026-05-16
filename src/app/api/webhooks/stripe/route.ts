@@ -81,10 +81,8 @@ export async function POST(request: NextRequest) {
       const collectedShipping = extractShippingDetails(session);
       if (wantsPrint && userId && collectedShipping) {
         const stripeShipping = stripeShippingToInput(collectedShipping, session);
-        const origin =
-          process.env.NEXT_PUBLIC_SITE_URL || 'https://vision-zine.vercel.app';
-        const contactEmail =
-          session.customer_details?.email || session.customer_email || '';
+        const origin = process.env.NEXT_PUBLIC_SITE_URL || 'https://vision-zine.vercel.app';
+        const contactEmail = session.customer_details?.email || session.customer_email || '';
 
         if (stripeShipping && contactEmail) {
           after(async () => {
