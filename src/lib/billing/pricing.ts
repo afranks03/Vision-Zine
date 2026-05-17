@@ -87,7 +87,7 @@ export const OUTPUTS: OutputOption[] = [
   {
     id: 'pdf',
     name: 'Print-ready PDF',
-    description: 'Letter, Tabloid, or Pocket. Print at home or hand to a printer.',
+    description: 'Letter or Pocket. Print at home or hand to a printer.',
     requiresPaid: true,
   },
   {

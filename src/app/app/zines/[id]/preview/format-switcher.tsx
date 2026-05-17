@@ -7,8 +7,7 @@ import type { ZineFormat } from '@/lib/supabase/types';
 
 const FORMATS: { id: ZineFormat; label: string; dims: string }[] = [
   { id: 'letter', label: 'Letter', dims: '8.5 × 11 in' },
-  { id: 'tabloid', label: 'Tabloid', dims: '11 × 17 in' },
-  { id: 'pocket', label: 'Pocket', dims: '4.25 × 5.5 in' },
+  { id: 'pocket', label: 'Pocket', dims: '4.25 × 6.875 in' },
 ];
 
 /**

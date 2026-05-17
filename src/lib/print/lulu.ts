@@ -73,17 +73,25 @@ async function getAccessToken(): Promise<string> {
 }
 
 /**
- * Map our zine format → a Lulu pod_package_id. These are placeholders;
- * Adrian should confirm the actual SKUs in the Lulu xPress product
- * catalog (sandbox API exposes /pod-packages/ for lookup) and adjust.
+ * Map our zine format → a Lulu pod_package_id. Verified against the
+ * sandbox catalog via scripts/lulu-probe.mjs on 2026-05-17:
  *
- * Naming: SIZE_BWBW_PAPER_BIND. e.g.
- *   0850X1100BWSTDPB060UW444MXX — 8.5×11, B&W, saddle-stitch, 60lb, white
+ *   letter (8.5×11)  → 0850X1100BWSTDPB060UW444MXX  · $10.69 unit cost
+ *   pocket (4.25×6.875, Mass Market Paperback)
+ *                    → 0425X0687BWSTDPB060UW444MXX  · $10.04 unit cost
+ *
+ * Code-letter decoder:
+ *   <TrimWxH><Color><Quality><Binding><Paper><Cover>
+ *   BW = B&W · STD = standard · PB = perfect-bound paperback
+ *   060UW444M = 60# uncoated white paper, 444 LPI matte · XX = no cover finish
+ *
+ * Tabloid (11×17) is intentionally absent — Lulu doesn't carry that size.
+ * If we later add a large-format print partner (Blurb, MagCloud), that
+ * lives in its own module; this map stays Lulu-only.
  */
 const POD_PACKAGE_BY_FORMAT: Record<ZineFormat, string> = {
   letter: '0850X1100BWSTDPB060UW444MXX',
-  tabloid: '1100X1700BWSTDPB060UW444MXX',
-  pocket: '0425X0550BWSTDPB060UW444MXX',
+  pocket: '0425X0687BWSTDPB060UW444MXX',
 };
 
 export function podPackageIdFor(format: ZineFormat): string {

@@ -106,7 +106,7 @@ export default function ExamplesPage() {
               <p className="font-serif text-[15px] leading-relaxed">{style.blurb}</p>
               <div className="mt-auto flex items-center justify-between border-t border-current pt-3.5">
                 <Eyebrow>{style.mood}</Eyebrow>
-                <Eyebrow>Letter · Tabloid · Pocket</Eyebrow>
+                <Eyebrow>Letter · Pocket</Eyebrow>
               </div>
             </article>
           ))}

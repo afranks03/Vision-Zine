@@ -286,14 +286,18 @@ function formatAmount(amountTotal: number | null, currency: string | null): stri
   }
 }
 
+/**
+ * Pretty labels for the receipt email's "Outputs" line. Keys must match
+ * the `id`s declared in lib/billing/pricing.ts → OUTPUTS.
+ */
 function prettifyOutput(o: string): string {
   return (
     (
       {
-        digital: 'Digital PDF',
-        print: 'Printed copy',
+        pdf: 'Print-ready PDF',
         web: 'Web edition',
         social: 'Social crops',
+        print: 'Printed copy',
       } as Record<string, string>
     )[o] ?? o
   );

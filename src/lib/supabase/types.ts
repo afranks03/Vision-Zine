@@ -14,7 +14,7 @@ export type ZineStyle =
   | 'travel'
   | 'financial';
 
-export type ZineFormat = 'letter' | 'tabloid' | 'pocket';
+export type ZineFormat = 'letter' | 'pocket';
 
 export type ZineStatus = 'draft' | 'paid' | 'generating' | 'printed' | 'archived';
 

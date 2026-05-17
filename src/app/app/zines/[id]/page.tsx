@@ -254,6 +254,6 @@ function labelStyle(s: string) {
 
 function labelFormat(f: string) {
   return (
-    ({ letter: 'Letter', tabloid: 'Tabloid', pocket: 'Pocket' } as Record<string, string>)[f] ?? f
+    ({ letter: 'Letter', pocket: 'Pocket' } as Record<string, string>)[f] ?? f
   );
 }

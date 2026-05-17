@@ -13,7 +13,7 @@ const FAQ_SECTIONS = [
     questions: [
       {
         q: 'What exactly do I get?',
-        a: 'A print-ready PDF at your chosen size (Letter, Tabloid, or Pocket), a public web edition with a shareable URL, social crops for Instagram and X, and — at the One Issue and Annual tiers — a printed copy shipped to your door from our print partner.',
+        a: 'A print-ready PDF at your chosen size (Letter or Pocket), a public web edition with a shareable URL, social crops for Instagram and X, and — at the One Issue and Annual tiers — a printed copy shipped to your door from our print partner.',
       },
       {
         q: 'How long does it take to make one?',
@@ -64,7 +64,7 @@ const FAQ_SECTIONS = [
     questions: [
       {
         q: 'What sizes do you offer?',
-        a: 'Letter (8.5 × 11 in), Tabloid (11 × 17 in), and Pocket (4.25 × 5.5 in). Each is a different reading experience — the Tabloid feels like a real magazine, the Pocket like a hand-bound journal.',
+        a: 'Letter (8.5 × 11 in) and Pocket (4.25 × 6.875 in, the mass-market paperback trim). Each is a different reading experience — Letter is the editorial coffee-table feel; Pocket is the novel-on-the-plane scale.',
       },
       {
         q: 'Where do you print?',

@@ -60,13 +60,17 @@ export async function renderZineToPdf(opts: RenderPdfOptions): Promise<Buffer> {
   }
 }
 
-/** CSS pixels at 96dpi for each paper size. */
+/**
+ * CSS pixels at 96dpi for each paper size.
+ *
+ * Pocket = 4.25 × 6.875 in (Mass Market Paperback). The "airport novel"
+ * standard. Matches Lulu's `0425X0687...` pod_package_id; previously was
+ * 4.25 × 5.5 but Lulu doesn't carry that exact trim.
+ */
 function paperViewport(format: ZineFormat) {
   switch (format) {
-    case 'tabloid':
-      return { width: 1056, height: 1632 };
     case 'pocket':
-      return { width: 408, height: 528 };
+      return { width: 408, height: 660 };
     case 'letter':
     default:
       return { width: 816, height: 1056 };
@@ -80,10 +84,8 @@ function pdfOptions(format: ZineFormat) {
     preferCSSPageSize: false as const,
   };
   switch (format) {
-    case 'tabloid':
-      return { ...common, format: 'Tabloid' as const };
     case 'pocket':
-      return { ...common, width: '4.25in', height: '5.5in' };
+      return { ...common, width: '4.25in', height: '6.875in' };
     case 'letter':
     default:
       return { ...common, format: 'Letter' as const };

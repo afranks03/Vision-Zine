@@ -75,7 +75,7 @@ export default function AboutPage() {
             <Principle
               n="4"
               title="Print is a first-class citizen."
-              body="Real, printable artifacts at three sizes: Letter, Tabloid, Pocket. The web edition is a courtesy. The PDF and the printed copy are the point."
+              body="Real, printable artifacts at two sizes: Letter and Pocket. The web edition is a courtesy. The PDF and the printed copy are the point."
             />
           </div>
         </div>

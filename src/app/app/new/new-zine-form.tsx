@@ -58,12 +58,11 @@ const FORMATS: { id: ZineFormat; name: string; dims: string; note: string }[] = 
     note: 'The default — handles long reading.',
   },
   {
-    id: 'tabloid',
-    name: 'Tabloid',
-    dims: '11 × 17 in',
-    note: 'Coffee-table sized. The full magazine feel.',
+    id: 'pocket',
+    name: 'Pocket',
+    dims: '4.25 × 6.875 in',
+    note: 'Mass-market paperback. The novel-on-the-plane scale.',
   },
-  { id: 'pocket', name: 'Pocket', dims: '4.25 × 5.5 in', note: 'Hand-bound journal scale.' },
 ];
 
 export function NewZineForm() {
