@@ -1,155 +1,165 @@
 import { romanize } from '../../atoms';
 import type { SpreadPalette } from '../../styles';
 import type { SpreadProps } from '../../types';
-import { getDisplayName } from './_shared';
+import { focalObjectPosition, getDisplayName, seasonFromDate } from './_shared';
 
 /**
- * Fashion cover — coral page, oversized italic stacked title bleeding off
- * the corner, runway pacing, big sans tags, an asymmetric image-block
- * placeholder. High contrast.
+ * Fashion cover layout — Vogue / Cultured reference.
+ *
+ * Move: full-bleed photograph; large condensed masthead behind the
+ * subject (subject's head/shoulders partially occlude the title's
+ * lower half), creating that iconic American-fashion z-stacking
+ * effect. Cover subject's name set vertical along the right edge in
+ * a tight all-caps sans. One coverline at lower-left.
+ *
+ * Photo is positioned via the focal_x/focal_y stored on the zine so
+ * the subject's face stays in the cover's vertical sweet spot even
+ * across different aspect ratios.
  */
-export function FashionCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+export function FashionCover({
+  data,
+  palette,
+  coverImageUrl,
+}: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
-  const title = (zine.title || 'Issue ' + romanize(zine.issue_number)).toUpperCase();
-  const words = title.split(/\s+/).filter(Boolean);
+  const mastheadText = (zine.title ? zine.title : 'VISION').toUpperCase();
+  const season = seasonFromDate(zine.created_at);
+  const year = new Date(zine.created_at).getFullYear();
+  const coverline = zine.cover_subtitle?.trim() || 'A Private Edition';
+
+  const objectPosition = focalObjectPosition(zine.cover_image_focal_x, zine.cover_image_focal_y);
 
   return (
     <article
       className="relative overflow-hidden"
-      style={{ background: palette.bg, color: palette.fg }}
+      style={{ background: palette.bg, color: palette.fg, minHeight: 900 }}
     >
+      {/* Background photo (or placeholder) */}
       <div
-        className="relative grid gap-0"
+        aria-hidden
+        className="absolute inset-0"
         style={{
-          padding: 'clamp(24px, 4vw, 56px)',
-          minHeight: '900px',
-          gridTemplateColumns: '1.4fr 1fr',
+          background: coverImageUrl
+            ? `url("${coverImageUrl}") center/cover no-repeat`
+            : palette.fg,
+          backgroundPosition: objectPosition,
+          opacity: coverImageUrl ? 1 : 0.85,
+        }}
+      />
+      {!coverImageUrl && (
+        <div
+          aria-hidden
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            color: palette.bg,
+            fontFamily: 'var(--font-sans)',
+            fontSize: 12,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            opacity: 0.7,
+          }}
+        >
+          Upload a cover photograph
+        </div>
+      )}
+
+      {/* Top strip — issue / season */}
+      <div
+        className="absolute inset-x-0 top-0 flex items-center justify-between px-8 pt-6"
+        style={{
+          fontFamily: 'var(--font-sans)',
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.18em',
+          textTransform: 'uppercase',
+          color: palette.bg,
+          mixBlendMode: 'difference',
         }}
       >
-        {/* Left: stacked italic title */}
-        <div className="flex flex-col justify-between">
-          <div>
-            <p
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: 10,
-                fontWeight: 700,
-                letterSpacing: '0.18em',
-                textTransform: 'uppercase',
-                marginBottom: 12,
-              }}
-            >
-              Vol. {romanize(zine.issue_number)} · The Runway Edition
-            </p>
-            <h1
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontStyle: 'italic',
-                fontSize: 'clamp(72px, 13vw, 200px)',
-                lineHeight: 0.85,
-                letterSpacing: '-0.04em',
-                fontWeight: 400,
-                wordBreak: 'break-word',
-              }}
-            >
-              {words.map((w, i) => (
-                <span
-                  key={i}
-                  style={{
-                    display: 'block',
-                    marginLeft: `${i * 32}px`,
-                  }}
-                >
-                  {w}
-                </span>
-              ))}
-            </h1>
-          </div>
+        <span>
+          Issue {romanize(zine.issue_number)} · {season} {year}
+        </span>
+        <span>A Vision Zine</span>
+      </div>
 
-          <div
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-            }}
-          >
-            <span style={{ display: 'block', opacity: 0.85 }}>{displayName}</span>
-            <span style={{ display: 'block', color: palette.accent, marginTop: 4 }}>
-              The Spring/Summer Outlook
-            </span>
-          </div>
-        </div>
+      {/* Masthead — large display serif in the cover accent. In
+          well-cropped photos the subject's head/shoulders occlude the
+          lower portion creating the z-stacking effect. */}
+      <h1
+        aria-label={mastheadText}
+        style={{
+          position: 'absolute',
+          top: '6%',
+          left: '4%',
+          right: '4%',
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(72px, 14vw, 220px)',
+          lineHeight: 0.85,
+          letterSpacing: '-0.03em',
+          fontWeight: 400,
+          color: palette.accent,
+          margin: 0,
+          textShadow: '0 2px 22px rgba(0,0,0,0.18)',
+          pointerEvents: 'none',
+          wordBreak: 'break-word',
+          overflowWrap: 'anywhere',
+        }}
+      >
+        {mastheadText}
+      </h1>
 
-        {/* Right: image-block placeholder + ticker */}
-        <div className="flex flex-col gap-4">
-          <div
-            aria-hidden
-            style={{
-              background: palette.fg,
-              color: palette.bg,
-              flex: 1,
-              minHeight: 380,
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              padding: 18,
-            }}
-          >
-            <span
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: 9,
-                fontWeight: 700,
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-              }}
-            >
-              · Cover image ·
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-display)',
-                fontStyle: 'italic',
-                fontSize: 48,
-                lineHeight: 0.9,
-                color: palette.accent,
-                alignSelf: 'flex-end',
-              }}
-            >
-              {(displayName?.[0] ?? 'V').toUpperCase()}
-            </span>
-            <span
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: 9,
-                fontWeight: 700,
-                letterSpacing: '0.2em',
-                textTransform: 'uppercase',
-              }}
-            >
-              No. {zine.issue_number}
-            </span>
-          </div>
+      {/* Subject name — vertical along right edge */}
+      <div
+        aria-label={displayName}
+        style={{
+          position: 'absolute',
+          right: 18,
+          top: '18%',
+          bottom: '12%',
+          writingMode: 'vertical-rl',
+          fontFamily: 'var(--font-sans)',
+          fontSize: 16,
+          fontWeight: 700,
+          letterSpacing: '0.16em',
+          textTransform: 'uppercase',
+          color: palette.bg,
+          textShadow: '0 1px 6px rgba(0,0,0,0.45)',
+        }}
+      >
+        {displayName}
+      </div>
 
-          {/* Tag ticker */}
-          <div
-            style={{
-              borderTop: `1px solid ${palette.fg}`,
-              paddingTop: 12,
-              fontFamily: 'var(--font-sans)',
-              fontSize: 9,
-              fontWeight: 700,
-              letterSpacing: '0.16em',
-              textTransform: 'uppercase',
-              lineHeight: 1.8,
-            }}
-          >
-            Vision · Bio · Career · Forecast · Foundation · Code · Closing
-          </div>
-        </div>
+      {/* Coverline — lower left */}
+      <div
+        className="absolute bottom-8 left-8 max-w-[44%]"
+        style={{
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(22px, 2.4vw, 32px)',
+          lineHeight: 1.05,
+          fontStyle: 'italic',
+          color: palette.bg,
+          textShadow: '0 1px 6px rgba(0,0,0,0.5)',
+        }}
+      >
+        {coverline}
+      </div>
+
+      {/* Bottom-right small-caps tagline */}
+      <div
+        className="absolute right-8 bottom-8"
+        style={{
+          fontFamily: 'var(--font-sans)',
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: palette.bg,
+          mixBlendMode: 'difference',
+        }}
+      >
+        Vol. I · No. {zine.issue_number}
       </div>
     </article>
   );

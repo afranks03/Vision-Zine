@@ -4,11 +4,19 @@ import type { SpreadProps } from '../../types';
 import { buildToc, getDisplayName, mastheadSizeForLength, seasonFromDate } from './_shared';
 
 /**
- * Editorial cover — the canonical reference. Yellow page with an
- * ink-bordered frame, dramatic stroked masthead, generated TOC,
- * decorative italic brand mark, feature block, barcode at the bottom.
+ * Big Type cover layout — the Broadwater Chronicle treatment.
+ *
+ * No photograph. The title fills the page in a stroked display serif.
+ * Issue identifier strip, generated TOC, decorative brand mark, season
+ * subline, barcode. Type-as-poster aesthetic that doubles as the
+ * "magazine cover, but make it editorial-typography" option for users
+ * who don't have a hero photo or specifically want the Wired/Bloomberg
+ * Businessweek typographic-cover feel.
+ *
+ * This was the original Editorial cover (style-keyed); 3d-i renames it
+ * and exposes it as one of five user-selectable cover layouts.
  */
-export function EditorialCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+export function BigTypeCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
   const location = data.personal.location || 'On Earth';
@@ -17,6 +25,7 @@ export function EditorialCover({ data, palette }: SpreadProps & { palette: Sprea
   const mastheadText = (zine.title ? zine.title : 'VISION').toUpperCase();
   const mastheadFontSize = mastheadSizeForLength(mastheadText);
   const tocItems = buildToc(data);
+  const subtitle = zine.cover_subtitle?.trim() || 'The Magazine That Explains the Years Ahead';
 
   return (
     <article
@@ -82,7 +91,7 @@ export function EditorialCover({ data, palette }: SpreadProps & { palette: Sprea
           · {location}
         </div>
 
-        {/* Masthead */}
+        {/* Masthead — the big stroked title */}
         <h1
           aria-label={mastheadText}
           style={{
@@ -116,7 +125,7 @@ export function EditorialCover({ data, palette }: SpreadProps & { palette: Sprea
             textTransform: 'uppercase',
           }}
         >
-          <span>The Magazine That Explains the Years Ahead</span>
+          <span>{subtitle}</span>
           <span className="inline-block size-1 rounded-full bg-current" />
           <span>A Private Edition for {displayName}</span>
         </div>

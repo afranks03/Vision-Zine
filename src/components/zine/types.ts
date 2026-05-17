@@ -28,6 +28,13 @@ export interface RenderableZine {
 
 export interface SpreadProps {
   data: RenderableZine;
+  /**
+   * Pre-signed URL for the cover image, when one has been uploaded.
+   * Resolved at the render entry point (preview route or PDF API) so
+   * cover components don't need to call out to storage themselves.
+   * Undefined for cover_layout='big_type' or before the user uploads.
+   */
+  coverImageUrl?: string;
 }
 
 export interface ZineRootProps {

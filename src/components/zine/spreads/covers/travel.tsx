@@ -1,142 +1,137 @@
 import { romanize } from '../../atoms';
 import type { SpreadPalette } from '../../styles';
 import type { SpreadProps } from '../../types';
-import { getDisplayName, seasonFromDate } from './_shared';
+import { focalObjectPosition, getDisplayName, seasonFromDate } from './_shared';
 
 /**
- * Travel cover — blue page, postcard sensibility. Stamp-style box in the
- * top-right with origin, big italic destination headline, a faux ferry/
- * mileage ticker at the bottom.
+ * Travel cover layout — Frieze / Heroine reference.
+ *
+ * Move: full-bleed photograph; lowercase wide-letterspaced masthead set
+ * vertical along the left edge in display serif (Frieze move). Issue
+ * tag right side, small. Optional cover subtitle along the bottom.
+ * Very quiet — minimal text, lets the photo carry the cover.
  */
-export function TravelCover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+export function TravelCover({
+  data,
+  palette,
+  coverImageUrl,
+}: SpreadProps & { palette: SpreadPalette }) {
   const { zine } = data;
   const displayName = getDisplayName(data);
-  const location = data.personal.location || 'Anywhere';
+  const mastheadText = (zine.title ? zine.title : 'vision').toLowerCase();
   const season = seasonFromDate(zine.created_at);
   const year = new Date(zine.created_at).getFullYear();
-  const title = zine.title || 'Onward';
+  const subtitle = zine.cover_subtitle?.trim();
+  const objectPosition = focalObjectPosition(zine.cover_image_focal_x, zine.cover_image_focal_y);
 
   return (
     <article
       className="relative overflow-hidden"
-      style={{ background: palette.bg, color: palette.fg }}
+      style={{ background: palette.bg, color: palette.fg, minHeight: 900 }}
     >
+      {/* Background photo (or placeholder) */}
       <div
-        className="relative flex flex-col"
+        aria-hidden
+        className="absolute inset-0"
         style={{
-          padding: 'clamp(40px, 6vw, 88px)',
-          minHeight: '900px',
+          background: coverImageUrl
+            ? `url("${coverImageUrl}") center/cover no-repeat`
+            : palette.fg,
+          backgroundPosition: objectPosition,
         }}
-      >
-        {/* Top — issue meta + postcard stamp */}
-        <div className="flex items-start justify-between">
-          <div
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: 10,
-              fontWeight: 700,
-              letterSpacing: '0.2em',
-              textTransform: 'uppercase',
-            }}
-          >
-            <span style={{ display: 'block', color: palette.accent }}>The Waybill</span>
-            <span style={{ display: 'block', marginTop: 4 }}>
-              Issue {romanize(zine.issue_number)} · {season} {year}
-            </span>
-          </div>
-
-          {/* Postcard stamp */}
-          <div
-            aria-hidden
-            style={{
-              border: `2px solid ${palette.accent}`,
-              padding: '12px 18px',
-              transform: 'rotate(6deg)',
-              textAlign: 'center',
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              color: palette.accent,
-              maxWidth: 140,
-            }}
-          >
-            <span style={{ display: 'block', fontSize: 28, lineHeight: 1 }}>↗</span>
-            <span
-              style={{
-                fontFamily: 'var(--font-sans)',
-                fontSize: 9,
-                fontWeight: 700,
-                letterSpacing: '0.16em',
-                textTransform: 'uppercase',
-                marginTop: 4,
-                display: 'block',
-              }}
-            >
-              From {location}
-            </span>
-          </div>
-        </div>
-
-        {/* Title — italic, big */}
-        <div className="flex grow flex-col justify-center">
-          <p
-            style={{
-              fontFamily: 'var(--font-sans)',
-              fontSize: 11,
-              fontWeight: 700,
-              letterSpacing: '0.22em',
-              textTransform: 'uppercase',
-              marginBottom: 18,
-            }}
-          >
-            A magazine of departures
-          </p>
-          <h1
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontStyle: 'italic',
-              fontSize: 'clamp(72px, 14vw, 200px)',
-              lineHeight: 0.9,
-              letterSpacing: '-0.02em',
-              fontWeight: 400,
-              wordBreak: 'break-word',
-              color: palette.accent,
-            }}
-          >
-            {title}
-          </h1>
-          <p
-            style={{
-              fontFamily: 'var(--font-display)',
-              fontSize: 'clamp(22px, 3vw, 36px)',
-              lineHeight: 1.15,
-              marginTop: 24,
-              maxWidth: 600,
-            }}
-          >
-            From the desk of {displayName}, this year.
-          </p>
-        </div>
-
-        {/* Mileage ticker */}
+      />
+      {!coverImageUrl && (
         <div
+          aria-hidden
+          className="absolute inset-0 flex items-center justify-center"
           style={{
-            borderTop: `1px solid ${palette.fg}`,
-            paddingTop: 14,
-            display: 'flex',
-            justifyContent: 'space-between',
-            gap: 18,
+            color: palette.bg,
             fontFamily: 'var(--font-sans)',
-            fontSize: 9,
+            fontSize: 12,
             fontWeight: 700,
             letterSpacing: '0.18em',
             textTransform: 'uppercase',
+            opacity: 0.7,
           }}
         >
-          <span>Brooklyn 0 km</span>
-          <span>Athens 7,860</span>
-          <span>Anywhere ∞</span>
-          <span>Volume {zine.issue_number}</span>
+          Upload a cover photograph
         </div>
+      )}
+
+      {/* Vertical masthead — lowercase display serif, wide letterspacing */}
+      <h1
+        aria-label={mastheadText}
+        style={{
+          position: 'absolute',
+          left: 26,
+          top: '7%',
+          bottom: '7%',
+          writingMode: 'vertical-rl',
+          transform: 'rotate(180deg)',
+          fontFamily: 'var(--font-display)',
+          fontSize: 'clamp(54px, 7vw, 110px)',
+          letterSpacing: '0.04em',
+          lineHeight: 1,
+          fontWeight: 400,
+          color: palette.bg,
+          textShadow: '0 1px 12px rgba(0,0,0,0.35)',
+          margin: 0,
+        }}
+      >
+        {mastheadText}
+      </h1>
+
+      {/* Right-side issue tag — small, vertical */}
+      <div
+        style={{
+          position: 'absolute',
+          right: 22,
+          top: '6%',
+          writingMode: 'vertical-rl',
+          fontFamily: 'var(--font-sans)',
+          fontSize: 10,
+          fontWeight: 700,
+          letterSpacing: '0.24em',
+          textTransform: 'uppercase',
+          color: palette.bg,
+          textShadow: '0 1px 6px rgba(0,0,0,0.4)',
+        }}
+      >
+        Issue {romanize(zine.issue_number)} · {season} {year}
+      </div>
+
+      {/* Optional cover subtitle — italic display, bottom band */}
+      {subtitle && (
+        <div
+          className="absolute right-0 bottom-12 left-24 px-8"
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(22px, 2.4vw, 32px)',
+            lineHeight: 1.15,
+            color: palette.bg,
+            textShadow: '0 1px 8px rgba(0,0,0,0.5)',
+            maxWidth: '70%',
+          }}
+        >
+          {subtitle}
+        </div>
+      )}
+
+      {/* Bottom-right tiny credit */}
+      <div
+        className="absolute right-6 bottom-5"
+        style={{
+          fontFamily: 'var(--font-sans)',
+          fontSize: 9,
+          fontWeight: 700,
+          letterSpacing: '0.2em',
+          textTransform: 'uppercase',
+          color: palette.bg,
+          mixBlendMode: 'difference',
+        }}
+      >
+        {displayName} · Vol. I
       </div>
     </article>
   );

@@ -1,4 +1,48 @@
+import type { CoverAccent } from '@/lib/supabase/types';
 import type { RenderableZine } from '../../types';
+
+/**
+ * Brand-locked accent swatches for cover composition. Six hot colors,
+ * each used by exactly one cover element (masthead emphasis, vertical
+ * name, block fill, etc.) so the rest of the page stays disciplined.
+ *
+ * Keep this in sync with the check constraint in
+ * supabase/migrations/20260517160000_add_cover_system.sql.
+ */
+export const ACCENT_HEX: Record<CoverAccent, string> = {
+  coral: '#E8584C',
+  yellow: '#FFD629',
+  magenta: '#D62B7E',
+  blue: '#1F4E89',
+  green: '#2A6E3F',
+  ink: '#0A0A0A',
+};
+
+/** Human label for a cover accent — used by the studio composer. */
+export const ACCENT_LABEL: Record<CoverAccent, string> = {
+  coral: 'Coral',
+  yellow: 'Yellow',
+  magenta: 'Magenta',
+  blue: 'Deep Blue',
+  green: 'Forest',
+  ink: 'Ink',
+};
+
+/**
+ * CSS `object-position` string from the focal point stored on the zine.
+ * Used by photo-based cover layouts to keep the subject in frame
+ * regardless of the photo's aspect ratio.
+ */
+export function focalObjectPosition(focalX: number, focalY: number): string {
+  const x = clamp01(focalX) * 100;
+  const y = clamp01(focalY) * 100;
+  return `${x.toFixed(1)}% ${y.toFixed(1)}%`;
+}
+
+function clamp01(n: number): number {
+  if (!Number.isFinite(n)) return 0.5;
+  return Math.max(0, Math.min(1, n));
+}
 
 /** Lowercase season name from a created_at ISO timestamp. */
 export function seasonFromDate(iso: string): string {

@@ -1,30 +1,41 @@
 import type { SpreadPalette } from '../styles';
 import type { SpreadProps } from '../types';
-import { ArtCatalogCover } from './covers/art-catalog';
-import { EditorialCover } from './covers/editorial';
+import { ACCENT_HEX } from './covers/_shared';
+import { BigTypeCover } from './covers/big-type';
+import { DailyLifeCover } from './covers/daily-life';
+import { DesignCover } from './covers/design';
 import { FashionCover } from './covers/fashion';
-import { FinancialCover } from './covers/financial';
-import { LifestyleCover } from './covers/lifestyle';
 import { TravelCover } from './covers/travel';
 
 /**
- * Cover router — picks the per-style cover variant. Each style gets a
- * structurally distinct layout, not just a recolored Editorial cover.
+ * Cover router (Phase 3d-i). Dispatches on `zine.cover_layout` — the
+ * new layout field that's independent of `zine.style`. The accent
+ * color is overridden into the palette from `zine.cover_accent` so
+ * the cover gets the user's hot-color choice without disturbing the
+ * inner spreads' palette.
+ *
+ * The pre-3d-i version dispatched on `zine.style`; the migration
+ * 20260517160000 backfilled cover_layout from style so existing
+ * zines keep their previous cover treatment.
  */
-export function Cover({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
-  switch (data.zine.style) {
-    case 'lifestyle':
-      return <LifestyleCover data={data} palette={palette} />;
+export function Cover(props: SpreadProps & { palette: SpreadPalette }) {
+  const { data, palette } = props;
+  const composed: SpreadPalette = {
+    ...palette,
+    accent: ACCENT_HEX[data.zine.cover_accent],
+  };
+
+  switch (data.zine.cover_layout) {
     case 'fashion':
-      return <FashionCover data={data} palette={palette} />;
-    case 'art_catalog':
-      return <ArtCatalogCover data={data} palette={palette} />;
+      return <FashionCover {...props} palette={composed} />;
     case 'travel':
-      return <TravelCover data={data} palette={palette} />;
-    case 'financial':
-      return <FinancialCover data={data} palette={palette} />;
-    case 'editorial':
+      return <TravelCover {...props} palette={composed} />;
+    case 'design':
+      return <DesignCover {...props} palette={composed} />;
+    case 'daily_life':
+      return <DailyLifeCover {...props} palette={composed} />;
+    case 'big_type':
     default:
-      return <EditorialCover data={data} palette={palette} />;
+      return <BigTypeCover {...props} palette={composed} />;
   }
 }

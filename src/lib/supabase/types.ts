@@ -18,6 +18,25 @@ export type ZineFormat = 'letter' | 'pocket';
 
 export type ZineStatus = 'draft' | 'paid' | 'generating' | 'printed' | 'archived';
 
+/**
+ * Cover layout (Phase 3d-i). Independent of `style`: a user can have a
+ * 'fashion' style zine with a 'big_type' cover, etc.
+ *
+ *   fashion     — full-bleed photo, masthead obscured by subject, name vertical right
+ *   travel      — full-bleed photo, lowercase masthead vertical left
+ *   design      — block masthead corner, scattered/rotated title letters
+ *   daily_life  — centered photo, calm masthead, contributor strip
+ *   big_type    — no photograph; title fills the cover (the Broadwater Chronicle look)
+ */
+export type CoverLayout = 'fashion' | 'travel' | 'design' | 'daily_life' | 'big_type';
+
+/**
+ * Cover accent — one slot of expressive color over the otherwise restrained
+ * cover palette. Six fixed swatches, brand-locked. Maps to hex in code
+ * (see src/components/zine/spreads/covers/_shared.ts).
+ */
+export type CoverAccent = 'coral' | 'yellow' | 'magenta' | 'blue' | 'green' | 'ink';
+
 export type SectionKey =
   | 'personal'
   | 'vision'
@@ -48,6 +67,13 @@ export interface ZineRow {
   status: ZineStatus;
   /** When true, /z/[id] renders publicly without auth. */
   is_published: boolean;
+  /** Phase 3d-i: cover composition fields. */
+  cover_layout: CoverLayout;
+  cover_image_path: string | null;
+  cover_image_focal_x: number;
+  cover_image_focal_y: number;
+  cover_accent: CoverAccent;
+  cover_subtitle: string | null;
   created_at: string;
   updated_at: string;
 }
