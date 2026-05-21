@@ -3,7 +3,13 @@
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
-import type { SectionKey, ZineFormat, ZineStyle } from '@/lib/supabase/types';
+import type {
+  CoverAccent,
+  CoverLayout,
+  SectionKey,
+  ZineFormat,
+  ZineStyle,
+} from '@/lib/supabase/types';
 
 /**
  * Server actions for the authenticated app: create a zine, save a section.
@@ -96,6 +102,104 @@ export async function setZineStyle(zineId: string, style: ZineStyle) {
   revalidatePath(`/app/zines/${zineId}`);
   revalidatePath(`/app/zines/${zineId}/preview`);
   return { ok: true as const };
+}
+
+/* ----- Phase 3d-i-b: cover composer setters ----- */
+
+/**
+ * Set the zine title (was previously only settable at creation time).
+ * The cover composer surfaces the title field because "title" is most
+ * fundamentally a cover concern in editorial design.
+ */
+export async function setZineTitle(zineId: string, title: string) {
+  const supabase = await createClient();
+  const trimmed = title.trim();
+  const { error } = await supabase
+    .from('zines')
+    .update({ title: trimmed.length > 0 ? trimmed : null })
+    .eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
+export async function setCoverLayout(zineId: string, cover_layout: CoverLayout) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('zines').update({ cover_layout }).eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
+export async function setCoverAccent(zineId: string, cover_accent: CoverAccent) {
+  const supabase = await createClient();
+  const { error } = await supabase.from('zines').update({ cover_accent }).eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
+export async function setCoverSubtitle(zineId: string, subtitle: string) {
+  const supabase = await createClient();
+  const trimmed = subtitle.trim();
+  const { error } = await supabase
+    .from('zines')
+    .update({ cover_subtitle: trimmed.length > 0 ? trimmed : null })
+    .eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
+/**
+ * Save the focal-point position (0..1, both axes). The cover's CSS
+ * `object-position` reads from these, so the subject stays in frame
+ * across the different photo-bleed layouts.
+ */
+export async function setCoverFocalPoint(zineId: string, x: number, y: number) {
+  const cx = clamp01(x);
+  const cy = clamp01(y);
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('zines')
+    .update({ cover_image_focal_x: cx, cover_image_focal_y: cy })
+    .eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
+/**
+ * Clear the cover image (sets path to null). Doesn't delete the file
+ * from storage — storage cleanup is a follow-up cron concern, not
+ * critical-path for the composer.
+ */
+export async function clearCoverImage(zineId: string) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('zines')
+    .update({ cover_image_path: null })
+    .eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
+function clamp01(n: number): number {
+  if (!Number.isFinite(n)) return 0.5;
+  return Math.max(0, Math.min(1, n));
 }
 
 export async function setZineFormat(zineId: string, format: ZineFormat) {

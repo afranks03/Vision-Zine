@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import { Eyebrow, Meta } from '@/components/editorial';
 import { Zine } from '@/components/zine/zine';
 import type { RenderableZine } from '@/components/zine/types';
+import { signCoverUrl } from '@/lib/storage/zine-cover';
 import { createAdminClient } from '@/lib/supabase/admin';
 import type {
   AchievementsContent,
@@ -98,9 +99,13 @@ export default async function PublicZinePage({ params }: Props) {
   const data = await loadZine(id);
   if (!data) notFound();
 
+  const coverImageUrl = data.zine.cover_image_path
+    ? ((await signCoverUrl(data.zine.cover_image_path)) ?? undefined)
+    : undefined;
+
   return (
     <div className="bg-vz-oat min-h-screen">
-      <Zine data={data} />
+      <Zine data={data} coverImageUrl={coverImageUrl} />
       <PublicFooter zineId={id} />
     </div>
   );

@@ -42,4 +42,11 @@ export interface ZineRootProps {
   /** Style and format are read off `data.zine` but exposed here for override during preview. */
   styleOverride?: ZineStyle;
   formatOverride?: ZineFormat;
+  /**
+   * Pre-signed URL for the cover photograph (Phase 3d-i). Render
+   * entry points (preview, web edition, PDF) sign the URL with the
+   * admin client and pass it down so cover layouts can use it as a
+   * full-bleed background.
+   */
+  coverImageUrl?: string;
 }

@@ -6,6 +6,7 @@ import { STYLE_LABELS } from '@/components/zine/styles';
 import { Zine } from '@/components/zine/zine';
 import type { RenderableZine } from '@/components/zine/types';
 import { createClient } from '@/lib/supabase/server';
+import { signCoverUrl } from '@/lib/storage/zine-cover';
 import type {
   AchievementsContent,
   BioContent,
@@ -48,6 +49,9 @@ export default async function PreviewPage({ params }: Props) {
   const zine = zineRes.data as ZineRow;
   const sections = (sectionsRes.data ?? []) as ZineDataRow[];
   const data = denormalize(zine, sections);
+  const coverImageUrl = zine.cover_image_path
+    ? ((await signCoverUrl(zine.cover_image_path)) ?? undefined)
+    : undefined;
 
   return (
     <div className="bg-vz-oat min-h-screen">
@@ -85,7 +89,7 @@ export default async function PreviewPage({ params }: Props) {
         </div>
       </div>
 
-      <Zine data={data} />
+      <Zine data={data} coverImageUrl={coverImageUrl} />
     </div>
   );
 }

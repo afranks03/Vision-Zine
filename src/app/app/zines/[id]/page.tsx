@@ -3,9 +3,11 @@ import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { BulletDot, Eyebrow, HairlineRule, Meta } from '@/components/editorial';
 import { createClient } from '@/lib/supabase/server';
+import { signCoverUrl } from '@/lib/storage/zine-cover';
 import type { SectionContent, SectionKey, ZineDataRow, ZineRow } from '@/lib/supabase/types';
 import { AchievementsSection } from './_sections/achievements-section';
 import { BioSection } from './_sections/bio-section';
+import { CoverSection } from './_sections/cover-section';
 import { GoalsSection } from './_sections/goals-section';
 import { PersonalSection } from './_sections/personal-section';
 import { ResumeSection } from './_sections/resume-section';
@@ -23,10 +25,14 @@ interface Props {
 }
 
 /**
- * Section index — the order they appear in the left rail and the canonical
- * label/copy for each. Marked AI = needs Phase 2b integration.
+ * Studio nav entries. "Cover" is a special non-section entry — its data
+ * lives on the `zines` row (cover_layout, cover_image_path, etc.), not
+ * in zine_data. Everything else maps 1:1 to a zine_data section key.
  */
-const SECTIONS: { key: SectionKey; label: string; ai: boolean }[] = [
+type StudioNavKey = 'cover' | SectionKey;
+
+const SECTIONS: { key: StudioNavKey; label: string; ai: boolean }[] = [
+  { key: 'cover', label: 'Cover', ai: false },
   { key: 'personal', label: 'Personal', ai: false },
   { key: 'vision', label: 'Vision Statement', ai: true },
   { key: 'bio', label: 'Bio', ai: true },
@@ -39,14 +45,14 @@ const SECTIONS: { key: SectionKey; label: string; ai: boolean }[] = [
   { key: 'coauthor', label: 'Co-author', ai: false },
 ];
 
-function isSectionKey(s: string | undefined): s is SectionKey {
+function isStudioNavKey(s: string | undefined): s is StudioNavKey {
   return !!s && SECTIONS.some((sec) => sec.key === s);
 }
 
 export default async function StudioPage({ params, searchParams }: Props) {
   const { id } = await params;
   const sp = await searchParams;
-  const sectionKey: SectionKey = isSectionKey(sp.section) ? sp.section : 'personal';
+  const sectionKey: StudioNavKey = isStudioNavKey(sp.section) ? sp.section : 'cover';
 
   const supabase = await createClient();
 
@@ -67,6 +73,11 @@ export default async function StudioPage({ params, searchParams }: Props) {
   function contentFor<K extends SectionKey>(key: K): Partial<SectionContent<K>> {
     return (sectionMap.get(key) ?? {}) as Partial<SectionContent<K>>;
   }
+
+  // Sign the cover image URL on the server (admin-client mediated) and
+  // pass it down to the client composer. Null when no cover image has
+  // been uploaded yet, in which case the composer shows the upload zone.
+  const coverImageUrl = zine.cover_image_path ? await signCoverUrl(zine.cover_image_path) : null;
 
   return (
     <div className="vz-container py-7">
@@ -110,7 +121,16 @@ export default async function StudioPage({ params, searchParams }: Props) {
           <ol className="border-vz-ink border-t">
             {SECTIONS.map((sec, i) => {
               const isActive = sec.key === sectionKey;
-              const isFilled = sectionMap.has(sec.key);
+              const isFilled =
+                sec.key === 'cover'
+                  ? // Cover counts as "filled" when the user has either
+                    // moved off the default layout, uploaded a photo, or
+                    // chosen a non-default accent.
+                    zine.cover_image_path !== null ||
+                    zine.cover_layout !== 'big_type' ||
+                    zine.cover_accent !== 'coral' ||
+                    !!zine.cover_subtitle
+                  : sectionMap.has(sec.key as SectionKey);
               return (
                 <li key={sec.key} className="border-vz-ink border-b">
                   <Link
@@ -143,7 +163,13 @@ export default async function StudioPage({ params, searchParams }: Props) {
 
         {/* Editor */}
         <section className="bg-vz-paper border-vz-ink min-h-[480px] border p-8">
-          {renderSection(zine.id, sectionKey, contentFor, displayNameFromPersonal(contentFor))}
+          {renderSection(
+            zine,
+            sectionKey,
+            contentFor,
+            displayNameFromPersonal(contentFor),
+            coverImageUrl,
+          )}
         </section>
       </div>
     </div>
@@ -151,12 +177,16 @@ export default async function StudioPage({ params, searchParams }: Props) {
 }
 
 function renderSection(
-  zineId: string,
-  key: SectionKey,
+  zine: ZineRow,
+  key: StudioNavKey,
   contentFor: <K extends SectionKey>(k: K) => Partial<SectionContent<K>>,
   displayName: string | undefined,
+  coverImageUrl: string | null,
 ) {
+  const zineId = zine.id;
   switch (key) {
+    case 'cover':
+      return <CoverSection zine={zine} initialCoverUrl={coverImageUrl} />;
     case 'personal':
       return <PersonalSection zineId={zineId} initial={contentFor('personal')} />;
     case 'goals':
