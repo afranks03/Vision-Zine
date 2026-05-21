@@ -124,15 +124,31 @@ export function CoverSection({
     setUploadError(null);
     setUploading(true);
     try {
+      // Resize client-side to dodge Vercel's 4.5 MB serverless body limit.
+      // 2400px on the long edge is still print-sharp at our pocket and
+      // letter trims (4.25in × 300dpi = 1275px; letter cover ~2550px).
+      const resized = await resizeImage(file, 2400, 0.85);
+
       const fd = new FormData();
-      fd.append('file', file);
+      fd.append('file', resized);
       const res = await fetch(`/api/zines/${zine.id}/cover`, {
         method: 'POST',
         body: fd,
       });
-      const body = (await res.json()) as { ok?: boolean; signedUrl?: string; error?: string };
-      if (!res.ok || !body.signedUrl) {
-        throw new Error(body.error ?? `Upload failed (${res.status})`);
+
+      // Some upstream errors (413, 502) come back as plain text or HTML
+      // instead of JSON. Read defensively so the user sees a real
+      // message instead of "Unexpected token 'R'".
+      const body = await readJsonOrText(res);
+      if (!res.ok) {
+        const msg =
+          typeof body === 'string'
+            ? body || `Upload failed (HTTP ${res.status})`
+            : (body.error ?? `Upload failed (HTTP ${res.status})`);
+        throw new Error(msg);
+      }
+      if (typeof body === 'string' || !body.signedUrl) {
+        throw new Error('Upload succeeded but no URL returned.');
       }
       setCoverUrl(body.signedUrl);
       setFocal({ x: 0.5, y: 0.5 });
@@ -201,7 +217,7 @@ export function CoverSection({
             onChange={(e) => setSubtitle(e.target.value)}
             onBlur={commitSubtitle}
             placeholder="A magazine of departures"
-            className="border-vz-ink bg-vz-cream font-serif w-full border px-4 py-3 text-base italic focus:outline-none"
+            className="border-vz-ink bg-vz-cream w-full border px-4 py-3 font-serif text-base italic focus:outline-none"
           />
           <p className="vz-meta text-vz-ink/50 mt-2">
             One short line shown near the cover photo. Fashion / Travel / Design / Daily Life only.
@@ -256,7 +272,9 @@ export function CoverSection({
                 aria-label={a.label}
                 aria-pressed={active}
                 className={`border-vz-ink relative size-14 border transition-transform ${
-                  active ? 'ring-vz-ink scale-105 ring-2 ring-offset-2 ring-offset-vz-paper' : 'hover:scale-105'
+                  active
+                    ? 'ring-vz-ink ring-offset-vz-paper scale-105 ring-2 ring-offset-2'
+                    : 'hover:scale-105'
                 }`}
                 style={{ background: a.hex }}
               >
@@ -281,9 +299,7 @@ export function CoverSection({
       <section className={isPhotoLayout ? '' : 'opacity-60'}>
         <div className="flex items-baseline justify-between">
           <Eyebrow className="text-vz-ink">Photograph</Eyebrow>
-          {!isPhotoLayout && (
-            <Eyebrow className="text-vz-ink/40">Not used by Big Type</Eyebrow>
-          )}
+          {!isPhotoLayout && <Eyebrow className="text-vz-ink/40">Not used by Big Type</Eyebrow>}
         </div>
 
         {coverUrl ? (
@@ -389,11 +405,9 @@ function UploadZone({
         {uploading ? 'Uploading…' : 'Drop a photograph here'}
       </p>
       <p className="vz-meta text-vz-ink/50">
-        or click to pick a file · JPG, PNG, WebP · up to 12 MB
+        or click to pick a file · JPG, PNG, WebP · resized to fit
       </p>
-      {error && (
-        <p className="font-serif text-vz-coral mt-3 max-w-prose text-sm">{error}</p>
-      )}
+      {error && <p className="text-vz-coral mt-3 max-w-prose font-serif text-sm">{error}</p>}
     </div>
   );
 }
@@ -501,8 +515,8 @@ function FocalPointPicker({
         </div>
       </div>
       <p className="vz-meta text-vz-ink/60">
-        Drag anywhere on the image to set the focal point. Subject stays in frame across all
-        cover layouts.
+        Drag anywhere on the image to set the focal point. Subject stays in frame across all cover
+        layouts.
       </p>
     </div>
   );
@@ -511,4 +525,76 @@ function FocalPointPicker({
 function clamp01(n: number): number {
   if (!Number.isFinite(n)) return 0.5;
   return Math.max(0, Math.min(1, n));
+}
+
+/**
+ * Resize an image client-side to keep uploads under Vercel's serverless
+ * request body limit (~4.5 MB). We draw to an offscreen canvas at the
+ * target long-edge size and re-encode as JPEG. PNG and WebP inputs
+ * lose transparency by design — cover photos are opaque so that's fine.
+ *
+ * Falls back to the original File if the browser doesn't support the
+ * needed APIs (e.g., very old Safari) — the server will still cap at
+ * its own MAX_BYTES.
+ */
+async function resizeImage(
+  file: File,
+  maxLongEdge: number,
+  jpegQuality: number,
+): Promise<File> {
+  if (typeof document === 'undefined' || typeof URL.createObjectURL !== 'function') {
+    return file;
+  }
+  const dataUrl = URL.createObjectURL(file);
+  try {
+    const img = await new Promise<HTMLImageElement>((resolve, reject) => {
+      const el = new Image();
+      el.onload = () => resolve(el);
+      el.onerror = () => reject(new Error('Could not read the image.'));
+      el.src = dataUrl;
+    });
+    const longEdge = Math.max(img.naturalWidth, img.naturalHeight);
+    // No resize needed — skip the canvas re-encode entirely.
+    if (longEdge <= maxLongEdge && file.size <= 3 * 1024 * 1024) {
+      return file;
+    }
+    const scale = Math.min(1, maxLongEdge / longEdge);
+    const width = Math.round(img.naturalWidth * scale);
+    const height = Math.round(img.naturalHeight * scale);
+    const canvas = document.createElement('canvas');
+    canvas.width = width;
+    canvas.height = height;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return file;
+    ctx.drawImage(img, 0, 0, width, height);
+
+    const blob = await new Promise<Blob | null>((resolve) =>
+      canvas.toBlob(resolve, 'image/jpeg', jpegQuality),
+    );
+    if (!blob) return file;
+    // Preserve the original filename but force the .jpg extension since
+    // we've re-encoded to JPEG.
+    const base = file.name.replace(/\.[a-z0-9]+$/i, '') || 'cover';
+    return new File([blob], `${base}.jpg`, { type: 'image/jpeg' });
+  } finally {
+    URL.revokeObjectURL(dataUrl);
+  }
+}
+
+/**
+ * Parse a fetch response defensively. Returns the JSON body if
+ * present and valid, the text body if it isn't JSON, or an empty
+ * string for opaque responses. Avoids the "Unexpected token" crash
+ * when an upstream (Vercel, nginx) returns a non-JSON error page.
+ */
+async function readJsonOrText(
+  res: Response,
+): Promise<{ ok?: boolean; signedUrl?: string; error?: string } | string> {
+  const text = await res.text();
+  if (!text) return '';
+  try {
+    return JSON.parse(text);
+  } catch {
+    return text.slice(0, 200);
+  }
 }
