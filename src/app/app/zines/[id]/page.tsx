@@ -13,6 +13,7 @@ import { PersonalSection } from './_sections/personal-section';
 import { ResumeSection } from './_sections/resume-section';
 import { SectionPlaceholder } from './_sections/section-placeholder';
 import { TenetsSection } from './_sections/tenets-section';
+import { TypographySection } from './_sections/typography-section';
 import { VisionSection } from './_sections/vision-section';
 
 export const metadata: Metadata = {
@@ -29,10 +30,11 @@ interface Props {
  * lives on the `zines` row (cover_layout, cover_image_path, etc.), not
  * in zine_data. Everything else maps 1:1 to a zine_data section key.
  */
-type StudioNavKey = 'cover' | SectionKey;
+type StudioNavKey = 'cover' | 'typography' | SectionKey;
 
 const SECTIONS: { key: StudioNavKey; label: string; ai: boolean }[] = [
   { key: 'cover', label: 'Cover', ai: false },
+  { key: 'typography', label: 'Typography', ai: false },
   { key: 'personal', label: 'Personal', ai: false },
   { key: 'vision', label: 'Vision Statement', ai: true },
   { key: 'bio', label: 'Bio', ai: true },
@@ -130,7 +132,9 @@ export default async function StudioPage({ params, searchParams }: Props) {
                     zine.cover_layout !== 'big_type' ||
                     zine.cover_accent !== 'coral' ||
                     !!zine.cover_subtitle
-                  : sectionMap.has(sec.key as SectionKey);
+                  : sec.key === 'typography'
+                    ? zine.typography_preset !== 'editorial'
+                    : sectionMap.has(sec.key as SectionKey);
               return (
                 <li key={sec.key} className="border-vz-ink border-b">
                   <Link
@@ -187,6 +191,8 @@ function renderSection(
   switch (key) {
     case 'cover':
       return <CoverSection zine={zine} initialCoverUrl={coverImageUrl} />;
+    case 'typography':
+      return <TypographySection zine={zine} />;
     case 'personal':
       return <PersonalSection zineId={zineId} initial={contentFor('personal')} />;
     case 'goals':
@@ -283,7 +289,5 @@ function labelStyle(s: string) {
 }
 
 function labelFormat(f: string) {
-  return (
-    ({ letter: 'Letter', pocket: 'Pocket' } as Record<string, string>)[f] ?? f
-  );
+  return ({ letter: 'Letter', pocket: 'Pocket' } as Record<string, string>)[f] ?? f;
 }

@@ -1,3 +1,4 @@
+import { presetCssVars } from '@/lib/typography/presets';
 import { Cover } from './spreads/cover';
 import { DailyCode } from './spreads/daily-code';
 import { EditorsLetter } from './spreads/letter';
@@ -17,9 +18,10 @@ import type { ZineRootProps } from './types';
  */
 export function Zine({ data, coverImageUrl }: ZineRootProps) {
   const palette = STYLE_PALETTES[data.zine.style];
+  const typographyStyle = presetCssVars(data.zine.typography_preset);
 
   return (
-    <div className="zine-root flex flex-col">
+    <div className="zine-root flex flex-col" style={typographyStyle}>
       <Cover data={data} palette={palette.cover} coverImageUrl={coverImageUrl} />
       <EditorsLetter data={data} palette={palette.letter} />
       <Forecast data={data} palette={palette.forecast} />

@@ -1,26 +1,12 @@
 import type { Metadata } from 'next';
-import { Archivo, DM_Serif_Display, Source_Serif_4 } from 'next/font/google';
+import { allFontVariables } from '@/lib/typography/presets';
 import './globals.css';
 
-// Editorial display — used for headlines and the magazine masthead.
-const dmSerifDisplay = DM_Serif_Display({
-  variable: '--font-display',
-  subsets: ['latin'],
-  weight: ['400'],
-  style: ['normal', 'italic'],
-});
-
-// Body serif — used for long-form reading copy.
-const sourceSerif = Source_Serif_4({
-  variable: '--font-serif',
-  subsets: ['latin'],
-});
-
-// UI sans — used for labels, navigation, eyebrows.
-const archivo = Archivo({
-  variable: '--font-sans',
-  subsets: ['latin'],
-});
+// All preset fonts are declared centrally in lib/typography/presets.ts
+// and exposed via CSS variables (--font-dm-serif-display, etc.).
+// globals.css :root binds the "active" --font-display / --font-serif /
+// --font-sans to the Editorial preset; the zine root overrides them
+// per-zine via inline style for non-default presets.
 
 const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
 
@@ -48,10 +34,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html
-      lang="en"
-      className={`${dmSerifDisplay.variable} ${sourceSerif.variable} ${archivo.variable} h-full antialiased`}
-    >
+    <html lang="en" className={`${allFontVariables} h-full antialiased`}>
       <body className="bg-background text-foreground flex min-h-full flex-col font-serif">
         {children}
       </body>

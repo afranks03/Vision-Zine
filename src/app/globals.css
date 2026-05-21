@@ -12,12 +12,26 @@
    No rounded corners. Hairline 1px ink dividers.
    ============================================================ */
 
-@theme inline {
-  /* ---- Fonts ---- */
-  --font-display: var(--font-display); /* DM Serif Display */
-  --font-serif: var(--font-serif); /* Source Serif 4 */
-  --font-sans: var(--font-sans); /* Archivo */
+/* ============================================================
+   Active typography variables.
+   Default to the Editorial preset; the zine root overrides these
+   per-zine via inline style (lib/typography/presets.ts). All
+   preset fonts are declared in lib/typography/presets.ts and
+   applied as variables to <html> in app/layout.tsx.
+   ============================================================ */
+:root {
+  --font-display: var(--font-dm-serif-display);
+  --font-serif: var(--font-source-serif);
+  --font-sans: var(--font-archivo);
   --font-mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+@theme inline {
+  /* ---- Fonts (Tailwind tokens; resolve via :root above) ---- */
+  --font-display: var(--font-display);
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
   --font-heading: var(--font-display);
 
   /* ---- Vision Zine brand palette (raw, for direct use) ---- */

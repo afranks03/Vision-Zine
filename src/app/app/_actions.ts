@@ -10,6 +10,7 @@ import type {
   ZineFormat,
   ZineStyle,
 } from '@/lib/supabase/types';
+import type { TypographyPreset } from '@/lib/typography/presets';
 
 /**
  * Server actions for the authenticated app: create a zine, save a section.
@@ -184,6 +185,23 @@ export async function setCoverFocalPoint(zineId: string, x: number, y: number) {
  * from storage — storage cleanup is a follow-up cron concern, not
  * critical-path for the composer.
  */
+/**
+ * Phase 3d-ii: typography preset. One of five curated pairings
+ * (see lib/typography/presets.ts). Independent of style + cover_layout.
+ */
+export async function setTypographyPreset(zineId: string, typography_preset: TypographyPreset) {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('zines')
+    .update({ typography_preset })
+    .eq('id', zineId);
+  if (error) return { error: error.message };
+  revalidatePath(`/app/zines/${zineId}`);
+  revalidatePath(`/app/zines/${zineId}/preview`);
+  revalidatePath(`/z/${zineId}`);
+  return { ok: true as const };
+}
+
 export async function clearCoverImage(zineId: string) {
   const supabase = await createClient();
   const { error } = await supabase

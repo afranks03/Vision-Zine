@@ -74,6 +74,12 @@ export interface ZineRow {
   cover_image_focal_y: number;
   cover_accent: CoverAccent;
   cover_subtitle: string | null;
+  /**
+   * Phase 3d-ii: typography preset. Maps to one of five curated font
+   * pairings in lib/typography/presets.ts. Independent of style and
+   * cover_layout — affects the inner spreads' typography.
+   */
+  typography_preset: 'editorial' | 'modern' | 'romantic' | 'news' | 'brutalist';
   created_at: string;
   updated_at: string;
 }
