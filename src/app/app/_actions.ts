@@ -2,8 +2,10 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { sendCoauthorInviteEmail } from '@/lib/email/send';
 import { createClient } from '@/lib/supabase/server';
 import type {
+  CoauthorInvitationRow,
   CoverAccent,
   CoverLayout,
   SectionKey,
@@ -225,6 +227,146 @@ export async function setZineFormat(zineId: string, format: ZineFormat) {
   }
   revalidatePath(`/app/zines/${zineId}`);
   revalidatePath(`/app/zines/${zineId}/preview`);
+  return { ok: true as const };
+}
+
+/* ----- Phase 5c: co-author invitations ----- */
+
+/**
+ * Invite a partner to co-author a zine. Creates a coauthor_invitations
+ * row (auto-generating a 64-char hex token via DB default), then sends
+ * the invitation email via Resend.
+ *
+ * The unique(zine_id, email) constraint means re-inviting the same
+ * email returns an error — use resendCoauthorInvite for that case.
+ */
+export async function inviteCoauthor(
+  zineId: string,
+  email: string,
+): Promise<{ ok: true; id: string } | { error: string }> {
+  const normalized = email.trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalized)) {
+    return { error: 'That doesn’t look like an email address.' };
+  }
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not signed in.' };
+
+  // RLS will block this insert unless the caller owns the zine.
+  const { data: invite, error: insertErr } = await supabase
+    .from('coauthor_invitations')
+    .insert({
+      zine_id: zineId,
+      email: normalized,
+      invited_by: user.id,
+    })
+    .select('id, token, zine_id')
+    .single();
+
+  if (insertErr || !invite) {
+    if (insertErr?.code === '23505') {
+      return { error: 'That email is already invited to this issue.' };
+    }
+    return { error: insertErr?.message ?? 'Could not create invitation.' };
+  }
+
+  // Look up the zine title + inviter display name for the email body.
+  const [{ data: zine }, { data: personalRow }] = await Promise.all([
+    supabase.from('zines').select('title, issue_number').eq('id', zineId).single(),
+    supabase
+      .from('zine_data')
+      .select('content_json')
+      .eq('zine_id', zineId)
+      .eq('section_key', 'personal')
+      .maybeSingle(),
+  ]);
+  const zineTitle =
+    (zine as { title: string | null; issue_number: number } | null)?.title?.trim() ||
+    `Issue ${(zine as { issue_number: number } | null)?.issue_number ?? 1}`;
+  const personal = (personalRow?.content_json ?? {}) as {
+    display_name?: string;
+    full_name?: string;
+  };
+  const inviterName =
+    personal.display_name?.trim() || personal.full_name?.trim() || user.email || 'A friend';
+
+  // Send the invitation email. Fail-soft: if Resend isn't configured
+  // or the send fails, the invitation row is still saved and can be
+  // resent later from the studio.
+  await sendCoauthorInviteEmail({
+    to: normalized,
+    zineTitle,
+    inviterName,
+    token: (invite as { token: string }).token,
+  });
+
+  revalidatePath(`/app/zines/${zineId}`);
+  return { ok: true as const, id: (invite as { id: string }).id };
+}
+
+export async function revokeCoauthorInvite(
+  invitationId: string,
+): Promise<{ ok: true } | { error: string }> {
+  const supabase = await createClient();
+  const { error } = await supabase
+    .from('coauthor_invitations')
+    .update({ status: 'revoked' })
+    .eq('id', invitationId);
+  if (error) return { error: error.message };
+  // We don't know zine_id from the call site without a round-trip;
+  // the studio refresh covers it.
+  return { ok: true as const };
+}
+
+export async function resendCoauthorInvite(
+  invitationId: string,
+): Promise<{ ok: true } | { error: string }> {
+  const supabase = await createClient();
+  const { data: inv, error: fetchErr } = await supabase
+    .from('coauthor_invitations')
+    .select('id, zine_id, email, token, status')
+    .eq('id', invitationId)
+    .single();
+  if (fetchErr || !inv) return { error: fetchErr?.message ?? 'Invitation not found.' };
+  const row = inv as Pick<CoauthorInvitationRow, 'id' | 'zine_id' | 'email' | 'token' | 'status'>;
+  if (row.status !== 'pending') {
+    return { error: 'Only pending invitations can be resent.' };
+  }
+
+  // Look up zine title + inviter name again.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: 'Not signed in.' };
+
+  const [{ data: zine }, { data: personalRow }] = await Promise.all([
+    supabase.from('zines').select('title, issue_number').eq('id', row.zine_id).single(),
+    supabase
+      .from('zine_data')
+      .select('content_json')
+      .eq('zine_id', row.zine_id)
+      .eq('section_key', 'personal')
+      .maybeSingle(),
+  ]);
+  const zineTitle =
+    (zine as { title: string | null; issue_number: number } | null)?.title?.trim() ||
+    `Issue ${(zine as { issue_number: number } | null)?.issue_number ?? 1}`;
+  const personal = (personalRow?.content_json ?? {}) as {
+    display_name?: string;
+    full_name?: string;
+  };
+  const inviterName =
+    personal.display_name?.trim() || personal.full_name?.trim() || user.email || 'A friend';
+
+  await sendCoauthorInviteEmail({
+    to: row.email,
+    zineTitle,
+    inviterName,
+    token: row.token,
+  });
   return { ok: true as const };
 }
 

@@ -4,9 +4,16 @@ import { notFound } from 'next/navigation';
 import { BulletDot, Eyebrow, HairlineRule, Meta } from '@/components/editorial';
 import { createClient } from '@/lib/supabase/server';
 import { signCoverUrl } from '@/lib/storage/zine-cover';
-import type { SectionContent, SectionKey, ZineDataRow, ZineRow } from '@/lib/supabase/types';
+import type {
+  CoauthorInvitationRow,
+  SectionContent,
+  SectionKey,
+  ZineDataRow,
+  ZineRow,
+} from '@/lib/supabase/types';
 import { AchievementsSection } from './_sections/achievements-section';
 import { BioSection } from './_sections/bio-section';
+import { CoauthorSection } from './_sections/coauthor-section';
 import { CoverSection } from './_sections/cover-section';
 import { GoalsSection } from './_sections/goals-section';
 import { PersonalSection } from './_sections/personal-section';
@@ -54,14 +61,19 @@ function isStudioNavKey(s: string | undefined): s is StudioNavKey {
 export default async function StudioPage({ params, searchParams }: Props) {
   const { id } = await params;
   const sp = await searchParams;
-  const sectionKey: StudioNavKey = isStudioNavKey(sp.section) ? sp.section : 'cover';
 
   const supabase = await createClient();
 
-  // Load zine + all sections in parallel.
-  const [zineRes, sectionsRes] = await Promise.all([
+  // Who is asking? Determines owner vs. co-author view.
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  // Load zine + sections + invitations in parallel.
+  const [zineRes, sectionsRes, invitesRes] = await Promise.all([
     supabase.from('zines').select('*').eq('id', id).single(),
     supabase.from('zine_data').select('*').eq('zine_id', id),
+    supabase.from('coauthor_invitations').select('*').eq('zine_id', id),
   ]);
 
   if (zineRes.error || !zineRes.data) {
@@ -71,6 +83,21 @@ export default async function StudioPage({ params, searchParams }: Props) {
   const zine = zineRes.data as ZineRow;
   const sections = (sectionsRes.data ?? []) as ZineDataRow[];
   const sectionMap = new Map(sections.map((s) => [s.section_key, s.content_json]));
+  const invitations = (invitesRes.data ?? []) as CoauthorInvitationRow[];
+
+  const isOwner = !!user && user.id === zine.user_id;
+  // The current user is a co-author if any accepted invitation links
+  // them to this zine. RLS only returns the row to the relevant party
+  // anyway, so this check just narrows the type.
+  const isCoauthor =
+    !!user && !isOwner && invitations.some((inv) => inv.accepted_by === user.id);
+
+  // Co-authors get a reduced nav (just the Co-author section). Owners
+  // get the full studio.
+  const sectionKey: StudioNavKey = (() => {
+    if (isCoauthor) return 'coauthor';
+    return isStudioNavKey(sp.section) ? sp.section : 'cover';
+  })();
 
   function contentFor<K extends SectionKey>(key: K): Partial<SectionContent<K>> {
     return (sectionMap.get(key) ?? {}) as Partial<SectionContent<K>>;
@@ -80,6 +107,12 @@ export default async function StudioPage({ params, searchParams }: Props) {
   // pass it down to the client composer. Null when no cover image has
   // been uploaded yet, in which case the composer shows the upload zone.
   const coverImageUrl = zine.cover_image_path ? await signCoverUrl(zine.cover_image_path) : null;
+
+  // Which entries appear in the left rail. Co-authors only see the
+  // Co-author section so they don't try to edit the owner's content.
+  const visibleSections = isCoauthor
+    ? SECTIONS.filter((s) => s.key === 'coauthor')
+    : SECTIONS;
 
   return (
     <div className="vz-container py-7">
@@ -121,7 +154,7 @@ export default async function StudioPage({ params, searchParams }: Props) {
         <aside>
           <Eyebrow className="mb-3">Sections</Eyebrow>
           <ol className="border-vz-ink border-t">
-            {SECTIONS.map((sec, i) => {
+            {visibleSections.map((sec, i) => {
               const isActive = sec.key === sectionKey;
               const isFilled =
                 sec.key === 'cover'
@@ -173,6 +206,8 @@ export default async function StudioPage({ params, searchParams }: Props) {
             contentFor,
             displayNameFromPersonal(contentFor),
             coverImageUrl,
+            invitations,
+            isOwner,
           )}
         </section>
       </div>
@@ -186,6 +221,8 @@ function renderSection(
   contentFor: <K extends SectionKey>(k: K) => Partial<SectionContent<K>>,
   displayName: string | undefined,
   coverImageUrl: string | null,
+  invitations: CoauthorInvitationRow[],
+  isOwner: boolean,
 ) {
   const zineId = zine.id;
   switch (key) {
@@ -193,6 +230,15 @@ function renderSection(
       return <CoverSection zine={zine} initialCoverUrl={coverImageUrl} />;
     case 'typography':
       return <TypographySection zine={zine} />;
+    case 'coauthor':
+      return (
+        <CoauthorSection
+          zineId={zineId}
+          initial={contentFor('coauthor')}
+          invitations={invitations}
+          isOwner={isOwner}
+        />
+      );
     case 'personal':
       return <PersonalSection zineId={zineId} initial={contentFor('personal')} />;
     case 'goals':
@@ -231,8 +277,6 @@ function renderSection(
           reason="Coming in Phase 2c (Supabase Storage uploads)"
         />
       );
-    case 'coauthor':
-      return <SectionPlaceholder title="Co-author" reason="Coming in Phase 2d (invitation flow)" />;
   }
 }
 

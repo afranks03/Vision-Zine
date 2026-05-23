@@ -12,21 +12,26 @@ export const metadata: Metadata = {
 
 export default async function DashboardPage() {
   const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  // Two parallel queries: the user's zines, and the user's print_orders.
-  // We merge them client-side so each zine row knows its latest print
-  // status (the dashboard pill reflects both). Cheaper than a JOIN we'd
-  // have to type by hand and easier to reason about with small N.
+  // Three parallel queries: zines visible to the user (RLS returns both
+  // owned + co-authored), the user's print_orders, and accepted
+  // invitations (used to identify which zines the user is co-authoring
+  // vs. owning, since RLS hands them back together).
   const [zinesRes, ordersRes] = await Promise.all([
     supabase.from('zines').select('*').order('issue_number', { ascending: false }),
-    supabase
-      .from('print_orders')
-      .select('*')
-      .order('created_at', { ascending: false }),
+    supabase.from('print_orders').select('*').order('created_at', { ascending: false }),
   ]);
 
   const allZines = (zinesRes.data ?? []) as ZineRow[];
   const allOrders = (ordersRes.data ?? []) as PrintOrderRow[];
+
+  // Split owned vs. co-authored. Anything where the current user isn't
+  // the user_id but is visible via RLS is a zine they were invited into.
+  const ownedZines = user ? allZines.filter((z) => z.user_id === user.id) : allZines;
+  const coauthoredZines = user ? allZines.filter((z) => z.user_id !== user.id) : [];
 
   // Latest print order per zine_id (orders already sorted desc).
   const latestOrderByZine = new Map<string, PrintOrderRow>();
@@ -35,8 +40,8 @@ export default async function DashboardPage() {
   }
 
   // Hide archived from the default list; we'll add a filter toggle later.
-  const visible = allZines.filter((z) => z.status !== 'archived');
-  const archivedCount = allZines.length - visible.length;
+  const visible = ownedZines.filter((z) => z.status !== 'archived');
+  const archivedCount = ownedZines.length - visible.length;
   const siteOrigin = process.env.NEXT_PUBLIC_SITE_URL || 'https://vision-zine.vercel.app';
 
   return (
@@ -74,9 +79,9 @@ export default async function DashboardPage() {
           href="/app/new"
           className="vz-eyebrow bg-vz-ink text-vz-yellow hover:bg-vz-coral hover:text-vz-cream justify-self-start px-5 py-3.5 transition-colors md:justify-self-end"
         >
-          {allZines.length === 0
+          {ownedZines.length === 0
             ? 'Start Issue I'
-            : 'Start Issue ' + romanize(allZines.length + 1)}
+            : 'Start Issue ' + romanize(ownedZines.length + 1)}
         </Link>
       </div>
       <HeavyRule className="mt-6" />
@@ -85,6 +90,51 @@ export default async function DashboardPage() {
         <EmptyState />
       ) : (
         <ZineList zines={visible} orders={latestOrderByZine} siteOrigin={siteOrigin} />
+      )}
+
+      {coauthoredZines.length > 0 && (
+        <section className="mt-20">
+          <div className="flex items-baseline justify-between">
+            <Eyebrow className="text-vz-coral">Co-authoring</Eyebrow>
+            <span className="vz-meta text-vz-ink/50">
+              {coauthoredZines.length} issue{coauthoredZines.length === 1 ? '' : 's'}
+            </span>
+          </div>
+          <HeavyRule className="mt-3" />
+          <ul className="mt-8 grid gap-0">
+            {coauthoredZines.map((zine, i) => (
+              <li
+                key={zine.id}
+                className={
+                  (i === 0 ? 'border-vz-ink border-t' : 'border-vz-ink border-t-0') +
+                  ' hover:bg-vz-cream border-vz-ink relative border-b transition-colors'
+                }
+              >
+                <Link
+                  href={`/app/zines/${zine.id}?section=coauthor`}
+                  className="flex flex-col gap-3 px-1 py-6 sm:flex-row sm:items-end sm:gap-8"
+                >
+                  <span className="font-display text-4xl leading-[0.85] tracking-[-0.02em]">
+                    {romanize(zine.issue_number)}
+                  </span>
+                  <div className="flex-1">
+                    <h2 className="font-display text-2xl leading-[1]">
+                      {zine.title || `Issue ${romanize(zine.issue_number)}`}
+                    </h2>
+                    <MetaRow
+                      className="text-vz-ink/70 mt-2"
+                      items={[
+                        <span key="s">{labelStyle(zine.style)}</span>,
+                        <span key="d">{formatDate(zine.updated_at)}</span>,
+                      ]}
+                    />
+                  </div>
+                  <StatusPill tone="neutral">Co-author</StatusPill>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
     </div>
   );

@@ -8,6 +8,7 @@
  * we never throw out of these into the webhook/auth path.
  */
 import { getBccAddress, getFromAddress, getResendClient, isEmailConfigured } from './client';
+import { CoauthorInviteEmail, type CoauthorInviteProps } from './templates/coauthor-invite';
 import { PaymentReceiptEmail, type PaymentReceiptProps } from './templates/payment-receipt';
 import {
   PrintConfirmationEmail,
@@ -101,5 +102,20 @@ export async function sendPrintConfirmationEmail(
     subject: `${templateProps.zineTitle} is at the press`,
     react: PrintConfirmationEmail(templateProps),
     idempotencyKey: `print-confirm:${templateProps.orderId}`,
+  });
+}
+
+export async function sendCoauthorInviteEmail(
+  input: { to: string } & CoauthorInviteProps,
+): Promise<Sent> {
+  const { to, ...templateProps } = input;
+  return sendCore({
+    to,
+    subject: `${templateProps.inviterName} invited you to co-author ${templateProps.zineTitle}`,
+    react: CoauthorInviteEmail(templateProps),
+    // Keyed on the invitation token (not the recipient) so a "resend"
+    // from the studio bypasses dedup with a fresh row, while the
+    // initial send-on-create is idempotent against webhook retries.
+    idempotencyKey: `coauthor-invite:${templateProps.token}`,
   });
 }
