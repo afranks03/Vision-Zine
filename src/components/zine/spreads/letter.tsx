@@ -16,9 +16,10 @@ export function EditorsLetter(props: SpreadProps & { palette: SpreadPalette }) {
   switch (props.data.zine.style) {
     case 'fashion':
       return <FashionLetter {...props} />;
+    case 'art_catalog':
+      return <ArtCatalogLetter {...props} />;
     case 'editorial':
     case 'lifestyle':
-    case 'art_catalog':
     case 'travel':
     case 'financial':
     default:
@@ -147,6 +148,125 @@ function EditorialLetter({ data, palette }: SpreadProps & { palette: SpreadPalet
             )}
           </div>
         </div>
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Art Catalog (gallery wall text) -------------------- */
+
+function ArtCatalogLetter({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { personal, vision, zine } = data;
+  const displayName = personal.display_name || personal.full_name || 'the artist';
+  const statement = vision.statement?.trim();
+  const paragraphs = statement
+    ? statement
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter(Boolean)
+    : [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 680,
+        }}
+      >
+        {/* Wall-label eyebrow */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.24em',
+            textTransform: 'uppercase',
+            borderTop: `1px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '10px 0',
+            marginBottom: 'clamp(40px, 6vw, 72px)',
+          }}
+        >
+          <span>Gallery I · Visitor&apos;s Statement</span>
+          <span>Vol. {zine.issue_number}</span>
+        </div>
+
+        {/* Quiet title */}
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(36px, 5vw, 64px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 28px',
+          }}
+        >
+          {statement ? <>On the year ahead.</> : <>The statement, forthcoming.</>}
+        </h2>
+
+        {/* Narrow measure — gallery wall texts never run full width */}
+        <div
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 17,
+            lineHeight: 1.65,
+            fontWeight: 400,
+          }}
+        >
+          {paragraphs.length > 0 ? (
+            paragraphs.map((p, i) => (
+              <p key={i} style={{ marginBottom: '1.2em' }}>
+                {p}
+              </p>
+            ))
+          ) : (
+            <p style={{ marginBottom: '1em', opacity: 0.6, fontStyle: 'italic' }}>
+              Write your Vision statement in the studio. The wall label form holds it here in a
+              quieter measure than the open editorial — narrow column, no drop cap, generous
+              breathing.
+            </p>
+          )}
+        </div>
+
+        {/* Curator's signature line */}
+        {paragraphs.length > 0 && (
+          <div
+            className="mt-12 flex items-end justify-between"
+            style={{ borderTop: `1px solid ${palette.fg}`, paddingTop: 18 }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontSize: 26,
+                lineHeight: 1.05,
+                fontWeight: 400,
+              }}
+            >
+              — {displayName}
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                textAlign: 'right',
+                lineHeight: 1.7,
+              }}
+            >
+              {personal.location && <span className="block">{personal.location}</span>}
+              <span className="block">Curator</span>
+            </span>
+          </div>
+        )}
       </div>
     </article>
   );

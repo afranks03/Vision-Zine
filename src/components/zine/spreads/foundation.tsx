@@ -16,9 +16,10 @@ export function Foundation(props: SpreadProps & { palette: SpreadPalette }) {
   switch (props.data.zine.style) {
     case 'fashion':
       return <FashionFoundation {...props} />;
+    case 'art_catalog':
+      return <ArtCatalogFoundation {...props} />;
     case 'editorial':
     case 'lifestyle':
-    case 'art_catalog':
     case 'travel':
     case 'financial':
     default:
@@ -161,6 +162,164 @@ function FoundationQuote({ palette }: { palette: SpreadPalette }) {
   );
 }
 
+/* -------------------- Art Catalog (museum wall labels) -------------------- */
+
+function ArtCatalogFoundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const items = data.achievements.items ?? [];
+  const { zine } = data;
+  const displayName = data.personal.display_name || data.personal.full_name || 'the artist';
+  const yearAcc = new Date(zine.created_at).getFullYear() % 100; // last 2 digits
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 760,
+        }}
+      >
+        {/* Catalog cover-strip eyebrow */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            borderTop: `1px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '10px 0',
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+          }}
+        >
+          <span>The Foundation</span>
+          <span>Catalogue Raisonné · {zine.created_at.slice(0, 4)}</span>
+        </div>
+
+        {/* Reserved gallery title */}
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(40px, 5.5vw, 72px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 14px',
+          }}
+        >
+          Selected works.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.5,
+            opacity: 0.7,
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+            maxWidth: 560,
+          }}
+        >
+          A record of acquisitions and exhibitions assembled by {displayName} for the present
+          volume. Each entry catalogued by year, medium, and accession.
+        </p>
+
+        {items.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add achievements in the studio. Each becomes a wall label here — accession number,
+            year, medium, title.
+          </p>
+        ) : (
+          <ol className="list-none" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
+            {items.map((item, i) => {
+              const accession = `${String(yearAcc).padStart(2, '0')}.${String(i + 1).padStart(3, '0')}`;
+              return (
+                <li
+                  key={i}
+                  style={{
+                    border: `1px solid ${palette.fg}`,
+                    padding: 'clamp(22px, 3vw, 32px)',
+                  }}
+                >
+                  {/* Accession number */}
+                  <div
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 9,
+                      fontWeight: 700,
+                      letterSpacing: '0.24em',
+                      textTransform: 'uppercase',
+                      color: palette.accent,
+                      marginBottom: 12,
+                    }}
+                  >
+                    Acc. No. {accession}
+                  </div>
+
+                  {/* Title */}
+                  <h3
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontStyle: 'italic',
+                      fontSize: 'clamp(22px, 2.4vw, 32px)',
+                      lineHeight: 1.1,
+                      letterSpacing: '-0.005em',
+                      fontWeight: 400,
+                      marginBottom: 8,
+                    }}
+                  >
+                    {item.title}.
+                  </h3>
+
+                  {/* Year + medium ("tag") line */}
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.18em',
+                      textTransform: 'uppercase',
+                      opacity: 0.7,
+                    }}
+                  >
+                    {item.year ? <span>{item.year}</span> : null}
+                    {item.year && item.tag ? <span> · </span> : null}
+                    {item.tag ? <span>{item.tag}</span> : null}
+                    {!item.year && !item.tag ? <span>Undated · Mixed media</span> : null}
+                  </p>
+                </li>
+              );
+            })}
+          </ol>
+        )}
+
+        {/* Catalog footer */}
+        <p
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: '0.24em',
+            textTransform: 'uppercase',
+            textAlign: 'center',
+            marginTop: 'clamp(40px, 6vw, 64px)',
+            opacity: 0.5,
+          }}
+        >
+          Catalogued by {displayName} · Volume {zine.issue_number}
+        </p>
+      </div>
+    </article>
+  );
+}
+
 /* -------------------- Fashion (runway list) -------------------- */
 
 function FashionFoundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
@@ -233,8 +392,7 @@ function FashionFoundation({ data, palette }: SpreadProps & { palette: SpreadPal
                   columnGap: 'clamp(24px, 4vw, 56px)',
                   rowGap: 4,
                   padding: 'clamp(28px, 5vw, 56px) 0',
-                  borderBottom:
-                    i === items.length - 1 ? 'none' : `1px solid ${palette.rule}`,
+                  borderBottom: i === items.length - 1 ? 'none' : `1px solid ${palette.rule}`,
                 }}
               >
                 {/* Big runway numeral */}

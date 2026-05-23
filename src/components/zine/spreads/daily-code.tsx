@@ -15,9 +15,10 @@ export function DailyCode(props: SpreadProps & { palette: SpreadPalette }) {
   switch (props.data.zine.style) {
     case 'fashion':
       return <FashionDailyCode {...props} />;
+    case 'art_catalog':
+      return <ArtCatalogDailyCode {...props} />;
     case 'editorial':
     case 'lifestyle':
-    case 'art_catalog':
     case 'travel':
     case 'financial':
     default:
@@ -113,6 +114,129 @@ function EditorialDailyCode({ data, palette }: SpreadProps & { palette: SpreadPa
   );
 }
 
+/* -------------------- Art Catalog (exhibition placards) -------------------- */
+
+function ArtCatalogDailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { zine } = data;
+  const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 920,
+        }}
+      >
+        {/* Catalog eyebrow */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            borderTop: `1px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '10px 0',
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+          }}
+        >
+          <span>The Daily Code · Wall Texts</span>
+          <span>Vol. {zine.issue_number}</span>
+        </div>
+
+        {/* Quiet italic title */}
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(40px, 5.5vw, 72px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 14px',
+          }}
+        >
+          Ten placards.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.5,
+            opacity: 0.7,
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+            maxWidth: 560,
+          }}
+        >
+          Read on the wall, in passing. Tenets framed like exhibition labels — small, declarative,
+          one beside the next.
+        </p>
+
+        {tenets.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add tenets in the studio. Each becomes a placard here.
+          </p>
+        ) : (
+          <ol
+            className="grid list-none"
+            style={{
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: 16,
+            }}
+          >
+            {tenets.map((tenet, i) => (
+              <li
+                key={i}
+                style={{
+                  border: `1px solid ${palette.fg}`,
+                  padding: 'clamp(18px, 2.4vw, 26px)',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  gap: 12,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 9,
+                    fontWeight: 700,
+                    letterSpacing: '0.24em',
+                    textTransform: 'uppercase',
+                    color: palette.accent,
+                  }}
+                >
+                  Placard {String(i + 1).padStart(2, '0')}
+                </span>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontSize: 'clamp(18px, 1.9vw, 22px)',
+                    lineHeight: 1.25,
+                    letterSpacing: '-0.005em',
+                    fontWeight: 400,
+                  }}
+                >
+                  {tenet}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
 /* -------------------- Fashion (manifesto) -------------------- */
 
 function FashionDailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
@@ -181,8 +305,7 @@ function FashionDailyCode({ data, palette }: SpreadProps & { palette: SpreadPale
                 style={{
                   gridTemplateColumns: 'auto 1fr',
                   padding: 'clamp(18px, 3vw, 32px) 0',
-                  borderBottom:
-                    i === tenets.length - 1 ? 'none' : `1px solid ${palette.rule}`,
+                  borderBottom: i === tenets.length - 1 ? 'none' : `1px solid ${palette.rule}`,
                 }}
               >
                 <span

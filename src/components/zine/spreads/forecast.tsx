@@ -25,15 +25,18 @@ export function Forecast(props: SpreadProps & { palette: SpreadPalette }) {
   switch (props.data.zine.style) {
     case 'fashion':
       return <FashionForecast {...props} />;
+    case 'art_catalog':
+      return <ArtCatalogForecast {...props} />;
     case 'editorial':
     case 'lifestyle':
-    case 'art_catalog':
     case 'travel':
     case 'financial':
     default:
       return <EditorialForecast {...props} />;
   }
 }
+
+const GALLERY_NUMERALS = ['I', 'II', 'III', 'IV'];
 
 /* -------------------- Editorial (baseline) -------------------- */
 
@@ -200,6 +203,212 @@ function EditorialForecast({ data, palette }: SpreadProps & { palette: SpreadPal
   );
 }
 
+/* -------------------- Art Catalog (galleries) -------------------- */
+
+function ArtCatalogForecast({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { goals, zine } = data;
+  const total =
+    (goals.financial?.length ?? 0) +
+    (goals.creative?.length ?? 0) +
+    (goals.place?.length ?? 0) +
+    (goals.body_spirit?.length ?? 0);
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 920,
+        }}
+      >
+        {/* Catalog eyebrow */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            borderTop: `1px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '10px 0',
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+          }}
+        >
+          <span>The Forecast · Acquisitions by gallery</span>
+          <span>Vol. {zine.issue_number}</span>
+        </div>
+
+        {/* Quiet italic title */}
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(40px, 5.5vw, 72px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 14px',
+          }}
+        >
+          Galleries I–IV.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.5,
+            opacity: 0.7,
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+            maxWidth: 560,
+          }}
+        >
+          Holdings catalogued under four headings: Financial, Creative, Place, Body &amp; Spirit.
+          {total > 0 && (
+            <>
+              {' '}
+              {total} entr{total === 1 ? 'y' : 'ies'} in this volume.
+            </>
+          )}
+        </p>
+
+        {total === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add goals to the four clusters in the studio. Each becomes a gallery here.
+          </p>
+        ) : (
+          <ol
+            className="list-none"
+            style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
+          >
+            {CLUSTERS.map((cluster, idx) => {
+              const items = goals[cluster.key] ?? [];
+              return (
+                <li
+                  key={cluster.key}
+                  style={{
+                    border: `1px solid ${palette.fg}`,
+                    padding: 'clamp(22px, 3vw, 32px)',
+                  }}
+                >
+                  {/* Gallery header */}
+                  <div
+                    className="flex items-baseline justify-between"
+                    style={{
+                      paddingBottom: 12,
+                      marginBottom: 16,
+                      borderBottom: `1px solid ${palette.rule}`,
+                    }}
+                  >
+                    <div className="flex items-baseline gap-3">
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-sans)',
+                          fontSize: 9,
+                          fontWeight: 700,
+                          letterSpacing: '0.24em',
+                          textTransform: 'uppercase',
+                          color: palette.accent,
+                        }}
+                      >
+                        Gallery {GALLERY_NUMERALS[idx]}
+                      </span>
+                      <span
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontStyle: 'italic',
+                          fontSize: 22,
+                          lineHeight: 1,
+                          fontWeight: 400,
+                        }}
+                      >
+                        {cluster.label}.
+                      </span>
+                    </div>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 9,
+                        fontWeight: 700,
+                        letterSpacing: '0.18em',
+                        textTransform: 'uppercase',
+                        opacity: 0.55,
+                      }}
+                    >
+                      {items.length} held
+                    </span>
+                  </div>
+
+                  {/* Catalog entries */}
+                  {items.length === 0 ? (
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: 15,
+                        fontStyle: 'italic',
+                        opacity: 0.45,
+                      }}
+                    >
+                      — gallery vacant this volume —
+                    </p>
+                  ) : (
+                    <ol className="list-none" style={{ display: 'flex', flexDirection: 'column' }}>
+                      {items.map((item, i) => (
+                        <li
+                          key={i}
+                          className="grid"
+                          style={{
+                            gridTemplateColumns: '80px 1fr',
+                            columnGap: 16,
+                            padding: '10px 0',
+                            borderBottom:
+                              i === items.length - 1
+                                ? 'none'
+                                : `1px solid ${palette.rule}`,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-sans)',
+                              fontSize: 9,
+                              fontWeight: 700,
+                              letterSpacing: '0.18em',
+                              textTransform: 'uppercase',
+                              opacity: 0.7,
+                            }}
+                          >
+                            No. {(i + 1).toString().padStart(3, '0')}
+                          </span>
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-serif)',
+                              fontSize: 16,
+                              lineHeight: 1.4,
+                            }}
+                          >
+                            {item}
+                          </span>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
 /* -------------------- Fashion (four looks) -------------------- */
 
 function FashionForecast({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
@@ -262,7 +471,7 @@ function FashionForecast({ data, palette }: SpreadProps & { palette: SpreadPalet
             becomes a look in this lineup.
           </p>
         ) : (
-          <ol className="list-none flex flex-col" style={{ gap: 'clamp(36px, 5vw, 64px)' }}>
+          <ol className="flex list-none flex-col" style={{ gap: 'clamp(36px, 5vw, 64px)' }}>
             {CLUSTERS.map((cluster, idx) => {
               const items = goals[cluster.key] ?? [];
               return (
