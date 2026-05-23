@@ -27,10 +27,13 @@ export function Forecast(props: SpreadProps & { palette: SpreadPalette }) {
       return <FashionForecast {...props} />;
     case 'art_catalog':
       return <ArtCatalogForecast {...props} />;
-    case 'editorial':
-    case 'lifestyle':
     case 'travel':
+      return <TravelForecast {...props} />;
+    case 'lifestyle':
+      return <LifestyleForecast {...props} />;
     case 'financial':
+      return <FinancialForecast {...props} />;
+    case 'editorial':
     default:
       return <EditorialForecast {...props} />;
   }
@@ -277,17 +280,11 @@ function ArtCatalogForecast({ data, palette }: SpreadProps & { palette: SpreadPa
         </p>
 
         {total === 0 ? (
-          <p
-            className="font-serif italic"
-            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
-          >
+          <p className="font-serif italic" style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}>
             Add goals to the four clusters in the studio. Each becomes a gallery here.
           </p>
         ) : (
-          <ol
-            className="list-none"
-            style={{ display: 'flex', flexDirection: 'column', gap: 24 }}
-          >
+          <ol className="list-none" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
             {CLUSTERS.map((cluster, idx) => {
               const items = goals[cluster.key] ?? [];
               return (
@@ -369,9 +366,7 @@ function ArtCatalogForecast({ data, palette }: SpreadProps & { palette: SpreadPa
                             columnGap: 16,
                             padding: '10px 0',
                             borderBottom:
-                              i === items.length - 1
-                                ? 'none'
-                                : `1px solid ${palette.rule}`,
+                              i === items.length - 1 ? 'none' : `1px solid ${palette.rule}`,
                           }}
                         >
                           <span
@@ -565,6 +560,459 @@ function FashionForecast({ data, palette }: SpreadProps & { palette: SpreadPalet
               );
             })}
           </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Travel (routes) -------------------- */
+
+function TravelForecast({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { goals, zine } = data;
+  const total =
+    (goals.financial?.length ?? 0) +
+    (goals.creative?.length ?? 0) +
+    (goals.place?.length ?? 0) +
+    (goals.body_spirit?.length ?? 0);
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
+      >
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '12px 0',
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+          }}
+        >
+          <span>The Forecast · Routes Planned</span>
+          <span>Volume {zine.issue_number}</span>
+        </div>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(48px, 7vw, 96px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.018em',
+            fontWeight: 400,
+            margin: '0 0 14px',
+          }}
+        >
+          Four <em style={{ color: palette.accent }}>routes</em> from here.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.5,
+            opacity: 0.7,
+            marginBottom: 'clamp(40px, 6vw, 56px)',
+            maxWidth: 560,
+          }}
+        >
+          {total} destination{total === 1 ? '' : 's'} mapped this issue. Each cluster a route, each
+          entry a leg.
+        </p>
+
+        {total === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add goals in the studio. Each becomes a leg on one of the routes here.
+          </p>
+        ) : (
+          <ol className="list-none" style={{ display: 'flex', flexDirection: 'column' }}>
+            {CLUSTERS.map((cluster, idx) => {
+              const items = goals[cluster.key] ?? [];
+              return (
+                <li
+                  key={cluster.key}
+                  style={{
+                    borderTop: `1px solid ${palette.fg}`,
+                    padding: 'clamp(24px, 4vw, 36px) 0',
+                  }}
+                >
+                  <div className="mb-4 flex items-baseline gap-4">
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 10,
+                        fontWeight: 700,
+                        letterSpacing: '0.22em',
+                        textTransform: 'uppercase',
+                        color: palette.accent,
+                      }}
+                    >
+                      Route {GALLERY_NUMERALS[idx]}
+                    </span>
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-display)',
+                        fontStyle: 'italic',
+                        fontSize: 'clamp(24px, 3vw, 36px)',
+                        lineHeight: 1,
+                        fontWeight: 400,
+                      }}
+                    >
+                      → {cluster.label}
+                    </span>
+                  </div>
+                  {items.length === 0 ? (
+                    <p
+                      style={{
+                        fontFamily: 'var(--font-serif)',
+                        fontSize: 15,
+                        fontStyle: 'italic',
+                        opacity: 0.45,
+                      }}
+                    >
+                      — no legs planned this volume —
+                    </p>
+                  ) : (
+                    <ol className="list-none">
+                      {items.map((item, i) => (
+                        <li
+                          key={i}
+                          className="grid items-baseline"
+                          style={{
+                            gridTemplateColumns: '60px 1fr',
+                            columnGap: 14,
+                            padding: '8px 0',
+                            fontFamily: 'var(--font-serif)',
+                            fontSize: 17,
+                            lineHeight: 1.4,
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: 'var(--font-sans)',
+                              fontSize: 9,
+                              fontWeight: 700,
+                              letterSpacing: '0.16em',
+                              textTransform: 'uppercase',
+                              opacity: 0.55,
+                            }}
+                          >
+                            Leg {String(i + 1).padStart(2, '0')}
+                          </span>
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ol>
+                  )}
+                </li>
+              );
+            })}
+          </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Lifestyle (quiet) -------------------- */
+
+function LifestyleForecast({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { goals } = data;
+  const total =
+    (goals.financial?.length ?? 0) +
+    (goals.creative?.length ?? 0) +
+    (goals.place?.length ?? 0) +
+    (goals.body_spirit?.length ?? 0);
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(80px, 12vw, 180px)',
+          paddingBottom: 'clamp(80px, 12vw, 180px)',
+          maxWidth: 620,
+          textAlign: 'center',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            marginBottom: 24,
+            opacity: 0.7,
+          }}
+        >
+          The Forecast
+        </p>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(36px, 5vw, 56px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 16px',
+          }}
+        >
+          What I&apos;m hoping for.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.55,
+            opacity: 0.7,
+            marginBottom: 'clamp(48px, 7vw, 72px)',
+          }}
+        >
+          {total} small intentions, grouped by where they live.
+        </p>
+
+        {total === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.6 }}
+          >
+            Add goals in the studio. They&apos;ll appear here as a quiet, centered list.
+          </p>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(40px, 6vw, 56px)',
+              textAlign: 'center',
+            }}
+          >
+            {CLUSTERS.map((cluster) => {
+              const items = goals[cluster.key] ?? [];
+              if (items.length === 0) return null;
+              return (
+                <div key={cluster.key}>
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.22em',
+                      textTransform: 'uppercase',
+                      color: palette.accent,
+                      marginBottom: 14,
+                    }}
+                  >
+                    {cluster.label}
+                  </p>
+                  <ul
+                    className="list-none"
+                    style={{ display: 'flex', flexDirection: 'column', gap: 10 }}
+                  >
+                    {items.map((item, i) => (
+                      <li
+                        key={i}
+                        style={{
+                          fontFamily: 'var(--font-display)',
+                          fontSize: 'clamp(20px, 2.4vw, 26px)',
+                          lineHeight: 1.2,
+                          fontWeight: 400,
+                        }}
+                      >
+                        {item}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Financial (positions ledger) -------------------- */
+
+function FinancialForecast({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { goals, zine } = data;
+  const total =
+    (goals.financial?.length ?? 0) +
+    (goals.creative?.length ?? 0) +
+    (goals.place?.length ?? 0) +
+    (goals.body_spirit?.length ?? 0);
+
+  const rows: { item: string; category: string }[] = [];
+  for (const cluster of CLUSTERS) {
+    for (const item of goals[cluster.key] ?? []) {
+      rows.push({ item, category: cluster.label });
+    }
+  }
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
+      >
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '10px 0',
+            marginBottom: 28,
+          }}
+        >
+          <span>The Forecast · Positions Held</span>
+          <span>FY {new Date(zine.created_at).getFullYear()}</span>
+        </div>
+
+        <div className="mb-10 flex items-baseline justify-between">
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(36px, 5vw, 64px)',
+              lineHeight: 1,
+              letterSpacing: '-0.018em',
+              fontWeight: 400,
+              margin: 0,
+            }}
+          >
+            Positions, opened.
+          </h2>
+          <span
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              opacity: 0.6,
+            }}
+          >
+            {total} open
+          </span>
+        </div>
+
+        {total === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add goals in the studio. They&apos;ll post here as opened positions.
+          </p>
+        ) : (
+          <>
+            <div
+              className="grid items-baseline"
+              style={{
+                gridTemplateColumns: '52px 1fr 140px',
+                columnGap: 16,
+                paddingBottom: 8,
+                borderBottom: `1px solid ${palette.fg}`,
+                fontFamily: 'var(--font-sans)',
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                opacity: 0.55,
+              }}
+            >
+              <span>No.</span>
+              <span>Position</span>
+              <span style={{ textAlign: 'right' }}>Category</span>
+            </div>
+
+            <ol className="list-none">
+              {rows.map((row, i) => (
+                <li
+                  key={i}
+                  className="grid items-baseline"
+                  style={{
+                    gridTemplateColumns: '52px 1fr 140px',
+                    columnGap: 16,
+                    padding: '11px 0',
+                    borderBottom: `1px solid ${palette.rule}`,
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 15,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.06em',
+                      color: palette.accent,
+                    }}
+                  >
+                    {String(i + 1).padStart(3, '0')}
+                  </span>
+                  <span>{row.item}</span>
+                  <span
+                    style={{
+                      textAlign: 'right',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 9,
+                      fontWeight: 700,
+                      letterSpacing: '0.16em',
+                      textTransform: 'uppercase',
+                      opacity: 0.7,
+                    }}
+                  >
+                    {row.category}
+                  </span>
+                </li>
+              ))}
+            </ol>
+
+            <div
+              className="grid items-baseline"
+              style={{
+                gridTemplateColumns: '1fr auto',
+                columnGap: 16,
+                paddingTop: 14,
+                marginTop: 4,
+                borderTop: `2px solid ${palette.fg}`,
+                fontFamily: 'var(--font-sans)',
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+              }}
+            >
+              <span>Total positions opened</span>
+              <span style={{ color: palette.accent }}>{total}</span>
+            </div>
+          </>
         )}
       </div>
     </article>

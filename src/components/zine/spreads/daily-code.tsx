@@ -17,10 +17,13 @@ export function DailyCode(props: SpreadProps & { palette: SpreadPalette }) {
       return <FashionDailyCode {...props} />;
     case 'art_catalog':
       return <ArtCatalogDailyCode {...props} />;
-    case 'editorial':
-    case 'lifestyle':
     case 'travel':
+      return <TravelDailyCode {...props} />;
+    case 'lifestyle':
+      return <LifestyleDailyCode {...props} />;
     case 'financial':
+      return <FinancialDailyCode {...props} />;
+    case 'editorial':
     default:
       return <EditorialDailyCode {...props} />;
   }
@@ -179,10 +182,7 @@ function ArtCatalogDailyCode({ data, palette }: SpreadProps & { palette: SpreadP
         </p>
 
         {tenets.length === 0 ? (
-          <p
-            className="font-serif italic"
-            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
-          >
+          <p className="font-serif italic" style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}>
             Add tenets in the studio. Each becomes a placard here.
           </p>
         ) : (
@@ -354,6 +354,354 @@ function FashionDailyCode({ data, palette }: SpreadProps & { palette: SpreadPale
             <span>The Daily Code</span>
           </div>
         )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Travel (field notes) -------------------- */
+
+function TravelDailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { zine } = data;
+  const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 820,
+        }}
+      >
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '12px 0',
+            marginBottom: 'clamp(40px, 6vw, 56px)',
+          }}
+        >
+          <span>The Daily Code · Field Notes</span>
+          <span>Volume {romanize(zine.issue_number)}</span>
+        </div>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(44px, 6.5vw, 88px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.018em',
+            fontWeight: 400,
+            margin: '0 0 16px',
+            maxWidth: '14ch',
+          }}
+        >
+          What I carry <em style={{ color: palette.accent }}>on the road</em>.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.5,
+            opacity: 0.7,
+            marginBottom: 'clamp(40px, 6vw, 56px)',
+            maxWidth: 520,
+          }}
+        >
+          Notes kept in the margins. Read at the start of each day&apos;s travel.
+        </p>
+
+        {tenets.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add tenets in the studio. Each becomes a field note.
+          </p>
+        ) : (
+          <ol className="list-none">
+            {tenets.map((tenet, i) => (
+              <li
+                key={i}
+                className="grid items-baseline"
+                style={{
+                  gridTemplateColumns: '60px 1fr',
+                  columnGap: 18,
+                  padding: 'clamp(16px, 2.6vw, 24px) 0',
+                  borderTop: `1px solid ${palette.rule}`,
+                  borderBottom:
+                    i === tenets.length - 1 ? `2px solid ${palette.fg}` : 'none',
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    color: palette.accent,
+                    paddingTop: 6,
+                  }}
+                >
+                  Note {String(i + 1).padStart(2, '0')}
+                </span>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontStyle: 'italic',
+                    fontSize: 'clamp(19px, 2vw, 24px)',
+                    lineHeight: 1.4,
+                    fontWeight: 400,
+                  }}
+                >
+                  &ldquo;{tenet}&rdquo;
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Lifestyle (meditation) -------------------- */
+
+function LifestyleDailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(80px, 12vw, 180px)',
+          paddingBottom: 'clamp(80px, 12vw, 180px)',
+          maxWidth: 620,
+          textAlign: 'center',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            marginBottom: 24,
+            opacity: 0.7,
+          }}
+        >
+          The Daily Code
+        </p>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(36px, 5vw, 56px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 16px',
+          }}
+        >
+          Read at the threshold.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.55,
+            opacity: 0.7,
+            marginBottom: 'clamp(56px, 8vw, 96px)',
+          }}
+        >
+          First thing, last thing. Quiet, declarative, kept short.
+        </p>
+
+        {tenets.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.6 }}
+          >
+            Add tenets in the studio. They&apos;ll appear here, one breath at a time.
+          </p>
+        ) : (
+          <ol
+            className="list-none"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(36px, 5vw, 56px)',
+            }}
+          >
+            {tenets.map((tenet, i) => (
+              <li key={i}>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 10,
+                    fontWeight: 700,
+                    letterSpacing: '0.22em',
+                    textTransform: 'uppercase',
+                    color: palette.accent,
+                    marginBottom: 10,
+                  }}
+                >
+                  {String(i + 1).padStart(2, '0')}
+                </p>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(22px, 2.6vw, 30px)',
+                    lineHeight: 1.25,
+                    fontWeight: 400,
+                  }}
+                >
+                  {tenet}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Financial (numbered principles) -------------------- */
+
+function FinancialDailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { zine } = data;
+  const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 860,
+        }}
+      >
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '10px 0',
+            marginBottom: 28,
+          }}
+        >
+          <span>The Daily Code · Operating Principles</span>
+          <span>Vol. {zine.issue_number}</span>
+        </div>
+
+        <div className="mb-10 flex items-baseline justify-between">
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(36px, 5vw, 64px)',
+              lineHeight: 1,
+              letterSpacing: '-0.018em',
+              fontWeight: 400,
+              margin: 0,
+            }}
+          >
+            Principles, on file.
+          </h2>
+          <span
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              opacity: 0.6,
+            }}
+          >
+            {tenets.length} of record
+          </span>
+        </div>
+
+        {tenets.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add tenets in the studio. They&apos;ll be filed here as numbered principles.
+          </p>
+        ) : (
+          <ol className="list-none" style={{ borderTop: `1px solid ${palette.fg}` }}>
+            {tenets.map((tenet, i) => (
+              <li
+                key={i}
+                className="grid items-baseline"
+                style={{
+                  gridTemplateColumns: '60px 1fr',
+                  columnGap: 18,
+                  padding: '14px 0',
+                  borderBottom: `1px solid ${palette.rule}`,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: '0.1em',
+                    color: palette.accent,
+                  }}
+                >
+                  § {String(i + 1).padStart(2, '0')}
+                </span>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 'clamp(16px, 1.7vw, 19px)',
+                    lineHeight: 1.45,
+                    fontWeight: 400,
+                  }}
+                >
+                  {tenet}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+
+        <p
+          className="mt-8"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 9,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            opacity: 0.55,
+            textAlign: 'right',
+          }}
+        >
+          End of section · Page break
+        </p>
       </div>
     </article>
   );

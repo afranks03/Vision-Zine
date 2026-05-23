@@ -18,10 +18,13 @@ export function EditorsLetter(props: SpreadProps & { palette: SpreadPalette }) {
       return <FashionLetter {...props} />;
     case 'art_catalog':
       return <ArtCatalogLetter {...props} />;
-    case 'editorial':
-    case 'lifestyle':
     case 'travel':
+      return <TravelLetter {...props} />;
+    case 'lifestyle':
+      return <LifestyleLetter {...props} />;
     case 'financial':
+      return <FinancialLetter {...props} />;
+    case 'editorial':
     default:
       return <EditorialLetter {...props} />;
   }
@@ -458,4 +461,359 @@ function FashionLetter({ data, palette }: SpreadProps & { palette: SpreadPalette
       </div>
     </article>
   );
+}
+
+/* -------------------- Travel (dispatch from the field) -------------------- */
+
+function TravelLetter({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { personal, vision, zine } = data;
+  const displayName = personal.display_name || personal.full_name || 'You';
+  const location = personal.location || 'The Field';
+  const statement = vision.statement?.trim();
+  const paragraphs = statement
+    ? statement
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter(Boolean)
+    : [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 820,
+        }}
+      >
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '12px 0',
+            marginBottom: 28,
+          }}
+        >
+          <span>Dispatch · No. {romanize(zine.issue_number)}</span>
+          <span>From {location}</span>
+        </div>
+
+        <p
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(20px, 2.2vw, 26px)',
+            lineHeight: 1.2,
+            opacity: 0.8,
+            marginBottom: 16,
+          }}
+        >
+          <span style={{ color: palette.accent }}>{location}</span> —{' '}
+          {new Date(zine.created_at).toLocaleDateString('en-US', {
+            month: 'long',
+            year: 'numeric',
+          })}
+        </p>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(40px, 6vw, 84px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.02em',
+            fontWeight: 400,
+            margin: '0 0 40px',
+            maxWidth: '14ch',
+          }}
+        >
+          {statement ? <>The year, in motion.</> : <>The dispatch, forthcoming.</>}
+        </h2>
+
+        <div
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 'clamp(17px, 1.7vw, 19px)',
+            lineHeight: 1.6,
+            fontWeight: 400,
+          }}
+        >
+          {paragraphs.length > 0 ? (
+            paragraphs.map((p, i) => (
+              <p key={i} style={{ marginBottom: '1.1em' }}>
+                {p}
+              </p>
+            ))
+          ) : (
+            <p style={{ marginBottom: '1em', opacity: 0.6, fontStyle: 'italic' }}>
+              Write your Vision statement in the studio. The dispatch form holds it here as a
+              single quiet column, with a dateline above.
+            </p>
+          )}
+        </div>
+
+        {paragraphs.length > 0 && (
+          <div
+            className="mt-10 flex items-end justify-between"
+            style={{ borderTop: `1px solid ${palette.fg}`, paddingTop: 18 }}
+          >
+            <span
+              style={{
+                fontFamily: 'var(--font-display)',
+                fontStyle: 'italic',
+                fontSize: 'clamp(28px, 3.5vw, 40px)',
+                lineHeight: 1,
+                fontWeight: 400,
+                color: palette.accent,
+              }}
+            >
+              — {displayName}
+            </span>
+            <span
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: '0.22em',
+                textTransform: 'uppercase',
+                textAlign: 'right',
+                lineHeight: 1.7,
+              }}
+            >
+              <span className="block">Filed from {location}</span>
+              <span className="block">Correspondent, this volume</span>
+            </span>
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Lifestyle (in conversation) -------------------- */
+
+function LifestyleLetter({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { personal, vision } = data;
+  const displayName = personal.display_name || personal.full_name || 'You';
+  const statement = vision.statement?.trim();
+  const paragraphs = statement
+    ? statement
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter(Boolean)
+    : [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(80px, 12vw, 180px)',
+          paddingBottom: 'clamp(80px, 12vw, 180px)',
+          maxWidth: 620,
+          textAlign: 'center',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            marginBottom: 28,
+            opacity: 0.7,
+          }}
+        >
+          In conversation with
+        </p>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(40px, 5.5vw, 64px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 36px',
+          }}
+        >
+          {displayName}.
+        </h2>
+
+        <div
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 17,
+            lineHeight: 1.7,
+            fontWeight: 400,
+            textAlign: 'left',
+          }}
+        >
+          {paragraphs.length > 0 ? (
+            paragraphs.map((p, i) => (
+              <p key={i} style={{ marginBottom: '1.2em' }}>
+                {p}
+              </p>
+            ))
+          ) : (
+            <p style={{ marginBottom: '1em', opacity: 0.6, fontStyle: 'italic' }}>
+              Write your Vision statement in the studio. The conversation form keeps it quiet and
+              centered — like an editor&apos;s introduction to a feature interview.
+            </p>
+          )}
+        </div>
+
+        {paragraphs.length > 0 && (
+          <p
+            className="mt-12"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.22em',
+              textTransform: 'uppercase',
+              opacity: 0.6,
+            }}
+          >
+            {personal.location ? <span>{personal.location} · </span> : null}
+            <span>This volume</span>
+          </p>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Financial (memo) -------------------- */
+
+function FinancialLetter({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { personal, vision, zine } = data;
+  const displayName = personal.display_name || personal.full_name || 'Editor';
+  const statement = vision.statement?.trim();
+  const paragraphs = statement
+    ? statement
+        .split(/\n\n+/)
+        .map((p) => p.trim())
+        .filter(Boolean)
+    : [];
+  const date = new Date(zine.created_at).toLocaleDateString('en-US', {
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
+  });
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+          maxWidth: 860,
+        }}
+      >
+        {/* Memo header */}
+        <div
+          style={{
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `2px solid ${palette.fg}`,
+            padding: '14px 0',
+            marginBottom: 36,
+            fontFamily: 'var(--font-sans)',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.16em',
+            textTransform: 'uppercase',
+            display: 'grid',
+            gridTemplateColumns: '80px 1fr',
+            rowGap: 6,
+            columnGap: 16,
+          }}
+        >
+          <span style={{ opacity: 0.55 }}>Memo</span>
+          <span>The Position, FY {new Date(zine.created_at).getFullYear()}</span>
+          <span style={{ opacity: 0.55 }}>To</span>
+          <span>Self · Vol. {zine.issue_number}</span>
+          <span style={{ opacity: 0.55 }}>From</span>
+          <span>{displayName}</span>
+          <span style={{ opacity: 0.55 }}>Date</span>
+          <span>{date}</span>
+        </div>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(34px, 4.8vw, 56px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.015em',
+            fontWeight: 400,
+            margin: '0 0 32px',
+            paddingBottom: 18,
+            borderBottom: `1px solid ${palette.fg}`,
+          }}
+        >
+          Re: <em style={{ color: palette.accent }}>The vision, on record.</em>
+        </h2>
+
+        <div
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontSize: 16,
+            lineHeight: 1.5,
+            fontWeight: 400,
+            textAlign: 'justify',
+          }}
+        >
+          {paragraphs.length > 0 ? (
+            paragraphs.map((p, i) => (
+              <p key={i} style={{ marginBottom: '1em' }}>
+                {p}
+              </p>
+            ))
+          ) : (
+            <p style={{ marginBottom: '1em', opacity: 0.6, fontStyle: 'italic' }}>
+              Write your Vision statement in the studio. The memo form receives it as the body of
+              a single internal communication.
+            </p>
+          )}
+        </div>
+
+        {paragraphs.length > 0 && (
+          <div className="mt-10" style={{ borderTop: `1px solid ${palette.fg}`, paddingTop: 16 }}>
+            <p
+              style={{
+                fontFamily: 'var(--font-sans)',
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                lineHeight: 1.6,
+              }}
+            >
+              <span style={{ opacity: 0.55 }}>Signed </span>
+              <span style={{ color: palette.accent }}>{initialsOf(displayName)}</span>
+              <span style={{ opacity: 0.55 }}> · {displayName} · Editor of record</span>
+            </p>
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+function initialsOf(name: string): string {
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((w) => w[0]?.toUpperCase() ?? '')
+    .join('.');
+  return initials.length > 0 ? `${initials}.` : '—';
 }

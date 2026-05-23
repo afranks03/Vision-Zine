@@ -18,10 +18,13 @@ export function Foundation(props: SpreadProps & { palette: SpreadPalette }) {
       return <FashionFoundation {...props} />;
     case 'art_catalog':
       return <ArtCatalogFoundation {...props} />;
-    case 'editorial':
-    case 'lifestyle':
     case 'travel':
+      return <TravelFoundation {...props} />;
+    case 'lifestyle':
+      return <LifestyleFoundation {...props} />;
     case 'financial':
+      return <FinancialFoundation {...props} />;
+    case 'editorial':
     default:
       return <EditorialFoundation {...props} />;
   }
@@ -229,12 +232,9 @@ function ArtCatalogFoundation({ data, palette }: SpreadProps & { palette: Spread
         </p>
 
         {items.length === 0 ? (
-          <p
-            className="font-serif italic"
-            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
-          >
-            Add achievements in the studio. Each becomes a wall label here — accession number,
-            year, medium, title.
+          <p className="font-serif italic" style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}>
+            Add achievements in the studio. Each becomes a wall label here — accession number, year,
+            medium, title.
           </p>
         ) : (
           <ol className="list-none" style={{ display: 'flex', flexDirection: 'column', gap: 18 }}>
@@ -483,6 +483,449 @@ function FashionFoundation({ data, palette }: SpreadProps & { palette: SpreadPal
             End of looks
             <span style={{ display: 'block', width: 36, height: 1, background: palette.accent }} />
           </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Travel (expeditions log) -------------------- */
+
+function TravelFoundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const items = data.achievements.items ?? [];
+  const { zine } = data;
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
+      >
+        {/* Gazette eyebrow */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '12px 0',
+            marginBottom: 'clamp(40px, 6vw, 64px)',
+          }}
+        >
+          <span>The Expeditions Log</span>
+          <span>Volume {zine.issue_number}</span>
+        </div>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(48px, 7vw, 96px)',
+            lineHeight: 0.95,
+            letterSpacing: '-0.018em',
+            fontWeight: 400,
+            margin: '0 0 16px',
+            maxWidth: '14ch',
+          }}
+        >
+          Where <em style={{ color: palette.accent }}>{data.personal.display_name || 'we'}</em>{' '}
+          went.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 15,
+            lineHeight: 1.5,
+            opacity: 0.7,
+            marginBottom: 'clamp(40px, 6vw, 56px)',
+            maxWidth: 540,
+          }}
+        >
+          A log of routes taken and territory crossed. Each entry dated by year, tagged by the
+          terrain it covered.
+        </p>
+
+        {items.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add achievements in the studio. Each becomes an entry in the log here.
+          </p>
+        ) : (
+          <ol className="list-none">
+            {items.map((item, i) => (
+              <li
+                key={i}
+                className="grid items-baseline"
+                style={{
+                  gridTemplateColumns: '90px 1fr 110px',
+                  columnGap: 'clamp(16px, 2vw, 28px)',
+                  padding: 'clamp(20px, 3vw, 28px) 0',
+                  borderTop: `1px solid ${palette.rule}`,
+                  borderBottom:
+                    i === items.length - 1 ? `2px solid ${palette.fg}` : 'none',
+                }}
+              >
+                {/* "Year" column — like an arrival date in a logbook */}
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 11,
+                    fontWeight: 700,
+                    letterSpacing: '0.16em',
+                    textTransform: 'uppercase',
+                    color: palette.accent,
+                  }}
+                >
+                  {item.year ?? '—'}
+                </span>
+
+                {/* Title */}
+                <span
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontSize: 'clamp(20px, 2.2vw, 28px)',
+                    lineHeight: 1.15,
+                    fontWeight: 400,
+                  }}
+                >
+                  {item.title}
+                </span>
+
+                {/* Terrain ("tag") right-aligned */}
+                <span
+                  style={{
+                    fontFamily: 'var(--font-sans)',
+                    fontSize: 9,
+                    fontWeight: 700,
+                    letterSpacing: '0.2em',
+                    textTransform: 'uppercase',
+                    textAlign: 'right',
+                    opacity: 0.65,
+                  }}
+                >
+                  {item.tag ?? 'Terra incognita'}
+                </span>
+              </li>
+            ))}
+          </ol>
+        )}
+
+        {/* Compass-rose closer */}
+        {items.length > 0 && (
+          <div
+            className="mt-12 flex items-center justify-center gap-3"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.28em',
+              textTransform: 'uppercase',
+              color: palette.accent,
+            }}
+          >
+            <span style={{ display: 'block', width: 24, height: 1, background: palette.accent }} />
+            N · E · S · W
+            <span style={{ display: 'block', width: 24, height: 1, background: palette.accent }} />
+          </div>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Lifestyle (quiet receipts) -------------------- */
+
+function LifestyleFoundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const items = data.achievements.items ?? [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(80px, 12vw, 180px)',
+          paddingBottom: 'clamp(80px, 12vw, 180px)',
+          maxWidth: 620,
+          textAlign: 'center',
+        }}
+      >
+        <p
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.22em',
+            textTransform: 'uppercase',
+            marginBottom: 24,
+            opacity: 0.7,
+          }}
+        >
+          The Foundation
+        </p>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontStyle: 'italic',
+            fontSize: 'clamp(36px, 5vw, 56px)',
+            lineHeight: 1.05,
+            letterSpacing: '-0.012em',
+            fontWeight: 400,
+            margin: '0 0 18px',
+          }}
+        >
+          What stays.
+        </h2>
+        <p
+          style={{
+            fontFamily: 'var(--font-serif)',
+            fontStyle: 'italic',
+            fontSize: 16,
+            lineHeight: 1.55,
+            opacity: 0.7,
+            marginBottom: 'clamp(48px, 7vw, 80px)',
+          }}
+        >
+          A short list of the things that made the year. Not a brag, not a CV — what you&apos;d
+          tell a friend over coffee.
+        </p>
+
+        {items.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.55, opacity: 0.6 }}
+          >
+            Add achievements in the studio. They&apos;ll appear here as a quiet, centered list.
+          </p>
+        ) : (
+          <ol
+            className="list-none"
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: 'clamp(28px, 4vw, 44px)',
+              textAlign: 'center',
+            }}
+          >
+            {items.map((item, i) => (
+              <li key={i}>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(22px, 2.6vw, 30px)',
+                    lineHeight: 1.15,
+                    letterSpacing: '-0.005em',
+                    fontWeight: 400,
+                    marginBottom: 6,
+                  }}
+                >
+                  {item.title}
+                </p>
+                {(item.year || item.tag) && (
+                  <p
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.2em',
+                      textTransform: 'uppercase',
+                      opacity: 0.55,
+                    }}
+                  >
+                    {item.year}
+                    {item.year && item.tag && ' · '}
+                    {item.tag}
+                  </p>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Financial (ledger) -------------------- */
+
+function FinancialFoundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const items = data.achievements.items ?? [];
+  const { zine } = data;
+  const year = new Date(zine.created_at).getFullYear();
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
+      >
+        {/* Ledger header */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            fontFamily: 'var(--font-sans)',
+            fontSize: 10,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+            borderTop: `2px solid ${palette.fg}`,
+            borderBottom: `1px solid ${palette.fg}`,
+            padding: '10px 0',
+            marginBottom: 28,
+          }}
+        >
+          <span>The Foundation · Ledger</span>
+          <span>FY {year} · Volume {zine.issue_number}</span>
+        </div>
+
+        {/* Title row */}
+        <div className="flex items-baseline justify-between mb-10">
+          <h2
+            style={{
+              fontFamily: 'var(--font-display)',
+              fontSize: 'clamp(36px, 5vw, 64px)',
+              lineHeight: 1,
+              letterSpacing: '-0.018em',
+              fontWeight: 400,
+              margin: 0,
+            }}
+          >
+            Assets, recorded.
+          </h2>
+          <span
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 9,
+              fontWeight: 700,
+              letterSpacing: '0.18em',
+              textTransform: 'uppercase',
+              opacity: 0.6,
+            }}
+          >
+            {items.length} entr{items.length === 1 ? 'y' : 'ies'}
+          </span>
+        </div>
+
+        {items.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 16, lineHeight: 1.5, opacity: 0.6 }}
+          >
+            Add achievements in the studio. They post to the ledger here.
+          </p>
+        ) : (
+          <>
+            {/* Column headers */}
+            <div
+              className="grid items-baseline"
+              style={{
+                gridTemplateColumns: '52px 1fr 90px 130px',
+                columnGap: 16,
+                paddingBottom: 8,
+                borderBottom: `1px solid ${palette.fg}`,
+                fontFamily: 'var(--font-sans)',
+                fontSize: 9,
+                fontWeight: 700,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+                opacity: 0.55,
+              }}
+            >
+              <span>No.</span>
+              <span>Asset</span>
+              <span style={{ textAlign: 'right' }}>FY</span>
+              <span style={{ textAlign: 'right' }}>Category</span>
+            </div>
+
+            {/* Ledger rows */}
+            <ol className="list-none">
+              {items.map((item, i) => (
+                <li
+                  key={i}
+                  className="grid items-baseline"
+                  style={{
+                    gridTemplateColumns: '52px 1fr 90px 130px',
+                    columnGap: 16,
+                    padding: '12px 0',
+                    borderBottom: `1px solid ${palette.rule}`,
+                    fontFamily: 'var(--font-serif)',
+                    fontSize: 15,
+                    lineHeight: 1.4,
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.06em',
+                      color: palette.accent,
+                    }}
+                  >
+                    {String(i + 1).padStart(3, '0')}
+                  </span>
+                  <span>{item.title}</span>
+                  <span
+                    style={{
+                      textAlign: 'right',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 12,
+                      fontWeight: 700,
+                      letterSpacing: '0.06em',
+                    }}
+                  >
+                    {item.year ?? '—'}
+                  </span>
+                  <span
+                    style={{
+                      textAlign: 'right',
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 9,
+                      fontWeight: 700,
+                      letterSpacing: '0.16em',
+                      textTransform: 'uppercase',
+                      opacity: 0.7,
+                    }}
+                  >
+                    {item.tag ?? 'Unclassified'}
+                  </span>
+                </li>
+              ))}
+            </ol>
+
+            {/* Totals strip */}
+            <div
+              className="grid items-baseline"
+              style={{
+                gridTemplateColumns: '1fr auto',
+                columnGap: 16,
+                paddingTop: 14,
+                marginTop: 4,
+                borderTop: `2px solid ${palette.fg}`,
+                fontFamily: 'var(--font-sans)',
+                fontSize: 10,
+                fontWeight: 700,
+                letterSpacing: '0.18em',
+                textTransform: 'uppercase',
+              }}
+            >
+              <span>Total assets recorded</span>
+              <span style={{ color: palette.accent }}>{items.length}</span>
+            </div>
+          </>
         )}
       </div>
     </article>
