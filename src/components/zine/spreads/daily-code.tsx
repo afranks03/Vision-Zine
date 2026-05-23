@@ -1,10 +1,33 @@
+import { romanize } from '../atoms';
 import type { SpreadPalette } from '../styles';
 import type { SpreadProps } from '../types';
 
 /**
- * The Daily Code — palette-driven 2-column bordered grid.
+ * The Daily Code — Tenets spread. Style-dispatcher (Phase 3d-iv).
+ *
+ * Editorial variant: bordered 2-column grid of tenets. Original.
+ *
+ * Fashion variant: manifesto poster. Single column, oversized
+ * numerals leading each line, generous letter-spacing on the
+ * tenet text. Reads like a fashion brand's "rules" page.
  */
-export function DailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+export function DailyCode(props: SpreadProps & { palette: SpreadPalette }) {
+  switch (props.data.zine.style) {
+    case 'fashion':
+      return <FashionDailyCode {...props} />;
+    case 'editorial':
+    case 'lifestyle':
+    case 'art_catalog':
+    case 'travel':
+    case 'financial':
+    default:
+      return <EditorialDailyCode {...props} />;
+  }
+}
+
+/* -------------------- Editorial (baseline) -------------------- */
+
+function EditorialDailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
 
   return (
@@ -84,6 +107,129 @@ export function DailyCode({ data, palette }: SpreadProps & { palette: SpreadPale
               );
             })}
           </ol>
+        )}
+      </div>
+    </article>
+  );
+}
+
+/* -------------------- Fashion (manifesto) -------------------- */
+
+function FashionDailyCode({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const { zine } = data;
+  const tenets = data.tenets.tenets?.filter((t) => t.trim().length > 0) ?? [];
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
+      >
+        {/* Eyebrow strip */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            borderBottom: `2px solid ${palette.fg}`,
+            paddingBottom: 14,
+            fontFamily: 'var(--font-sans)',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+          }}
+        >
+          <span>The Daily Code · No. {romanize(zine.issue_number)}</span>
+          <span>
+            {tenets.length} tenet{tenets.length === 1 ? '' : 's'}
+          </span>
+        </div>
+
+        {/* Manifesto headline */}
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(56px, 9vw, 140px)',
+            lineHeight: 0.85,
+            letterSpacing: '-0.03em',
+            fontWeight: 400,
+            margin: '36px 0 56px',
+            maxWidth: '11em',
+          }}
+        >
+          <em style={{ color: palette.accent }}>Read first thing.</em>
+          <br />
+          Read last thing.
+        </h2>
+
+        {tenets.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{ fontSize: 18, lineHeight: 1.45, opacity: 0.6, maxWidth: 520 }}
+          >
+            Add tenets in the studio — short, declarative, first-person. Each one becomes a line of
+            the manifesto.
+          </p>
+        ) : (
+          <ol className="list-none">
+            {tenets.map((tenet, i) => (
+              <li
+                key={i}
+                className="grid items-baseline gap-6"
+                style={{
+                  gridTemplateColumns: 'auto 1fr',
+                  padding: 'clamp(18px, 3vw, 32px) 0',
+                  borderBottom:
+                    i === tenets.length - 1 ? 'none' : `1px solid ${palette.rule}`,
+                }}
+              >
+                <span
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontStyle: 'italic',
+                    fontSize: 'clamp(56px, 7vw, 96px)',
+                    lineHeight: 0.85,
+                    fontWeight: 400,
+                    color: palette.accent,
+                    width: '2.2ch',
+                  }}
+                >
+                  {(i + 1).toString().padStart(2, '0')}
+                </span>
+                <p
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(24px, 2.8vw, 36px)',
+                    lineHeight: 1.15,
+                    letterSpacing: '-0.005em',
+                    fontWeight: 400,
+                  }}
+                >
+                  {tenet}
+                </p>
+              </li>
+            ))}
+          </ol>
+        )}
+
+        {/* Closing tag */}
+        {tenets.length > 0 && (
+          <div
+            className="mt-12 flex items-center justify-end gap-3"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.24em',
+              textTransform: 'uppercase',
+              color: palette.accent,
+            }}
+          >
+            <span style={{ display: 'block', width: 36, height: 1, background: palette.accent }} />
+            <span>The Daily Code</span>
+          </div>
         )}
       </div>
     </article>

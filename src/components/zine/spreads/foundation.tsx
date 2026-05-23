@@ -1,11 +1,34 @@
+import { romanize } from '../atoms';
 import type { SpreadPalette } from '../styles';
 import type { SpreadProps } from '../types';
 
 /**
- * The Foundation — palette-driven achievements receipt list with an
- * italic editorial quote at the top.
+ * The Foundation — Achievements spread. Style-dispatcher (Phase 3d-iv).
+ *
+ * Editorial variant: numbered receipts in two columns. The original
+ * Vision Zine treatment, preserved.
+ *
+ * Fashion variant: runway-list. Single column, generous breathing,
+ * huge display-serif numerals, year and tag arranged like a magazine's
+ * fashion credit. Each item reads like a runway "look."
  */
-export function Foundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+export function Foundation(props: SpreadProps & { palette: SpreadPalette }) {
+  switch (props.data.zine.style) {
+    case 'fashion':
+      return <FashionFoundation {...props} />;
+    case 'editorial':
+    case 'lifestyle':
+    case 'art_catalog':
+    case 'travel':
+    case 'financial':
+    default:
+      return <EditorialFoundation {...props} />;
+  }
+}
+
+/* -------------------- Editorial (baseline) -------------------- */
+
+function EditorialFoundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
   const items = data.achievements.items ?? [];
 
   return (
@@ -135,5 +158,175 @@ function FoundationQuote({ palette }: { palette: SpreadPalette }) {
         }}
       />
     </blockquote>
+  );
+}
+
+/* -------------------- Fashion (runway list) -------------------- */
+
+function FashionFoundation({ data, palette }: SpreadProps & { palette: SpreadPalette }) {
+  const items = data.achievements.items ?? [];
+  const { zine } = data;
+
+  return (
+    <article className="relative" style={{ background: palette.bg, color: palette.fg }}>
+      <div
+        className="vz-container"
+        style={{
+          paddingTop: 'clamp(60px, 10vw, 140px)',
+          paddingBottom: 'clamp(60px, 10vw, 140px)',
+        }}
+      >
+        {/* Eyebrow + big editorial headline */}
+        <div
+          className="flex items-baseline justify-between"
+          style={{
+            borderBottom: `2px solid ${palette.fg}`,
+            paddingBottom: 14,
+            fontFamily: 'var(--font-sans)',
+            fontSize: 11,
+            fontWeight: 700,
+            letterSpacing: '0.18em',
+            textTransform: 'uppercase',
+          }}
+        >
+          <span>Foundation · No. {romanize(zine.issue_number)}</span>
+          <span>
+            {items.length} look{items.length === 1 ? '' : 's'}
+          </span>
+        </div>
+
+        <h2
+          style={{
+            fontFamily: 'var(--font-display)',
+            fontSize: 'clamp(56px, 9vw, 132px)',
+            lineHeight: 0.88,
+            letterSpacing: '-0.025em',
+            fontWeight: 400,
+            margin: '36px 0 56px',
+            maxWidth: '11em',
+          }}
+        >
+          The work <em style={{ color: palette.accent }}>behind</em> the next chapter.
+        </h2>
+
+        {items.length === 0 ? (
+          <p
+            className="font-serif italic"
+            style={{
+              fontSize: 18,
+              lineHeight: 1.45,
+              opacity: 0.6,
+              maxWidth: 520,
+            }}
+          >
+            Add achievements in the studio — Title, Year, Tag. Each appears here as a runway look
+            with a huge numeral and an editor&apos;s tag.
+          </p>
+        ) : (
+          <ol className="list-none">
+            {items.map((item, i) => (
+              <li
+                key={i}
+                className="grid items-baseline"
+                style={{
+                  gridTemplateColumns: 'auto 1fr auto',
+                  columnGap: 'clamp(24px, 4vw, 56px)',
+                  rowGap: 4,
+                  padding: 'clamp(28px, 5vw, 56px) 0',
+                  borderBottom:
+                    i === items.length - 1 ? 'none' : `1px solid ${palette.rule}`,
+                }}
+              >
+                {/* Big runway numeral */}
+                <span
+                  style={{
+                    fontFamily: 'var(--font-display)',
+                    fontSize: 'clamp(72px, 10vw, 144px)',
+                    lineHeight: 0.85,
+                    fontWeight: 400,
+                    color: palette.accent,
+                    fontStyle: 'italic',
+                    width: '1.4em',
+                  }}
+                >
+                  {(i + 1).toString().padStart(2, '0')}
+                </span>
+
+                {/* Title + year */}
+                <div className="flex flex-col">
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-display)',
+                      fontSize: 'clamp(28px, 3.5vw, 44px)',
+                      lineHeight: 1.05,
+                      letterSpacing: '-0.012em',
+                      fontWeight: 400,
+                    }}
+                  >
+                    {item.title}
+                  </span>
+                  {item.year && (
+                    <span
+                      style={{
+                        fontFamily: 'var(--font-sans)',
+                        fontSize: 11,
+                        fontWeight: 700,
+                        letterSpacing: '0.18em',
+                        textTransform: 'uppercase',
+                        marginTop: 10,
+                        opacity: 0.6,
+                      }}
+                    >
+                      {item.year}
+                    </span>
+                  )}
+                </div>
+
+                {/* Tag — bold magazine credit-pill, vertical on right */}
+                {item.tag && (
+                  <span
+                    style={{
+                      fontFamily: 'var(--font-sans)',
+                      fontSize: 10,
+                      fontWeight: 700,
+                      letterSpacing: '0.2em',
+                      textTransform: 'uppercase',
+                      writingMode: 'vertical-rl',
+                      transform: 'rotate(180deg)',
+                      borderLeft: `2px solid ${palette.accent}`,
+                      paddingLeft: 10,
+                      paddingTop: 6,
+                      paddingBottom: 6,
+                      alignSelf: 'stretch',
+                    }}
+                  >
+                    {item.tag}
+                  </span>
+                )}
+              </li>
+            ))}
+          </ol>
+        )}
+
+        {/* End-of-feature marker */}
+        {items.length > 0 && (
+          <div
+            className="mt-12 flex items-center justify-center gap-3"
+            style={{
+              fontFamily: 'var(--font-sans)',
+              fontSize: 10,
+              fontWeight: 700,
+              letterSpacing: '0.24em',
+              textTransform: 'uppercase',
+              color: palette.accent,
+            }}
+          >
+            <span style={{ display: 'block', width: 36, height: 1, background: palette.accent }} />
+            End of looks
+            <span style={{ display: 'block', width: 36, height: 1, background: palette.accent }} />
+          </div>
+        )}
+      </div>
+    </article>
   );
 }
