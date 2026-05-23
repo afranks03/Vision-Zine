@@ -21,7 +21,14 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="bg-vz-oat text-vz-ink flex min-h-screen flex-col">
-      <header className="bg-vz-cream border-vz-ink sticky top-0 z-50 border-b">
+      {/* Studio chrome — sticky on screen, suppressed in print so the
+          downloaded PDF and any browser-print don't pick up the
+          authenticated UI (Dashboard nav, the user's email, Sign out).
+          The Vision Zine wordmark is kept visible on screen but
+          hidden in print too — covers + running heads carry the
+          brand from page 1 onward, no need for it at the top of
+          every PDF. */}
+      <header className="bg-vz-cream border-vz-ink sticky top-0 z-50 border-b print:hidden">
         <nav className="vz-container flex h-16 items-center justify-between gap-6">
           <div className="flex items-center gap-6">
             <Link

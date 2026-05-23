@@ -113,7 +113,10 @@ export default async function PublicZinePage({ params }: Props) {
 
 function PublicFooter({ zineId }: { zineId: string }) {
   return (
-    <footer className="bg-vz-ink text-vz-cream">
+    // print:hidden — the CTAs and URL display are web-only chrome.
+    // They appear in the live /z/[id] view and on social shares but
+    // never on the PDF the user downloads or the bound print copy.
+    <footer className="bg-vz-ink text-vz-cream print:hidden">
       <div className="vz-container vz-section-tight text-center">
         <Eyebrow className="text-vz-yellow">A Vision Zine</Eyebrow>
         <p
