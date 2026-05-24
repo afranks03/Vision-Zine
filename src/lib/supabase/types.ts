@@ -80,6 +80,12 @@ export interface ZineRow {
    * cover_layout — affects the inner spreads' typography.
    */
   typography_preset: 'editorial' | 'modern' | 'romantic' | 'news' | 'brutalist';
+  /**
+   * Phase 5d: when the annual reissue reminder email was sent.
+   * Null means never reminded; the cron sets it on send to prevent
+   * re-spamming the same owner.
+   */
+  last_reminder_sent_at: string | null;
   created_at: string;
   updated_at: string;
 }

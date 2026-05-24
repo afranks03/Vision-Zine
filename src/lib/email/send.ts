@@ -8,6 +8,7 @@
  * we never throw out of these into the webhook/auth path.
  */
 import { getBccAddress, getFromAddress, getResendClient, isEmailConfigured } from './client';
+import { AnnualReminderEmail, type AnnualReminderProps } from './templates/annual-reminder';
 import { CoauthorInviteEmail, type CoauthorInviteProps } from './templates/coauthor-invite';
 import { PaymentReceiptEmail, type PaymentReceiptProps } from './templates/payment-receipt';
 import {
@@ -102,6 +103,20 @@ export async function sendPrintConfirmationEmail(
     subject: `${templateProps.zineTitle} is at the press`,
     react: PrintConfirmationEmail(templateProps),
     idempotencyKey: `print-confirm:${templateProps.orderId}`,
+  });
+}
+
+export async function sendAnnualReminderEmail(
+  input: { to: string } & AnnualReminderProps,
+): Promise<Sent> {
+  const { to, ...templateProps } = input;
+  return sendCore({
+    to,
+    subject: `A year on ${templateProps.zineTitle}. Ready for the next?`,
+    react: AnnualReminderEmail(templateProps),
+    // Keyed on the zine id so a re-fire (cron retry within the same
+    // day) doesn't double-send to the same owner.
+    idempotencyKey: `annual-reminder:${templateProps.zineId}`,
   });
 }
 
