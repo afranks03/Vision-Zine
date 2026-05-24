@@ -1,23 +1,22 @@
 import { NextResponse, type NextRequest } from 'next/server';
+import { aiRateLimit } from '@/lib/ratelimit';
 import { createClient } from '@/lib/supabase/server';
+import { aiStreamRequestSchema, formatZodError } from '@/lib/validation/schemas';
 import { AI_MODEL, getAnthropicClient } from './client';
 
 /**
- * Shared helper for the four AI streaming routes. Validates auth, runs the
- * model with prompt caching on the system block, and returns a plain text
- * ReadableStream (one chunk per text delta).
+ * Shared helper for the four AI streaming routes. Validates auth + body
+ * (Zod), applies a per-user rate limit, then runs the model with prompt
+ * caching on the system block and returns a plain text ReadableStream
+ * (one chunk per text delta).
+ *
+ * Phase 6 hardening: Zod replaces hand-rolled validation; Upstash rate
+ * limiting prevents prompt-spam from draining the Anthropic budget.
  */
-
-const MAX_INPUT_CHARS = 8000;
 
 interface StreamRouteOptions {
   systemPrompt: string;
   buildUserPrompt: (rawInput: string, displayName?: string) => string;
-}
-
-interface RouteRequestBody {
-  raw_input?: unknown;
-  display_name?: unknown;
 }
 
 export async function handleAIStreamRoute(
@@ -33,34 +32,49 @@ export async function handleAIStreamRoute(
     return NextResponse.json({ error: 'Not signed in.' }, { status: 401 });
   }
 
-  // 2. Parse + validate body.
-  let body: RouteRequestBody;
+  // 2. Rate-limit by user_id. Shared bucket across the four AI routes
+  //    (30/hour total) so a runaway loop in any one of them can't
+  //    drain the entire Anthropic budget.
+  const limit = await aiRateLimit.limit(`ai:${user.id}`);
+  if (!limit.success) {
+    const retryAfterSec = Math.max(1, Math.ceil((limit.reset - Date.now()) / 1000));
+    return NextResponse.json(
+      {
+        error:
+          'You’ve made a lot of AI requests in the last hour. Try again in a few minutes.',
+      },
+      {
+        status: 429,
+        headers: {
+          'Retry-After': String(retryAfterSec),
+          'X-RateLimit-Limit': String(limit.limit),
+          'X-RateLimit-Remaining': '0',
+        },
+      },
+    );
+  }
+
+  // 3. Parse + validate body via Zod.
+  let raw: unknown;
   try {
-    body = (await request.json()) as RouteRequestBody;
+    raw = await request.json();
   } catch {
     return NextResponse.json({ error: 'Invalid JSON.' }, { status: 400 });
   }
-
-  const rawInput = typeof body.raw_input === 'string' ? body.raw_input.trim() : '';
-  const displayName =
-    typeof body.display_name === 'string' && body.display_name.trim()
-      ? body.display_name.trim()
-      : undefined;
-
+  const parsed = aiStreamRequestSchema.safeParse(raw);
+  if (!parsed.success) {
+    return NextResponse.json({ error: formatZodError(parsed.error) }, { status: 400 });
+  }
+  const rawInput = parsed.data.raw_input.trim();
+  const displayName = parsed.data.display_name?.trim() || undefined;
   if (!rawInput) {
     return NextResponse.json(
-      { error: 'raw_input is required and must be a non-empty string.' },
+      { error: 'Write something before asking the assistant.' },
       { status: 400 },
     );
   }
-  if (rawInput.length > MAX_INPUT_CHARS) {
-    return NextResponse.json(
-      { error: `raw_input too long (max ${MAX_INPUT_CHARS} chars).` },
-      { status: 413 },
-    );
-  }
 
-  // 3. Build and stream the Claude call.
+  // 4. Build and stream the Claude call.
   let anthropic;
   try {
     anthropic = getAnthropicClient();
