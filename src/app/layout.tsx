@@ -1,4 +1,5 @@
 import type { Metadata } from 'next';
+import { PlausibleScript } from '@/components/analytics/plausible';
 import { allFontVariables } from '@/lib/typography/presets';
 import './globals.css';
 
@@ -35,6 +36,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={`${allFontVariables} h-full antialiased`}>
+      <head>
+        <PlausibleScript />
+      </head>
       <body className="bg-background text-foreground flex min-h-full flex-col font-serif">
         {children}
       </body>
