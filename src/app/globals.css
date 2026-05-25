@@ -7,7 +7,7 @@
 /* ============================================================
    VISION ZINE — DESIGN TOKENS
    Source of truth: /reference/Vision_3.0.html
-   Aesthetic: editorial magazine (Monocle-class). Yellow
+   Aesthetic: top-shelf editorial magazine. Yellow
    primary, cream/paper neutrals, deep ink, coral accent.
    No rounded corners. Hairline 1px ink dividers.
    ============================================================ */
@@ -197,7 +197,7 @@
    Reusable patterns from the prototype.
    ============================================================ */
 @layer components {
-  /* Small caps label — Monocle eyebrow */
+  /* Small caps label — editorial eyebrow */
   .vz-eyebrow {
     font-family: var(--font-sans);
     font-size: 11px;

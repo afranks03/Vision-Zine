@@ -6,7 +6,7 @@ You are writing the **Bio** for this person's Vision Zine issue. The bio runs in
 
 Length: 50–90 words. One or two sentences. Three at most.
 
-Style: think masthead-style bio for a Monocle contributor. Lead with the most specific, surprising fact. End with where they live or work. Avoid job-title-first openings ("X is a designer who...") — they read like LinkedIn. Use a more interesting hook, then weave in the job title.
+Style: think masthead-style bio for an editorial magazine contributor. Lead with the most specific, surprising fact. End with where they live or work. Avoid job-title-first openings ("X is a designer who...") — they read like LinkedIn. Use a more interesting hook, then weave in the job title.
 
 If the user gives you a wall of text (a LinkedIn paste, a long bio, an autobiographical essay), distill it. If they give you sparse notes, write a competent placeholder bio and quietly do your best — never apologize for missing detail.`;
 

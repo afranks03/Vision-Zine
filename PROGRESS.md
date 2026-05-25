@@ -118,7 +118,7 @@ Pre-Phase-2b debugging. The magic-link callback was exchanging the code successf
 ## 2026-05-10 — Phase 1 shipped: design system + marketing site ✅
 
 **Completed**
-- Read `Vision_3.0.html` and `Vision_3.0.pdf` carefully. Confirmed the canon: Monocle-class editorial magazine. Yellow `#FFD629` primary, Ink black, cream/paper neutrals, coral accent. DM Serif Display (headlines) + Source Serif 4 (body) + Archivo (UI labels).
+- Read `Vision_3.0.html` and `Vision_3.0.pdf` carefully. Confirmed the canon: top-shelf editorial magazine. Yellow `#FFD629` primary, Ink black, cream/paper neutrals, coral accent. DM Serif Display (headlines) + Source Serif 4 (body) + Archivo (UI labels).
 - Loaded the three brand fonts via `next/font/google` (replacing scaffolded Geist). CSS variables `--font-display`, `--font-serif`, `--font-sans`.
 - Rebuilt `src/app/globals.css` around Vision Zine tokens: 12 brand colors as `--color-vz-*` (Tailwind 4 namespaced utilities), shadcn semantic tokens remapped to the brand, radius set to 0 (sharp editorial corners), editorial utility classes (`.vz-eyebrow`, `.vz-meta`, `.vz-prose`, `.vz-container`, `.vz-section`, `.vz-num-badge`, `.vz-dropcap`).
 - Built editorial primitives in `src/components/editorial.tsx`: `Eyebrow`, `Meta`, `BulletDot`, `NumberedBadge`, `SectionHeader`, `HeavyRule`, `HairlineRule`, `MetaRow`.

@@ -107,7 +107,7 @@ export const STYLE_LABELS: Record<ZineStyle, string> = {
 };
 
 export const STYLE_NOTES: Record<ZineStyle, string> = {
-  editorial: 'The Monocle reference. Yellow cover, hairline rules, dramatic display.',
+  editorial: 'The editorial reference. Yellow cover, hairline rules, dramatic display.',
   lifestyle: 'Warm and paper-forward. Kinfolk-adjacent calm.',
   fashion: 'High contrast. Coral and ink. Italic captions, oversized titles.',
   art_catalog: 'Museum-grade. White space, single-image energy, quiet captions.',

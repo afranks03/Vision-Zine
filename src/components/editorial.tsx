@@ -5,7 +5,7 @@
 import { cn } from '@/lib/utils';
 import type { HTMLAttributes, ReactNode } from 'react';
 
-/** Small caps label (Monocle-style eyebrow). 11px, Archivo 700, uppercase. */
+/** Small caps label (editorial eyebrow). 11px, Archivo 700, uppercase. */
 export function Eyebrow({ className, children, ...props }: HTMLAttributes<HTMLParagraphElement>) {
   return (
     <p className={cn('vz-eyebrow', className)} {...props}>

@@ -8,7 +8,7 @@ Questions for the founder. Answered items move to `DECISIONS.md`.
 
 ### A. Marketing copy review
 All marketing copy is first-draft in the brand voice. Pages and what to look at:
-- **`/`** — Hero subhead ("Your year, printed like Monocle would print it."), the three step descriptions, the "Inside an issue" TOC items, the dark quote section, the CTA copy
+- **`/`** — Hero subhead ("Your year, printed like it matters."), the three step descriptions, the "Inside an issue" TOC items, the dark quote section, the CTA copy
 - **`/examples`** — Six style names + blurbs + "mood" lines. Consider whether the styles map to what you actually want to build
 - **`/pricing`** — Tier names (Preview / One Issue / Annual), tier descriptions, feature lists, the three "Common questions" at the bottom. Dollar amounts are `$—` until you set them
 - **`/about`** — The founder essay (first 3 paragraphs use your dropcap; the four principles are pulled from the brief's voice). Email shown is `hello@visionzine.com` (placeholder)

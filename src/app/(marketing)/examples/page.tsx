@@ -14,7 +14,7 @@ const STYLES = [
     fg: 'text-vz-ink',
     tag: 'Issue I',
     blurb:
-      'The Monocle reference. Bold serif masthead, two-column reading, hairline rules, dramatic display headlines.',
+      'The editorial reference. Bold serif masthead, two-column reading, hairline rules, dramatic display headlines.',
     mood: 'Bookshelf, weekend read',
   },
   {

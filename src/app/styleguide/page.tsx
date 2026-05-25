@@ -401,7 +401,7 @@ function ComponentsSection() {
           <ComponentDemo
             label="Eyebrow"
             cssVar=".vz-eyebrow"
-            description="Small-caps Monocle label. 11px Archivo bold uppercase, letter-spacing 0.1em."
+            description="Small-caps editorial label. 11px Archivo bold uppercase, letter-spacing 0.1em."
           >
             <Eyebrow>From the desk</Eyebrow>
           </ComponentDemo>

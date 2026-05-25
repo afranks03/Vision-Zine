@@ -12,7 +12,7 @@ import {
 
 /**
  * Marketing home — the hero. The argument we're making is simple:
- * "your life, printed like Monocle would print it."
+ * your life, printed like it matters.
  *
  * Copy is a first draft in the calm editorial voice the brief asks for.
  * Adrian to edit (flagged in OPEN_QUESTIONS).
@@ -80,7 +80,7 @@ function Hero() {
             className="font-display leading-[0.9] font-normal tracking-[-0.02em]"
             style={{ fontSize: 'clamp(36px, 6vw, 84px)' }}
           >
-            Your year, <em>printed</em> like Monocle would print it.
+            Your year, <em>printed</em> like it matters.
           </h2>
           <div className="font-serif text-[15px] leading-relaxed">
             <p>
