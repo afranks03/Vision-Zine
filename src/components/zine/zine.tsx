@@ -6,6 +6,7 @@ import { DailyCode } from './spreads/daily-code';
 import { EditorsLetter } from './spreads/letter';
 import { Forecast } from './spreads/forecast';
 import { Foundation } from './spreads/foundation';
+import { Practice } from './spreads/practice';
 import { STYLE_PALETTES } from './styles';
 import type { ZineRootProps } from './types';
 
@@ -37,10 +38,16 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
   // First listed section's page index depends on whether Contents
   // exists; Letter zines have Contents at page 2, so the Letter is
   // page 3; Pocket has Letter at page 2.
+  //
+  // Sequence (Letter): Cover · Contents · Letter · Practice · Forecast
+  //                    · DailyCode · Foundation
+  // Sequence (Pocket): Cover · Letter · Practice · Forecast
+  //                    · DailyCode · Foundation
   const letterPage = showContents ? 3 : 2;
-  const forecastPage = letterPage + 1;
-  const dailyCodePage = letterPage + 2;
-  const foundationPage = letterPage + 3;
+  const practicePage = letterPage + 1;
+  const forecastPage = letterPage + 2;
+  const dailyCodePage = letterPage + 3;
+  const foundationPage = letterPage + 4;
   const totalPages = foundationPage;
 
   return (
@@ -76,7 +83,20 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
         <EditorsLetter data={data} palette={palette.letter} />
       </Page>
 
-      {/* 4 (or 3). Forecast — Goals */}
+      {/* 4 (or 3). The Practice — inward + outward */}
+      <Page
+        number={practicePage}
+        total={totalPages}
+        runningHead={runningHead}
+        sectionEyebrow="The Practice"
+        variant={pageVariant(practicePage)}
+        palette={palette.forecast}
+        format={zine.format}
+      >
+        <Practice data={data} palette={palette.forecast} />
+      </Page>
+
+      {/* 5 (or 4). Forecast — Goals */}
       <Page
         number={forecastPage}
         total={totalPages}

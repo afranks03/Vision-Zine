@@ -69,6 +69,20 @@ export function buildToc(data: RenderableZine): TocItem[] {
       filled: true,
     });
   }
+  const practiceFilled =
+    !!data.practice.gratitude?.trim() ||
+    !!data.practice.forgiveness?.trim() ||
+    !!data.practice.grounding?.trim() ||
+    !!data.practice.spirituality?.trim() ||
+    !!data.practice.environment?.trim() ||
+    !!data.practice.friend_circle?.trim();
+  if (practiceFilled) {
+    items.push({
+      title: 'The Practice',
+      desc: 'Six prompts of inward and outward reckoning.',
+      filled: true,
+    });
+  }
   if (data.bio.summary?.trim()) {
     items.push({ title: 'Bio', desc: 'A short editorial introduction.', filled: true });
   }

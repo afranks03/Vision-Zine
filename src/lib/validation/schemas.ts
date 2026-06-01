@@ -22,6 +22,32 @@ export const aiStreamRequestSchema = z.object({
 
 export type AIStreamRequest = z.infer<typeof aiStreamRequestSchema>;
 
+/* ---- Refine-Vision input (Phase 7c) ---- */
+// Same per-field length cap as the regular AI route, applied to the
+// concatenation of current_vision + all six practice fields. The
+// payload is structured so the prompt can render labeled sections;
+// schema enforces individual field caps so a runaway practice entry
+// doesn't blow the prompt context.
+
+const PRACTICE_FIELD_MAX = 2000;
+
+export const refineVisionRequestSchema = z.object({
+  current_vision: z.string().max(PRACTICE_FIELD_MAX).optional(),
+  practice: z
+    .object({
+      gratitude: z.string().max(PRACTICE_FIELD_MAX).optional(),
+      forgiveness: z.string().max(PRACTICE_FIELD_MAX).optional(),
+      grounding: z.string().max(PRACTICE_FIELD_MAX).optional(),
+      spirituality: z.string().max(PRACTICE_FIELD_MAX).optional(),
+      environment: z.string().max(PRACTICE_FIELD_MAX).optional(),
+      friend_circle: z.string().max(PRACTICE_FIELD_MAX).optional(),
+    })
+    .default({}),
+  display_name: z.string().max(120).optional(),
+});
+
+export type RefineVisionRequest = z.infer<typeof refineVisionRequestSchema>;
+
 /* ---- Cover upload form fields (multipart) ---- */
 // The File is validated by route logic (Content-Type allowlist +
 // size cap); this schema covers any non-file fields we might add

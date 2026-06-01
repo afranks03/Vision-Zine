@@ -3,6 +3,7 @@ import type {
   BioContent,
   GoalsContent,
   PersonalContent,
+  PracticeContent,
   ResumeContent,
   TenetsContent,
   VisionContent,
@@ -24,6 +25,7 @@ export interface RenderableZine {
   achievements: Partial<AchievementsContent>;
   goals: Partial<GoalsContent>;
   tenets: Partial<TenetsContent>;
+  practice: Partial<PracticeContent>;
 }
 
 export interface SpreadProps {

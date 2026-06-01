@@ -17,6 +17,7 @@ import { CoauthorSection } from './_sections/coauthor-section';
 import { CoverSection } from './_sections/cover-section';
 import { GoalsSection } from './_sections/goals-section';
 import { PersonalSection } from './_sections/personal-section';
+import { PracticeSection } from './_sections/practice-section';
 import { ResumeSection } from './_sections/resume-section';
 import { SectionPlaceholder } from './_sections/section-placeholder';
 import { TenetsSection } from './_sections/tenets-section';
@@ -43,6 +44,7 @@ const SECTIONS: { key: StudioNavKey; label: string; ai: boolean }[] = [
   { key: 'cover', label: 'Cover', ai: false },
   { key: 'typography', label: 'Typography', ai: false },
   { key: 'personal', label: 'Personal', ai: false },
+  { key: 'practice', label: 'The Practice', ai: false },
   { key: 'vision', label: 'Vision Statement', ai: true },
   { key: 'bio', label: 'Bio', ai: true },
   { key: 'resume', label: 'Resume / Career', ai: true },
@@ -241,6 +243,15 @@ function renderSection(
       );
     case 'personal':
       return <PersonalSection zineId={zineId} initial={contentFor('personal')} />;
+    case 'practice':
+      return (
+        <PracticeSection
+          zineId={zineId}
+          initial={contentFor('practice')}
+          initialVision={contentFor('vision')}
+          displayName={displayName}
+        />
+      );
     case 'goals':
       return <GoalsSection zineId={zineId} initial={contentFor('goals')} />;
     case 'tenets':

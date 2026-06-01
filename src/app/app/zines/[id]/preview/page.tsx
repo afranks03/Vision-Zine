@@ -12,6 +12,7 @@ import type {
   BioContent,
   GoalsContent,
   PersonalContent,
+  PracticeContent,
   ResumeContent,
   SectionKey,
   TenetsContent,
@@ -110,5 +111,6 @@ function denormalize(zine: ZineRow, sections: ZineDataRow[]): RenderableZine {
     achievements: (map.get('achievements') ?? {}) as Partial<AchievementsContent>,
     goals: (map.get('goals') ?? {}) as Partial<GoalsContent>,
     tenets: (map.get('tenets') ?? {}) as Partial<TenetsContent>,
+    practice: (map.get('practice') ?? {}) as Partial<PracticeContent>,
   };
 }

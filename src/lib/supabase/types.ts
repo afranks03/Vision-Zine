@@ -47,7 +47,8 @@ export type SectionKey =
   | 'tenets'
   | 'online'
   | 'documents'
-  | 'coauthor';
+  | 'coauthor'
+  | 'practice';
 
 export type AssetType = 'document' | 'image' | 'audio' | 'other';
 
@@ -280,6 +281,25 @@ export interface CoauthorContent {
   joint_notes?: string;
 }
 
+/**
+ * The Practice (Phase 7). Six short reflective inputs the user fills out
+ * before writing the Vision. Two visual groups:
+ *   Inward  — gratitude, forgiveness, grounding, spirituality
+ *   Outward — environment, friend_circle
+ * All fields are optional. The "Sharpen my Vision" AI flow reads these
+ * + the current Vision draft and proposes a refined Vision.
+ */
+export interface PracticeContent {
+  // Inward
+  gratitude?: string;
+  forgiveness?: string;
+  grounding?: string;
+  spirituality?: string;
+  // Outward
+  environment?: string;
+  friend_circle?: string;
+}
+
 export type SectionContentMap = {
   personal: PersonalContent;
   vision: VisionContent;
@@ -291,6 +311,7 @@ export type SectionContentMap = {
   online: OnlineContent;
   documents: DocumentsContent;
   coauthor: CoauthorContent;
+  practice: PracticeContent;
 };
 
 export type SectionContent<K extends SectionKey> = SectionContentMap[K];
