@@ -1,11 +1,14 @@
 import { presetCssVars } from '@/lib/typography/presets';
 import { Page, buildRunningHead, type PageVariant } from './page';
+import { Bio } from './spreads/bio';
+import { Career } from './spreads/career';
 import { Contents } from './spreads/contents';
 import { Cover } from './spreads/cover';
 import { DailyCode } from './spreads/daily-code';
 import { EditorsLetter } from './spreads/letter';
 import { Forecast } from './spreads/forecast';
 import { Foundation } from './spreads/foundation';
+import { Joint } from './spreads/joint';
 import { Practice } from './spreads/practice';
 import { STYLE_PALETTES } from './styles';
 import type { ZineRootProps } from './types';
@@ -15,17 +18,24 @@ import type { ZineRootProps } from './types';
  * inner spread in <Page> for chrome (running head + page number);
  * the cover is bare (no chrome) per magazine convention.
  *
- * Page sequence (Letter):
- *   1. Cover (no chrome)
- *   2. Contents (TOC)
- *   3. Editor's Letter — Vision section
- *   4. Forecast — Goals
- *   5. Daily Code — Tenets
- *   6. Foundation — Achievements
+ * Phase 8 expanded the spread list so every studio section that
+ * carries data now has its own printed page. Each <Page> wrapper
+ * also forces a page-break in the PDF output.
  *
- * Pocket skips the Contents page (limited real estate) so its
- * inner sequence is: 1 cover, 2 letter, 3 forecast, 4 daily code,
- * 5 foundation.
+ * Page sequence (Letter):
+ *   1. Cover
+ *   2. Contents (TOC)
+ *   3. Editor's Letter — Vision
+ *   4. The Profile — Bio
+ *   5. The Career — Resume
+ *   6. The Practice — Reflective inputs
+ *   7. The Forecast — Goals
+ *   8. The Daily Code — Tenets
+ *   9. The Foundation — Achievements
+ *   10. The Joint Section — Co-author
+ *
+ * Pocket skips Contents (limited real estate) — same nine spreads,
+ * just one shorter.
  */
 export function Zine({ data, coverImageUrl }: ZineRootProps) {
   const palette = STYLE_PALETTES[data.zine.style];
@@ -34,21 +44,18 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
   const runningHead = buildRunningHead(zine);
   const showContents = zine.format !== 'pocket';
 
-  // Pages 2..N receive chrome. Page 1 is the cover (no chrome).
-  // First listed section's page index depends on whether Contents
-  // exists; Letter zines have Contents at page 2, so the Letter is
-  // page 3; Pocket has Letter at page 2.
-  //
-  // Sequence (Letter): Cover · Contents · Letter · Practice · Forecast
-  //                    · DailyCode · Foundation
-  // Sequence (Pocket): Cover · Letter · Practice · Forecast
-  //                    · DailyCode · Foundation
+  // Page-number math. Cover is page 1 (no chrome). Contents is page 2
+  // on Letter; Letter format starts the inner spreads at page 3.
+  // Pocket starts inner spreads at page 2 (no Contents).
   const letterPage = showContents ? 3 : 2;
-  const practicePage = letterPage + 1;
-  const forecastPage = letterPage + 2;
-  const dailyCodePage = letterPage + 3;
-  const foundationPage = letterPage + 4;
-  const totalPages = foundationPage;
+  const bioPage = letterPage + 1;
+  const careerPage = letterPage + 2;
+  const practicePage = letterPage + 3;
+  const forecastPage = letterPage + 4;
+  const dailyCodePage = letterPage + 5;
+  const foundationPage = letterPage + 6;
+  const jointPage = letterPage + 7;
+  const totalPages = jointPage;
 
   return (
     <div className="zine-root flex flex-col" style={typographyStyle}>
@@ -83,7 +90,33 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
         <EditorsLetter data={data} palette={palette.letter} />
       </Page>
 
-      {/* 4 (or 3). The Practice — inward + outward */}
+      {/* 4 (or 3). The Profile — Bio */}
+      <Page
+        number={bioPage}
+        total={totalPages}
+        runningHead={runningHead}
+        sectionEyebrow="The Profile"
+        variant={pageVariant(bioPage)}
+        palette={palette.dailyCode}
+        format={zine.format}
+      >
+        <Bio data={data} palette={palette.dailyCode} />
+      </Page>
+
+      {/* 5 (or 4). The Career — Resume */}
+      <Page
+        number={careerPage}
+        total={totalPages}
+        runningHead={runningHead}
+        sectionEyebrow="The Career"
+        variant={pageVariant(careerPage)}
+        palette={palette.foundation}
+        format={zine.format}
+      >
+        <Career data={data} palette={palette.foundation} />
+      </Page>
+
+      {/* 6 (or 5). The Practice */}
       <Page
         number={practicePage}
         total={totalPages}
@@ -96,7 +129,7 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
         <Practice data={data} palette={palette.forecast} />
       </Page>
 
-      {/* 5 (or 4). Forecast — Goals */}
+      {/* 7 (or 6). The Forecast — Goals */}
       <Page
         number={forecastPage}
         total={totalPages}
@@ -109,7 +142,7 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
         <Forecast data={data} palette={palette.forecast} />
       </Page>
 
-      {/* 5 (or 4). Daily Code — Tenets */}
+      {/* 8 (or 7). The Daily Code — Tenets */}
       <Page
         number={dailyCodePage}
         total={totalPages}
@@ -122,7 +155,7 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
         <DailyCode data={data} palette={palette.dailyCode} />
       </Page>
 
-      {/* 6 (or 5). Foundation — Achievements */}
+      {/* 9 (or 8). The Foundation — Achievements */}
       <Page
         number={foundationPage}
         total={totalPages}
@@ -133,6 +166,19 @@ export function Zine({ data, coverImageUrl }: ZineRootProps) {
         format={zine.format}
       >
         <Foundation data={data} palette={palette.foundation} />
+      </Page>
+
+      {/* 10 (or 9). The Joint Section — Co-author */}
+      <Page
+        number={jointPage}
+        total={totalPages}
+        runningHead={runningHead}
+        sectionEyebrow="The Joint Section"
+        variant={pageVariant(jointPage)}
+        palette={palette.letter}
+        format={zine.format}
+      >
+        <Joint data={data} palette={palette.letter} />
       </Page>
     </div>
   );

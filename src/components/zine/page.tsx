@@ -42,7 +42,16 @@ export function Page({
   const minimal = format === 'pocket';
 
   return (
-    <div className="relative">
+    <div
+      className="relative"
+      style={{
+        // Force every wrapped spread onto its own printed page. Property
+        // is ignored in screen rendering (vertical scroll keeps working
+        // in the live preview), only honored by the PDF / print pipeline.
+        breakBefore: 'page',
+        pageBreakBefore: 'always',
+      }}
+    >
       {children}
       <PageChrome
         number={number}

@@ -59,16 +59,39 @@ export interface TocItem {
   filled: boolean;
 }
 
-/** Build the cover's table of contents from filled sections. */
+/**
+ * Build the cover's table of contents in the canonical print order.
+ * Phase 8 expanded this to include The Profile (Bio), The Career
+ * (Resume), and The Joint Section (Co-author) at the positions they
+ * occupy in the rendered magazine. Each entry tracks `filled` so the
+ * Contents page can dim the un-touched ones without losing the
+ * canonical sequence.
+ */
 export function buildToc(data: RenderableZine): TocItem[] {
   const items: TocItem[] = [];
-  if (data.vision.statement?.trim()) {
-    items.push({
-      title: 'The Vision',
-      desc: 'A first-person manifesto for the year ahead.',
-      filled: true,
-    });
-  }
+
+  // 1. The Vision
+  items.push({
+    title: 'The Vision',
+    desc: 'A first-person manifesto for the year ahead.',
+    filled: !!data.vision.statement?.trim(),
+  });
+
+  // 2. The Profile (Bio)
+  items.push({
+    title: 'The Profile',
+    desc: 'A short editorial introduction to the author.',
+    filled: !!(data.bio.summary?.trim() || data.bio.raw_paste?.trim()),
+  });
+
+  // 3. The Career
+  items.push({
+    title: 'The Career',
+    desc: 'Highlights of the work behind the next chapter.',
+    filled: (data.resume.highlights?.length ?? 0) > 0,
+  });
+
+  // 4. The Practice
   const practiceFilled =
     !!data.practice.gratitude?.trim() ||
     !!data.practice.forgiveness?.trim() ||
@@ -76,56 +99,46 @@ export function buildToc(data: RenderableZine): TocItem[] {
     !!data.practice.spirituality?.trim() ||
     !!data.practice.environment?.trim() ||
     !!data.practice.friend_circle?.trim();
-  if (practiceFilled) {
-    items.push({
-      title: 'The Practice',
-      desc: 'Six prompts of inward and outward reckoning.',
-      filled: true,
-    });
-  }
-  if (data.bio.summary?.trim()) {
-    items.push({ title: 'Bio', desc: 'A short editorial introduction.', filled: true });
-  }
-  if ((data.resume.highlights?.length ?? 0) > 0) {
-    items.push({
-      title: 'Career',
-      desc: 'Highlights of the work behind the next chapter.',
-      filled: true,
-    });
-  }
+  items.push({
+    title: 'The Practice',
+    desc: 'Six prompts of inward and outward reckoning.',
+    filled: practiceFilled,
+  });
+  // 5. The Forecast
   const goalCount =
     (data.goals.financial?.length ?? 0) +
     (data.goals.creative?.length ?? 0) +
     (data.goals.place?.length ?? 0) +
     (data.goals.body_spirit?.length ?? 0);
-  if (goalCount > 0) {
-    items.push({
-      title: 'The Forecast',
-      desc: 'Goals by domain — money, art, place, body.',
-      filled: true,
-    });
-  }
-  if ((data.achievements.items?.length ?? 0) > 0) {
-    items.push({
-      title: 'The Foundation',
-      desc: 'The case for the next chapter, in evidence.',
-      filled: true,
-    });
-  }
-  if ((data.tenets.tenets?.length ?? 0) > 0) {
-    items.push({
-      title: 'The Daily Code',
-      desc: 'Ten tenets. Read first thing. Read last thing.',
-      filled: true,
-    });
-  }
-  while (items.length < 6) {
-    items.push({
-      title: ['Online', 'Documents', 'Co-author', 'Closing'][items.length - 2] ?? 'Section',
-      desc: 'Reserved for the next issue.',
-      filled: false,
-    });
-  }
+  items.push({
+    title: 'The Forecast',
+    desc: 'Goals by domain — money, art, place, body.',
+    filled: goalCount > 0,
+  });
+
+  // 6. The Daily Code
+  items.push({
+    title: 'The Daily Code',
+    desc: 'Ten tenets. Read first thing. Read last thing.',
+    filled: (data.tenets.tenets?.length ?? 0) > 0,
+  });
+
+  // 7. The Foundation
+  items.push({
+    title: 'The Foundation',
+    desc: 'The case for the next chapter, in evidence.',
+    filled: (data.achievements.items?.length ?? 0) > 0,
+  });
+
+  // 8. The Joint Section
+  const jointFilled =
+    !!data.coauthor.partner_display_name?.trim() || !!data.coauthor.joint_notes?.trim();
+  items.push({
+    title: 'The Joint Section',
+    desc: 'Co-edited notes with a partner, when one is engaged.',
+    filled: jointFilled,
+  });
+
   return items;
 }
 

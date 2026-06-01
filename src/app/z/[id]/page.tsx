@@ -9,6 +9,7 @@ import { createAdminClient } from '@/lib/supabase/admin';
 import type {
   AchievementsContent,
   BioContent,
+  CoauthorContent,
   GoalsContent,
   PersonalContent,
   PracticeContent,
@@ -62,6 +63,7 @@ async function loadZine(id: string): Promise<RenderableZine | null> {
     goals: (map.get('goals') ?? {}) as Partial<GoalsContent>,
     tenets: (map.get('tenets') ?? {}) as Partial<TenetsContent>,
     practice: (map.get('practice') ?? {}) as Partial<PracticeContent>,
+    coauthor: (map.get('coauthor') ?? {}) as Partial<CoauthorContent>,
   };
 }
 

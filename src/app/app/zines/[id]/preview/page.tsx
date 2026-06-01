@@ -10,6 +10,7 @@ import { signCoverUrl } from '@/lib/storage/zine-cover';
 import type {
   AchievementsContent,
   BioContent,
+  CoauthorContent,
   GoalsContent,
   PersonalContent,
   PracticeContent,
@@ -112,5 +113,6 @@ function denormalize(zine: ZineRow, sections: ZineDataRow[]): RenderableZine {
     goals: (map.get('goals') ?? {}) as Partial<GoalsContent>,
     tenets: (map.get('tenets') ?? {}) as Partial<TenetsContent>,
     practice: (map.get('practice') ?? {}) as Partial<PracticeContent>,
+    coauthor: (map.get('coauthor') ?? {}) as Partial<CoauthorContent>,
   };
 }

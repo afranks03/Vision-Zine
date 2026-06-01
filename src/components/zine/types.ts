@@ -1,6 +1,7 @@
 import type {
   AchievementsContent,
   BioContent,
+  CoauthorContent,
   GoalsContent,
   PersonalContent,
   PracticeContent,
@@ -26,6 +27,7 @@ export interface RenderableZine {
   goals: Partial<GoalsContent>;
   tenets: Partial<TenetsContent>;
   practice: Partial<PracticeContent>;
+  coauthor: Partial<CoauthorContent>;
 }
 
 export interface SpreadProps {
